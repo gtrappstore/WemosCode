@@ -223,21 +223,14 @@ boolean sendData(unsigned char* data, int length) {
 	Serial.write((byte) 0);
     softSer.println("DATA command sent");
     
-    char lenBuf[11];
-    sprintf(lenBuf, "%010d", length);
-    String len = String(lenBuf);
-    Serial.print(len);
+    Serial.print(len, DEC);
+	Serial.write((byte) 0);
     softSer.println("Length sent: " + len);
-    
-    String cs = checksum(data, length);
-    Serial.print(cs);
+	
+	unsigned long cs = checksum(data, length);
+	Serial.print(cs);
+	Serial.write((byte) 0);
     softSer.println("Checksum sent: " + cs);
-
-    long r = random(20);
-    if (r == 1) {
-      data[0] = (unsigned char) 8;
-    }
-    softSer.println("RANDOM: " + String(r));
   
     int counter = 0;
     while(counter < length) {
@@ -251,7 +244,7 @@ boolean sendData(unsigned char* data, int length) {
     ack = receiveAck();
     softSer.println("Ack received: " + ack);
 
-    if (String("CA").equals(ack) || String("CA1").equals(ack)) {
+    if (String("CA").equals(ack)) {
       return true;
     }
     
@@ -283,17 +276,19 @@ bool timeElapsed(long start, long ms) {
 }
 
 
-String checksum(unsigned char* data, int length) {
-  int cs = 0;
+unsigned long checksum(unsigned char* data, int length) {
+  unsigned long cs = 0;
   char checksumBuf[5];
   
   for (int i = 0; i < length; i++) {
-    cs += (int)data[i];
+    cs += (unsigned long) data[i];
+	
+	if (cs > 10000) {
+		cs = cs % 10000;
+	}
   }
 
-  cs = cs % 10000;
-  sprintf(checksumBuf, "%04d", cs);
-  return String(checksumBuf);
+  return cs;
 }
 
 String serialReadString() {
