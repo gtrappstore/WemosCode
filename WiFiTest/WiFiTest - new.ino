@@ -86,42 +86,9 @@ void loop() {
   }
 }
 
-void sendCommandAck() {
-  sendCommandAck("OK");
-}
-
-void sendCommandAck(String status) {
-  Serial.write((byte) 220); // 0xDC
-  Serial.print(status);
-  Serial.write((byte) 0);
-}
-
-void sendCommand(String command) {
-  Serial.write((byte) 219);
-  Serial.print(command);
-  Serial.write((byte) 0);
-}
 
 void connectToNetwork() {
-  int n = WiFi.scanNetworks();
-  for (int i = 0; i < n; i++) {
-    // Print SSID and RSSI for each network found
-    softSer.print(i);
-    softSer.print(": ");
-    softSer.print(WiFi.SSID(i));
-    softSer.print(" (");
-    softSer.print(WiFi.RSSI(i));
-    softSer.print(")");
-    softSer.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
-    
-    Serial.print(WiFi.SSID(i));
-    Serial.print("\n");
-  }
 
-  Serial.write((byte) 0);
-
-  softSer.println("");
-  
   String netIndex = serialReadString();
   int selectedNetwork = netIndex.toInt();
   softSer.println("Selection: " + String(selectedNetwork));
@@ -142,6 +109,30 @@ void connectToNetwork() {
   softSer.println(WiFi.localIP());
 
   sendCommandAck("OF");
+}
+
+
+void getNets(){
+	int n = WiFi.scanNetworks();
+	for (int i = 0; i < n; i++) {
+		// Print SSID and RSSI for each network found
+		softSer.print(i);
+		softSer.print(": ");
+		softSer.print(WiFi.SSID(i));
+		softSer.print(" (");
+		softSer.print(WiFi.RSSI(i));
+		softSer.print(")");
+		softSer.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+		
+		Serial.print(WiFi.SSID(i));
+		Serial.print("\n");
+	}
+
+  Serial.write((byte) 0);
+
+  softSer.println("");
+  
+	
 }
 
 void getWebContent() {
@@ -222,80 +213,6 @@ void getWebContent() {
 
 }
 
-void downloadFile() {
-  String appNumber = serialReadString();
-
-  softSer.println("Download App Number " + appNumber);
-
-  delay(1000);
-  
-  WiFiClient wfClient;
-
-  String host = "gtr-app-store.herokuapp.com";
-  String url = "/apps/" + appNumber + "?dl=1";
-  int port = 80; // prefer HTTP over HTTPS cause of cert problems
-
-  if (!wfClient.connect(host.c_str(), port)) {
-    softSer.println("connection failed");
-    return;
-  }
-
-  wfClient.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" +
-               "User-Agent: BuildFailureDetectorESP8266\r\n" +
-               "Connection: close\r\n\r\n");
-
-  softSer.println("request sent");
-
-  int contentLength = 0;
-  String contentLengthStr;
-
-  while(wfClient.connected()) {
-    String line = wfClient.readStringUntil('\n');
-    softSer.println(line);
-    if (line.startsWith("Content-Length")) {
-      contentLengthStr = line.substring(line.indexOf(":") + 2);
-      softSer.println("--- " + contentLengthStr + " ---");
-      contentLength = contentLengthStr.toInt();
-    } else if (line == "\r") {
-      softSer.println("headers received");
-      break;
-    }
-  }
-
-  Serial.print(contentLength);
-  softSer.println(contentLengthStr);
-  Serial.write((byte) 0);
-
-  unsigned char buf[256];
-
-  int counter = 0;
-  while(wfClient.connected() && counter < contentLength) {
-    if (wfClient.available()) {
-      int len = wfClient.read(buf, sizeof buf);
-//      Serial.write(buf, len);
-
-      if (sendData(buf, len)) {
-        return;
-      }
-      
-      counter += len;
-      softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
-    }
-    yield();
-  }
-}
-
-void getAppInfo() {
-  String appNumber = serialReadString();
-  
-  softSer.println("Get Info Number " + appNumber);
-
-  downloadPic(appNumber); //downloaden und senden
-  //senden der Textinfos als einen String mit Trennzeichen (FESTZULEGEN), Trennen auf dem GTR  
-  
-  
-}
 
 boolean sendData(unsigned char* data, int length) {
   String ack;
@@ -510,6 +427,23 @@ void downloadPic(String appNumber){
   //for(int i=0;i<contentLength;i++){
   //    softSer.print(buf[i],HEX);
   //}
+}
+
+
+void sendCommand(String command) {
+  Serial.write((byte) 219);
+  Serial.print(command);
+  Serial.write((byte) 0);
+}
+
+void sendCommandAck() {
+  sendCommandAck("OK");
+}
+
+void sendCommandAck(String status) {
+  Serial.write((byte) 220); // 0xDC
+  Serial.print(status);
+  Serial.write((byte) 0);
 }
 
 
