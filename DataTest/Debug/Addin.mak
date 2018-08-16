@@ -3,10 +3,10 @@
 #
 ############################
 # Directory defines
-TCDIR = A:\CASIO_SDK\OS\SH
-OSDIR = A:\CASIO_SDK\OS
-APPDIR = A:\_Austuasch\TheRealSlimWifi\WiFi
-OUTDIR = A:\_Austuasch\TheRealSlimWifi\WiFi\Debug
+TCDIR = D:\Program Files\CASIO\fx-9860G SDK\OS\SH
+OSDIR = D:\Program Files\CASIO\fx-9860G SDK\OS
+APPDIR = D:\Documents\GTR\DataTest
+OUTDIR = D:\Documents\GTR\DataTest\Debug
 
 ################
 # Main Defines
@@ -14,7 +14,7 @@ SH_EXEDIR=$(TCDIR)\bin
 
 # Hitachi SH C/C++ Compiler02 phase
 SHCC02_EXE=shc.exe
-SHCC02_DEP="$(OSDIR)\FX\include\fxlib.h" 
+SHCC02_DEP="$(OSDIR)\FX\include\fxlib.h" "net.h" "status.h" "syscalls.h"
 
 # Hitachi SH Assembler03 phase
 SHASM03_EXE=asmsh.exe
@@ -26,14 +26,20 @@ SHLINK04_DEP2="$(OSDIR)\FX\lib\setup.obj"
 
 #######################
 # Files to build
-FILE0=WiFi
+FILE0=DataTest
 FILESRC0="$(APPDIR)\$(FILE0).c"
 FILEOBJ0="$(OUTDIR)\$(FILE0).obj"
-FILE1=SYSCALLS
-FILESRC1="$(APPDIR)\$(FILE1).src"
+FILE1=net
+FILESRC1="$(APPDIR)\$(FILE1).c"
 FILEOBJ1="$(OUTDIR)\$(FILE1).obj"
+FILE2=status
+FILESRC2="$(APPDIR)\$(FILE2).c"
+FILEOBJ2="$(OUTDIR)\$(FILE2).obj"
+FILE3=syscalls
+FILESRC3="$(APPDIR)\$(FILE3).src"
+FILEOBJ3="$(OUTDIR)\$(FILE3).obj"
 RFILE=FXADDINror
-USERALLOBJ=$(FILEOBJ0) $(FILEOBJ1)
+USERALLOBJ=$(FILEOBJ0) $(FILEOBJ1) $(FILEOBJ2) $(FILEOBJ3)
 
 #######################
 # nmake "all" statement
@@ -73,9 +79,43 @@ $(FILESRC0)
 -debug
 <<
 
-$(FILEOBJ1) : $(FILESRC1)
-	"$(SH_EXEDIR)\$(SHASM03_EXE)" -subcommand=<<
+$(FILEOBJ1) : $(FILESRC1) $(SHCC02_DEP)
+	"$(SH_EXEDIR)\$(SHCC02_EXE)" -subcommand=<<
+-cpu=sh3
+-include="$(OSDIR)\FX\include","$(APPDIR)"
+-objectfile=$(FILEOBJ1)
+-show=source
+-listfile="$(OUTDIR)\$(FILE1).lst"
+-size
+-noinline
+-chgincpath
+-errorpath
 $(FILESRC1)
+-lang=c
+-nologo
+-debug
+<<
+
+$(FILEOBJ2) : $(FILESRC2) $(SHCC02_DEP)
+	"$(SH_EXEDIR)\$(SHCC02_EXE)" -subcommand=<<
+-cpu=sh3
+-include="$(OSDIR)\FX\include","$(APPDIR)"
+-objectfile=$(FILEOBJ2)
+-show=source
+-listfile="$(OUTDIR)\$(FILE2).lst"
+-size
+-noinline
+-chgincpath
+-errorpath
+$(FILESRC2)
+-lang=c
+-nologo
+-debug
+<<
+
+$(FILEOBJ3) : $(FILESRC3)
+	"$(SH_EXEDIR)\$(SHASM03_EXE)" -subcommand=<<
+$(FILESRC3)
 -cpu=sh3
 -endian=big
 -round=zero
@@ -83,7 +123,7 @@ $(FILESRC1)
 -include="$(APPDIR)"
 -include="$(OSDIR)\FX\include"
 -debug
--object=$(FILEOBJ1)
+-object=$(FILEOBJ3)
 -literal=pool,branch,jump,return
 -nologo
 -chgincpath

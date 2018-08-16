@@ -1,0 +1,203 @@
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 15-Aug-2018 23:23:25  PAGE    1
+
+************ OBJECT LISTING ************
+
+FILE NAME: D:\Documents\GTR\DataTest\status.c
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+        status.c     1    #include "status.h"
+        status.c     2    
+        status.c     3    int convertStatus(unsigned char* statusBuf) {
+P   00000000              _convertStatus:                  ; function: convertStatus
+                                                           ; frame size=16
+    00000000 2FE6                   MOV.L       R14,@-R15
+        status.c     4            int status = -1;
+    00000002 EEFF                   MOV         #-1,R14
+        status.c     5            
+        status.c     6            if (memcmp(statusBuf, "OK", 2) == 0) {
+    00000004 D519                   MOV.L       L263+6,R5  ; L238
+    00000006 2FD6                   MOV.L       R13,@-R15
+    00000008 2FC6                   MOV.L       R12,@-R15
+    0000000A 6D43                   MOV         R4,R13
+    0000000C 4F22                   STS.L       PR,@-R15
+    0000000E DC16                   MOV.L       L263+2,R12 ; _memcmp
+    00000010 4C0B                   JSR         @R12
+    00000012 E602                   MOV         #2,R6
+    00000014 2008                   TST         R0,R0
+    00000016 8B01                   BF          L253
+        status.c     7                    status = STATUS_OK;
+    00000018 A01F                   BRA         L254
+    0000001A EE00                   MOV         #0,R14
+    0000001C              L253:                             
+        status.c     8            } else if (memcmp(statusBuf, "UC", 2) == 0) {
+    0000001C D514                   MOV.L       L263+10,R5 ; L240
+    0000001E E602                   MOV         #2,R6
+    00000020 4C0B                   JSR         @R12
+    00000022 64D3                   MOV         R13,R4
+    00000024 2008                   TST         R0,R0
+    00000026 8B01                   BF          L255
+        status.c     9                    status = STATUS_UC;
+    00000028 A017                   BRA         L254
+    0000002A EE01                   MOV         #1,R14
+    0000002C              L255:                             
+        status.c    10            } else if (memcmp(statusBuf, "TO", 2) == 0) {
+    0000002C D511                   MOV.L       L263+14,R5 ; L242
+    0000002E E602                   MOV         #2,R6
+    00000030 4C0B                   JSR         @R12
+    00000032 64D3                   MOV         R13,R4
+    00000034 2008                   TST         R0,R0
+    00000036 8B01                   BF          L257
+        status.c    11                    status = STATUS_TO;
+    00000038 A00F                   BRA         L254
+    0000003A EE02                   MOV         #2,R14
+    0000003C              L257:                             
+        status.c    12            } else if (memcmp(statusBuf, "OF", 2) == 0) {
+    0000003C D50E                   MOV.L       L263+18,R5 ; L244
+    0000003E E602                   MOV         #2,R6
+    00000040 4C0B                   JSR         @R12
+    00000042 64D3                   MOV         R13,R4
+    00000044 2008                   TST         R0,R0
+    00000046 8B01                   BF          L259
+        status.c    13                    status = STATUS_OF;
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 15-Aug-2018 23:23:25  PAGE    2
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000048 A007                   BRA         L254
+    0000004A EE03                   MOV         #3,R14
+    0000004C              L259:                             
+        status.c    14            } else if (memcmp(statusBuf, "DE", 2) == 0) {
+    0000004C D50B                   MOV.L       L263+22,R5 ; L246
+    0000004E E602                   MOV         #2,R6
+    00000050 4C0B                   JSR         @R12
+    00000052 64D3                   MOV         R13,R4
+    00000054 2008                   TST         R0,R0
+    00000056 8B00                   BF          L254
+        status.c    15                    status = STATUS_DE;
+    00000058 EE04                   MOV         #4,R14
+    0000005A              L254:                             
+        status.c    16            }
+        status.c    17            
+        status.c    18            return status;
+    0000005A 60E3                   MOV         R14,R0
+        status.c    19    }
+    0000005C 4F26                   LDS.L       @R15+,PR
+    0000005E 6CF6                   MOV.L       @R15+,R12
+    00000060 6DF6                   MOV.L       @R15+,R13
+    00000062 000B                   RTS
+    00000064 6EF6                   MOV.L       @R15+,R14
+    00000066              L263:                             
+    00000066 0000                   .DATA.W     0
+    00000068 <00000000>             .DATA.L     _memcmp
+    0000006C <00000000>             .DATA.L     L238
+    00000070 <00000000>             .DATA.L     L240
+    00000074 <00000000>             .DATA.L     L242
+    00000078 <00000000>             .DATA.L     L244
+    0000007C <00000000>             .DATA.L     L246
+C   00000000              L238:
+    00000000 4F4B                   .SDATA      "OK"
+    00000002 00                     .DATA.B     H'00
+    00000003 00000001               .RES.B      1
+    00000004              L240:
+    00000004 5543                   .SDATA      "UC"
+    00000006 00                     .DATA.B     H'00
+    00000007 00000001               .RES.B      1
+    00000008              L242:
+    00000008 544F                   .SDATA      "TO"
+    0000000A 00                     .DATA.B     H'00
+    0000000B 00000001               .RES.B      1
+    0000000C              L244:
+    0000000C 4F46                   .SDATA      "OF"
+    0000000E 00                     .DATA.B     H'00
+    0000000F 00000001               .RES.B      1
+    00000010              L246:
+    00000010 4445                   .SDATA      "DE"
+    00000012 00                     .DATA.B     H'00
+
+
+
+
+
+
+
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 15-Aug-2018 23:23:25  PAGE    1
+
+
+******** STATISTICS INFORMATION ********
+
+
+********** ERROR INFORMATION ***********
+
+NUMBER OF ERRORS:           0
+NUMBER OF WARNINGS:         0
+
+
+
+
+******* SOURCE LINE INFORMATION ********
+
+COMPILED SOURCE LINE:       19
+
+
+
+******* SECTION SIZE INFORMATION *******
+
+PROGRAM  SECTION (P):                               00000080 Byte(s)
+CONSTANT SECTION (C):                               00000013 Byte(s)
+DATA     SECTION (D):                               00000000 Byte(s)
+BSS      SECTION (B):                               00000000 Byte(s)
+
+ TOTAL PROGRAM SIZE: 00000093 Byte(s)
+
+
+
+********** LABEL INFORMATION ***********
+
+NUMBER OF EXTERNAL REFERENCE SYMBOLS:            1
+NUMBER OF EXTERNAL DEFINITION SYMBOLS:           1
+NUMBER OF INTERNAL/EXTERNAL SYMBOLS:            13
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*** COMMAND PARAMETER ***
+
+
+  -subcommand=C:\Users\Niko\AppData\Local\Temp\hmkE505.tmp 
+

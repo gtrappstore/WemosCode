@@ -1,6 +1,7 @@
 #ifndef NET_H
 #define NET_H
 
+#include "stddef.h"
 #include "status.h"
 #include "syscalls.h"
 
@@ -25,18 +26,18 @@ void openSerial();
 void closeSerial();
 
 void sendCommand(unsigned char* command);
-void receiveStatus();
-void receiveStatusTimeout(int timeout);
+int receiveStatus();
+int receiveStatusTimeout(int timeout);
 
-void receiveString(unsigned char* buf);
-void receiveStringTimeout(unsigned char* buf, int timeout);
+int receiveString(unsigned char* buf, int maxLen);
+int receiveStringTimeout(unsigned char* buf, int maxLen, int timeout);
 
 void freeData(Data* data);
 
-int calculateChecksum(unsigned char* buf, int len);
+unsigned int calculateChecksum(unsigned char* buf, int len);
 
-Data* receiveData();
-Data* receiveStatusTimeout(int timeout);
+Data* receiveData(int retryCount);
+Data* receiveDataTimeout(int timeout, int retryCount);
 
 NetworkList* getAvailableNetworks();
 

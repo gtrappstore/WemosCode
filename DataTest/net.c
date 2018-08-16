@@ -1,4 +1,5 @@
 #include "net.h"
+#include "stdio.h"
 
 void openSerial() {
     unsigned char mode[6];
@@ -9,7 +10,7 @@ void openSerial() {
     mode[4] = 0;
     mode[5] = 0;
 
-    Serial_Open(&mode);
+    Serial_Open(mode);
 }
 
 void closeSerial() {
@@ -27,7 +28,7 @@ void sendStatus(unsigned char* status) {
 }
 
 int receiveString(unsigned char* buf, int maxLen) {
-	return receiveStringTimeout(buf, 500);
+	return receiveStringTimeout(buf, maxLen, 500);
 }
 
 int receiveStringTimeout(unsigned char* buf, int maxLen, int timeout) { // Bei true ist nicht getimeouted
@@ -77,7 +78,7 @@ int receiveStatusTimeout(int timeout) {
 }
 
 unsigned int calculateChecksum(unsigned char* buf, int len) {
-	unsigned int checksum;
+	unsigned int checksum = 0;
 	int counter;
 	
 	for (counter = 0; counter < len; counter++) {
@@ -91,61 +92,77 @@ unsigned int calculateChecksum(unsigned char* buf, int len) {
 	return checksum;
 }
 
-Data* receiveData() {
-	return receiveDataTimeout(500);
+Data* receiveData(int retryCount) {
+	return receiveDataTimeout(500, retryCount);
 }
 
-Data* receiveDataTimeout(int timeout) {
+Data* receiveDataTimeout(int timeout, int retryCount) {
 	int startTicks = RTC_GetTicks();
+	Data* data = NULL;
 	unsigned char buf[11];
+	int retry = 0;
+	
+	if (retryCount < 0) {
+		return NULL;
+	}
 	
 	while (!RTC_Elapsed_ms(startTicks, timeout)) {
-		if (Serial_GetReceivedBytesAvailable() >= 1) {
-			unsigned char c;
-			Serial_ReadOneByte(&c);
-			
-			if (c == 221) {
-				receiveStringTimeout(buf, 11, timeout);
-				if (strcmp(buf, "DATA") == 0) {
-					Data* data = (Data*) malloc(sizeof(Data));
-					int counter = 0;
-					short received;
+		unsigned char c;
+		
+		if (Serial_ReadOneByte(&c) == 0 && c == 221) {
+			receiveStringTimeout(buf, 11, timeout);
+			if (strcmp(buf, "DATA", 4) == 0) {
+				int counter = 0;
+				short received;
+				data = (Data*) malloc(sizeof(Data));
+				
+				if (!receiveStringTimeout(buf, 11, timeout)) {
+					retry = 1;
+					break;
+				}
+				data->length = atoi(buf);
+				
+				if (!receiveStringTimeout(buf, 11, timeout)) {
+					retry = 1;
+					break;
+				}
+				data->checksum = (unsigned int) atol(buf);
+				
+				data->buf = (unsigned char*) malloc(data->length);
+				while (1) {
+					Serial_ReadNBytes(&data->buf[counter], data->length - counter, &received);
+					counter += received;
 					
-					if (!receiveStringTimeout(buf, 11, timeout)) {
-						break;
-					}
-					data->length = atoi(buf);
-					
-					if (!receiveStringTimeout(buf, 11, timeout)) {
-						break;
-					}
-					data->checksum = (unsigned int) atol(buf);
-					
-					data->buf = (unsigned char*) malloc(data->length);
-					while (!RTC_Elapsed_ms(startTicks, timeout)) {
-						Serial_ReadNBytes(&data->buf[counter], data->length - counter, &received);
-						counter += received;
-						
-						if (counter >= data->length) {
-							if (data->checksum != calculateChecksum(data->buf, data->length)) {
-								return NULL;	
-							}
-							
-							sendStatus("OK");
-							
-							return data;
+					if (counter >= data->length) {
+						if (data->checksum != calculateChecksum(data->buf, data->length)) {
+							retry = 1;
 						}
+						
+						break;
+					}
+
+					if (RTC_Elapsed_ms(startTicks, timeout)) {
+						freeData(data);
+						data = NULL;
+						break;
 					}
 				}
-				
+
 				break;
 			}
 		}
 	}
 	
-	sendStatus("DE");
+	if (retry == 1) {
+		freeData(data);
+		data = NULL;
+		sendStatus("DE");
+		data = receiveDataTimeout(timeout, retryCount - 1);
+	} else {
+		sendStatus("OK");
+	}
 	
-	return NULL;
+	return data;
 }
 
 void freeData(Data* data) {
@@ -163,7 +180,7 @@ NetworkList* getAvailableNetworks() {
 	int status;
 	Data* data = NULL;
 	int counter;
-	NetworkList* head = NULL, tail = NULL;
+	NetworkList *head = NULL, *tail = NULL;
 	
 	sendCommand((unsigned char*) "GETNETS");
 	status = receiveStatus();
@@ -172,7 +189,7 @@ NetworkList* getAvailableNetworks() {
 		return NULL;
 	}
 	
-	data = receiveData();
+	data = receiveDataTimeout(20000, 5);
 	if (data == NULL) {
 		return NULL;
 	}

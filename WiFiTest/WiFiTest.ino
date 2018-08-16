@@ -22,30 +22,15 @@ void setup() {
   randomSeed(analogRead(0));
 
   softSer.println("Started");
+
+/*
+  softSer.println("CHECKSUM: " + String(checksum((unsigned char*) "Test String\0", 13)));
+  sendData((unsigned char*) "Test String\0", 13);
+  */
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
-  /*
-  unsigned char testData[] { 'A', '0', 'z', '6', '2', 'p', 'e', 'n', 'i', 'S'};
-  softSer.println(checksum(testData, 10));
-  return;
-  */
-    
-  if (softSer.available() > 0) {
-    byte data = softSer.read();
-    //Serial.write(data);
-    softSer.write(data);
-
-    if (data == '0') {
-      Serial.write((byte) 0);
-      softSer.println("NULL Byte written");
-    }
-
-    if(data==48)
-      downloadPic("1");
-  }
 
   if (Serial.available() > 0) {
     byte data = Serial.read();
@@ -60,8 +45,12 @@ void loop() {
         sendCommandAck("TO");
       } else {
         softSer.print("Command Received: ");
-        
-        if (String("CONNECT").equals(command)) {
+
+        if (String("GETNETS").equals(command)) {
+          softSer.println("GETNETS");
+          sendCommandAck();
+          getNetworks();
+        } else if (String("CONNECT").equals(command)) {
           softSer.println("CONNECT");
           sendCommandAck();
           connectToNetwork();
@@ -87,15 +76,15 @@ void loop() {
         } else if (String("SEARCH").equals(command)) {
           softSer.println("SEARCH");
           sendCommandAck();
-          browseFiles();
+//          browseFiles();
         } else if (String("DOWNLOAD").equals(command)) {
           softSer.println("DOWNLOAD");
           sendCommandAck();
-          downloadFile();
+//          downloadFile();
         }else if (String("GETAPPINFO").equals(command)) {
           softSer.println("GETAPPINFO");
           sendCommandAck();
-          getAppInfo();
+//          getAppInfo();
         } else if (String("GETBYID").equals(command)) {
           
         } else {
@@ -103,71 +92,47 @@ void loop() {
         }
       }
     }
-
-    if (data == 110) {
-      if (WiFi.isConnected()) {
-        softSer.println("Connected to: " + WiFi.SSID());
-        Serial.print(WiFi.SSID());
-        int rssi = WiFi.RSSI();
-        Serial.write('\t');
-        Serial.print(rssi);
-        softSer.print(rssi);
-      }
-      
-      Serial.write((byte) 0);
-    } else if (data == 111) {
-      softSer.println("");
-      softSer.println("Start Byte Received!");
-
-      connectToNetwork();
-//      downloadFile();
-    } else if (data == 112) {
-      browseFiles();
-    } else if (data == 113) {
-      downloadFile();
-    } else if (data == 114) {
-      softSer.println("Disconnecting...");
-      WiFi.disconnect();
-    }
   }
 }
 
-void sendCommandAck() {
-  sendCommandAck("OK");
+void getNetworks() {
+  int n = WiFi.scanNetworks();
+  int len = 0;
+  int counter = 0;
+  unsigned char* buf;
+
+  for (int i = 0; i < n; i++) {
+    len += WiFi.SSID(i).length() + 1;
+    len += String(WiFi.RSSI(i)).length() + 1;
+    len += String(WiFi.encryptionType(i)).length() + 1;
+
+    softSer.println(WiFi.SSID(i));
+  }
+
+  buf = (unsigned char*) malloc(len);
+
+  for (int i = 0; i < n; i++) {
+    int tmp;
+    tmp = WiFi.SSID(i).length() + 1;
+    memcpy(&buf[counter], WiFi.SSID(i).c_str(), tmp);
+    counter += tmp;
+
+    tmp = String(WiFi.RSSI(i)).length() + 1;
+    memcpy(&buf[counter], String(WiFi.RSSI(i)).c_str(), tmp);
+    counter += tmp;
+
+    tmp = String(WiFi.encryptionType(i)).length() + 1;
+    memcpy(&buf[counter], String(WiFi.encryptionType(i)).c_str(), tmp);
+    counter += tmp;
+  }
+
+  sendData(buf, len);
+  free(buf);
 }
 
-void sendCommandAck(String status) {
-  Serial.write((byte) 220); // 0xDB
-  Serial.print(status);
-  Serial.write((byte) 0);
-}
-
-void sendCommand(String command) {
-  Serial.write((byte) 219);
-  Serial.print(command);
-  Serial.write((byte) 0);
-}
 
 void connectToNetwork() {
-  int n = WiFi.scanNetworks();
-  for (int i = 0; i < n; i++) {
-    // Print SSID and RSSI for each network found
-    softSer.print(i);
-    softSer.print(": ");
-    softSer.print(WiFi.SSID(i));
-    softSer.print(" (");
-    softSer.print(WiFi.RSSI(i));
-    softSer.print(")");
-    softSer.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
-    
-    Serial.print(WiFi.SSID(i));
-    Serial.print("\n");
-  }
 
-  Serial.write((byte) 0);
-
-  softSer.println("");
-  
   String netIndex = serialReadString();
   int selectedNetwork = netIndex.toInt();
   softSer.println("Selection: " + String(selectedNetwork));
@@ -190,34 +155,68 @@ void connectToNetwork() {
   sendCommandAck("OF");
 }
 
-void browseFiles() {
-  String searchQuery = serialReadString();
 
-  softSer.println(searchQuery);
+void getNets(){
+  int n = WiFi.scanNetworks();
+  for (int i = 0; i < n; i++) {
+    // Print SSID and RSSI for each network found
+    softSer.print(i);
+    softSer.print(": ");
+    softSer.print(WiFi.SSID(i));
+    softSer.print(" (");
+    softSer.print(WiFi.RSSI(i));
+    softSer.print(")");
+    softSer.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+    
+    Serial.print(WiFi.SSID(i));
+    Serial.print("\n");
+  }
+
+  Serial.write((byte) 0);
+
+  softSer.println("");
+  
+  
+}
+
+
+void getWebContent() {
+  
+  String modeString=serialReadString();
+  int mode=modeString.toInt();
+  /*modes: 
+  0=all
+  1=only content
+  2=only headers
+  */
+  
+  String url = serialReadString();
+  String portString= serialReadString();
+  int port=portString.toInt();
+  
+  softSer.println(url); //GET muss mit in der URL stehen
+  softSer.println("Port:"+portString);
   
   WiFiClient wfClient;
 
-  String host = "gtr-app-store.herokuapp.com";
-  String url = "/search?name=" + searchQuery;
-  int port = 80; // prefer HTTP over HTTPS cause of cert problems
+//  if (!wfClient.connect(host.c_str(), port)) {
+//    softSer.println("connection failed");
+//  return;
+//  }
 
-  if (!wfClient.connect(host.c_str(), port)) {
-    softSer.println("connection failed");
-    return;
-  }
-
-  wfClient.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" +
-               "User-Agent: BuildFailureDetectorESP8266\r\n" +
-               "Connection: close\r\n\r\n");
+  wfClient.print(url);
 
   softSer.println("request sent");
 
   int contentLength = 0;
   String contentLengthStr;
 
+  String header="";
+  
   while(wfClient.connected()) {
     String line = wfClient.readStringUntil('\n');
+    header=header+line;
+    
     softSer.println(line);
     if (line.startsWith("Content-Length")) {
       contentLengthStr = line.substring(line.indexOf(":") + 2);
@@ -228,127 +227,59 @@ void browseFiles() {
       break;
     }
   }
+  
+  if(mode==0 || mode==2){
+    sendData((unsigned char*) header.c_str(), header.length());
+  }
 
   softSer.println(contentLengthStr);
 
   unsigned char buf[256];
-
+ 
   int counter = 0;
-  while(wfClient.connected() && counter < contentLength) {
-    if (wfClient.available()) {
-      int len = wfClient.read(buf, sizeof buf);
-      Serial.write(buf, len);
-      
-      counter += len;
-      softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
-    }
-    yield();
-  }
-
-  Serial.write((byte) 0);
-}
-
-void downloadFile() {
-  String appNumber = serialReadString();
-
-  softSer.println("Download App Number " + appNumber);
-
-  delay(1000);
   
-  WiFiClient wfClient;
-
-  String host = "gtr-app-store.herokuapp.com";
-  String url = "/apps/" + appNumber + "?dl=1";
-  int port = 80; // prefer HTTP over HTTPS cause of cert problems
-
-  if (!wfClient.connect(host.c_str(), port)) {
-    softSer.println("connection failed");
+  if(mode==2){
     return;
   }
-
-  wfClient.print(String("GET ") + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" +
-               "User-Agent: BuildFailureDetectorESP8266\r\n" +
-               "Connection: close\r\n\r\n");
-
-  softSer.println("request sent");
-
-  int contentLength = 0;
-  String contentLengthStr;
-
-  while(wfClient.connected()) {
-    String line = wfClient.readStringUntil('\n');
-    softSer.println(line);
-    if (line.startsWith("Content-Length")) {
-      contentLengthStr = line.substring(line.indexOf(":") + 2);
-      softSer.println("--- " + contentLengthStr + " ---");
-      contentLength = contentLengthStr.toInt();
-    } else if (line == "\r") {
-      softSer.println("headers received");
-      break;
-    }
-  }
-
-  Serial.print(contentLength);
-  softSer.println(contentLengthStr);
-  Serial.write((byte) 0);
-
-  unsigned char buf[256];
-
-  int counter = 0;
+  
   while(wfClient.connected() && counter < contentLength) {
     if (wfClient.available()) {
       int len = wfClient.read(buf, sizeof buf);
-//      Serial.write(buf, len);
 
-      if (sendData(buf, len)) {
-        return;
-      }
-      
-      counter += len;
-      softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
+    if (sendData(buf, len)) {
+      return;
     }
+      
+    counter += len;
+    softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
+    } 
     yield();
   }
+
 }
 
-void getAppInfo() {
-  String appNumber = serialReadString();
-  
-  softSer.println("Get Info Number " + appNumber);
 
-  downloadPic(appNumber); //downloaden und senden
-  //senden der Textinfos als einen String mit Trennzeichen (FESTZULEGEN), Trennen auf dem GTR  
-  
-  
-}
-
-boolean sendData(unsigned char* data, int length) {
+boolean sendData(unsigned char* data, int len) {
   String ack;
   
   do {    
-    sendCommand("DATA");
+    Serial.write((byte) 221); // 0xDD
+  Serial.print("DATA");
+  Serial.write((byte) 0);
     softSer.println("DATA command sent");
     
-    char lenBuf[11];
-    sprintf(lenBuf, "%010d", length);
-    String len = String(lenBuf);
-    Serial.print(len);
+    Serial.print(len, DEC);
+  Serial.write((byte) 0);
     softSer.println("Length sent: " + len);
-    
-    String cs = checksum(data, length);
-    Serial.print(cs);
-    softSer.println("Checksum sent: " + cs);
-
-    long r = random(20);
-    if (r == 1) {
-      data[0] = (unsigned char) 8;
-    }
-    softSer.println("RANDOM: " + String(r));
+  
+  unsigned long cs = checksum(data, len);  
+  Serial.print(cs);
+  Serial.write((byte) 0);
+    softSer.println("Checksum sent: " + String(cs));
   
     int counter = 0;
-    while(counter < length) {
-      int transfered = Serial.write(&data[counter], length - counter);
+    while(counter < len) {
+      int transfered = Serial.write(&data[counter], len - counter);
       counter += transfered;
       yield();
     }
@@ -357,10 +288,6 @@ boolean sendData(unsigned char* data, int length) {
 
     ack = receiveAck();
     softSer.println("Ack received: " + ack);
-
-    if (String("CA").equals(ack) || String("CA1").equals(ack)) {
-      return true;
-    }
     
     yield();
   } while(!String("OK").equals(ack));
@@ -389,6 +316,41 @@ bool timeElapsed(long start, long ms) {
   return millis() - start > ms;
 }
 
+
+unsigned long checksum(unsigned char* data, int length) {
+  unsigned long cs = 0;
+  
+  for (int i = 0; i < length; i++) {
+    cs += (unsigned long) data[i];
+  
+    if (cs > 10000) {
+      cs = cs % 10000;
+    }
+  }
+
+  return cs;
+}
+
+String serialReadString() {
+  char c;
+  String resp = "";
+  
+  while (true) {
+    if (Serial.available() > 0) {
+      c = Serial.read();
+      if (c == 0) {
+        break;
+      } else {
+        resp += c;
+      }
+    }
+
+    yield(); // to prevent watchdog timeout
+  }
+
+  return resp;
+}
+
 String serialReadString(long timeout) {
   String result = "";
   long start = millis();
@@ -410,39 +372,6 @@ String serialReadString(long timeout) {
 
     yield();
   }
-}
-
-String checksum(unsigned char* data, int length) {
-  int cs = 0;
-  char checksumBuf[5];
-  
-  for (int i = 0; i < length; i++) {
-    cs += (int)data[i];
-  }
-
-  cs = cs % 10000;
-  sprintf(checksumBuf, "%04d", cs);
-  return String(checksumBuf);
-}
-
-String serialReadString() {
-  char c;
-  String resp = "";
-  
-  while (true) {
-    if (Serial.available() > 0) {
-      c = Serial.read();
-      if (c == 0) {
-        break;
-      } else {
-        resp += c;
-      }
-    }
-
-    yield(); // to prevent watchdog timeout
-  }
-
-  return resp;
 }
 
 String serialReadString(int timeout, int maxLength) {
@@ -534,5 +463,23 @@ void downloadPic(String appNumber){
   //    softSer.print(buf[i],HEX);
   //}
 }
+
+
+void sendCommand(String command) {
+  Serial.write((byte) 219);
+  Serial.print(command);
+  Serial.write((byte) 0);
+}
+
+void sendCommandAck() {
+  sendCommandAck("OK");
+}
+
+void sendCommandAck(String status) {
+  Serial.write((byte) 220); // 0xDC
+  Serial.print(status);
+  Serial.write((byte) 0);
+}
+
 
 

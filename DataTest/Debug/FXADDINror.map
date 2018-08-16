@@ -1,0 +1,404 @@
+Hitachi Optimizing Linkage Editor (Ver. 7.1.03.000)15-Aug-2018 23:23:26
+
+*** Options ***
+
+-subcommand=C:\Users\Niko\AppData\Local\Temp\hmkE5A3.tmp
+noprelink
+sdebug
+rom D=R
+nomessage
+list "D:\Documents\GTR\DataTest\Debug\FXADDINror.map"
+show symbol
+nooptimize
+start P_TOP,P,C,D,C$VTBL,C$INIT/0300200,B_BR_Size,B,R/08100000
+fsymbol P
+nologo
+input "D:\Documents\GTR\DataTest\Debug\DataTest.obj" "D:\Documents\GTR\DataTest\Debug\net.obj" "D:\Documents\GTR\DataTest\Debug\status.obj" "D:\Documents\GTR\DataTest\Debug\syscalls.obj"
+input "D:\Program Files\CASIO\fx-9860G SDK\OS\FX\lib\setup.obj"
+library "D:\Program Files\CASIO\fx-9860G SDK\OS\FX\lib\fx9860G_library.lib"
+output "D:\Documents\GTR\DataTest\Debug\FXADDINror.abs"
+-nomessage=1100
+end
+
+*** Error information ***
+
+*** Mapping List ***
+
+SECTION                            START      END         SIZE   ALIGN
+
+P_TOP
+                                  00300200  0030020b         c   4
+P
+                                  0030020c  0030127f      1074   4
+C
+                                  00301280  003013d3       154   4
+D
+                                  003013d4  003013d7         4   4
+B_BR_Size
+                                  08100000  08100003         4   4
+B
+                                  08100004  08100007         4   4
+R
+                                  08100008  0810000b         4   4
+
+*** Symbol List ***
+
+SECTION=
+FILE=                               START        END    SIZE
+  SYMBOL                            ADDR        SIZE    INFO      COUNTS  OPT
+
+SECTION=P_TOP
+FILE=D:\Documents\GTR\DataTest\Debug\DataTest.obj
+                                  00300200  0030020b         c
+  _InitializeSystem
+                                  00300200         c   func ,g         * 
+
+SECTION=P
+FILE=D:\Documents\GTR\DataTest\Debug\DataTest.obj
+                                  0030020c  00300287        7c
+  _AddIn_main
+                                  0030020c        7c   func ,g         * 
+FILE=D:\Documents\GTR\DataTest\Debug\net.obj
+                                  00300288  003006f7       470
+  _openSerial
+                                  00300288        28   func ,g         * 
+  _closeSerial
+                                  003002b0         6   func ,g         * 
+  _sendCommand
+                                  003002b6        20   func ,g         * 
+  _sendStatus
+                                  003002d6        20   func ,g         * 
+  _receiveString
+                                  003002f6         6   func ,g         * 
+  _receiveStringTimeout
+                                  003002fc        78   func ,g         * 
+  _receiveStatus
+                                  00300374         6   func ,g         * 
+  _receiveStatusTimeout
+                                  0030037a        9e   func ,g         * 
+  _calculateChecksum
+                                  00300418        34   func ,g         * 
+  _receiveData
+                                  0030044c         c   func ,g         * 
+  _receiveDataTimeout
+                                  00300458       154   func ,g         * 
+  _freeData
+                                  003005ac        2a   func ,g         * 
+  _getAvailableNetworks
+                                  003005d6       122   func ,g         * 
+FILE=D:\Documents\GTR\DataTest\Debug\status.obj
+                                  003006f8  00300777        80
+  _convertStatus
+                                  003006f8        80   func ,g         * 
+FILE=D:\Documents\GTR\DataTest\Debug\syscalls.obj
+                                  00300778  00300887       110
+  _Serial_Open
+                                  00300778         0   none ,g         * 
+  _Serial_Close
+                                  00300788         0   none ,g         * 
+  _Serial_ReadOneByte
+                                  00300798         0   none ,g         * 
+  _Serial_ReadNBytes
+                                  003007a8         0   none ,g         * 
+  _Serial_GetReceivedBytesAvailable
+                                  003007b8         0   none ,g         * 
+  _Serial_ClearReceiveBuffer
+                                  003007c8         0   none ,g         * 
+  _Serial_BufferedTransmitOneByte
+                                  003007d8         0   none ,g         * 
+  _Serial_BufferedTransmitNBytes
+                                  003007e8         0   none ,g         * 
+  _Serial_ClearTransmitBuffer
+                                  003007f8         0   none ,g         * 
+  _Keyboard_GetPressedKey
+                                  00300808         0   none ,g         * 
+  _Keyboard_GetKeyWait
+                                  00300818         0   none ,g         * 
+  _Keyboard_PRGM_GetKey
+                                  00300828         0   none ,g         * 
+  _Keyboard_KeyDown
+                                  00300838         0   none ,g         * 
+  _Keyboard_ClrBuffer
+                                  00300848         0   none ,g         * 
+  _App_RegisterAddins
+                                  00300858         0   none ,g         * 
+  _RTC_GetTicks
+                                  00300868         0   none ,g         * 
+  _RTC_Elapsed_ms
+                                  00300878         0   none ,g         * 
+FILE=D:\Program Files\CASIO\fx-9860G SDK\OS\FX\lib\setup.obj
+                                  00300888  003009a3       11c
+  ___LINK_PROTECT
+                                  00300888         4   func ,g         * 
+  _SetQuitHandler
+                                  0030088c         6   func ,g         * 
+  _OnAppCloseDefault
+                                  00300892        54   func ,g         * 
+  __INITSCT_ADDIN
+                                  003008e6        48   func ,g         * 
+  _INIT_ADDIN_APPLICATION
+                                  0030092e        76   func ,g         * 
+FILE=__modlu
+                                  003009a4  00300a5b        b8
+  __modlu
+                                  003009a4         0   none ,g         * 
+  modlu_L
+                                  00300a3c         0   none ,l         * 
+  modlu_zero
+                                  00300a44         0   none ,l         * 
+  A_errno
+                                  00300a54         0   none ,l         * 
+  n_zerono
+                                  00300a58         0   none ,l         * 
+FILE=atoi
+                                  00300a5c  00300a67         c
+  _atoi
+                                  00300a5c         c   func ,g         * 
+FILE=atol
+                                  00300a68  00300a73         c
+  _atol
+                                  00300a68         c   func ,g         * 
+FILE=memchr
+                                  00300a74  00300a99        26
+  _memchr
+                                  00300a74        26   func ,g         * 
+FILE=memcmp
+                                  00300a9c  00300acf        34
+  _memcmp
+                                  00300a9c        34   func ,g         * 
+FILE=strcmp
+                                  00300ad0  00300ae3        14
+  _strcmp
+                                  00300ad0        14   func ,g         * 
+FILE=strlen
+                                  00300ae4  00300af3        10
+  _strlen
+                                  00300ae4        10   func ,g         * 
+FILE=strncpy
+                                  00300af4  00300b21        2e
+  _strncpy
+                                  00300af4        2e   func ,g         * 
+FILE=_Bdel_cychdr
+                                  00300b24  00300b33        10
+  _Bdel_cychdr
+                                  00300b24         0   none ,g         * 
+FILE=_Bdisp_AllClr_DDVRAM
+                                  00300b34  00300b43        10
+  _Bdisp_AllClr_DDVRAM
+                                  00300b34         0   none ,g         * 
+FILE=_BfileFLS_CloseFile
+                                  00300b44  00300b53        10
+  _BfileFLS_CloseFile
+                                  00300b44         0   none ,g         * 
+FILE=_Bkey_Set_RepeatTime_Default
+                                  00300b54  00300b63        10
+  _Bkey_Set_RepeatTime_Default
+                                  00300b54         0   none ,g         * 
+FILE=_CallbackAtQuitMainFunction
+                                  00300b64  00300b73        10
+  _CallbackAtQuitMainFunction
+                                  00300b64         0   none ,g         * 
+FILE=_flsFindClose
+                                  00300b74  00300b83        10
+  _flsFindClose
+                                  00300b74         0   none ,g         * 
+FILE=_free
+                                  00300b84  00300b93        10
+  _free
+                                  00300b84         0   none ,g         * 
+FILE=_getkey
+                                  00300b94  00300ba3        10
+  _GetKey
+                                  00300b94         0   none ,g         * 
+FILE=_GLibAddinAplExecutionCheck
+                                  00300ba4  00300bb3        10
+  _GLibAddinAplExecutionCheck
+                                  00300ba4         0   none ,g         * 
+FILE=_Hmem_SetMMU
+                                  00300bb4  00300bc3        10
+  _Hmem_SetMMU
+                                  00300bb4         0   none ,g         * 
+FILE=_malloc
+                                  00300bc4  00300bd3        10
+  _malloc
+                                  00300bc4         0   none ,g         * 
+FILE=_Print
+                                  00300bd4  00300be3        10
+  _Print
+                                  00300bd4         0   none ,g         * 
+FILE=dispbios
+                                  00300be4  00300d59       176
+  _PrintMini
+                                  00300be4        1c   func ,g         * 
+  _locate
+                                  00300c00        28   func ,g         * 
+  _Bdisp_ReadArea_DD
+                                  00300c28       132   func ,g         * 
+FILE=__divls
+                                  00300d5c  00300e0f        b4
+  __divls
+                                  00300d5c         0   none ,g         * 
+  divls_zero
+                                  00300dfa         0   none ,l         * 
+  A_errno
+                                  00300e08         0   none ,l         * 
+  n_zerono
+                                  00300e0c         0   none ,l         * 
+FILE=__strcmp
+                                  00300e10  00300ebb        ac
+  __slow_strcmp1
+                                  00300e10         0   none ,g         * 
+  __quick_strcmp1
+                                  00300e18         0   none ,g         * 
+  QCMP_L
+                                  00300e1c         0   none ,l         * 
+  QCMP_NULL2
+                                  00300e50         0   none ,l         * 
+  QCMP_NULL
+                                  00300e52         0   none ,l         * 
+  QCMP_END
+                                  00300e7e         0   none ,l         * 
+  QCMP_END2
+                                  00300e82         0   none ,l         * 
+  SCMP_L
+                                  00300e88         0   none ,l         * 
+  SCMP_END
+                                  00300eb8         0   none ,l         * 
+FILE=strtol
+                                  00300ebc  0030117f       2c4
+  _strtol
+                                  00300ebc       2c4   func ,g         * 
+FILE=_DD_GET
+                                  00301180  0030118f        10
+  _DD_GET
+                                  00301180         0   none ,g         * 
+FILE=_locate
+                                  00301190  0030119f        10
+  _locate_OS
+                                  00301190         0   none ,g         * 
+FILE=_PrintMiniSd
+                                  003011a0  003011af        10
+  _PrintMiniSd
+                                  003011a0         0   none ,g         * 
+FILE=__divlu
+                                  003011b0  00301257        a8
+  __divlu
+                                  003011b0         0   none ,g         * 
+  divlu_zero
+                                  00301242         0   none ,l         * 
+  A_errno
+                                  00301250         0   none ,l         * 
+  n_zerono
+                                  00301254         0   none ,l         * 
+FILE=_strchek
+                                  00301258  0030127f        28
+  __strchek
+                                  00301258        28   func ,g         * 
+
+SECTION=C
+FILE=addin_sct
+                                  003012c0  003012d3        14
+  _B_BGN
+                                  003012c0         0   none ,g         * 
+  _B_END
+                                  003012c4         0   none ,g         * 
+  _R_BGN
+                                  003012c8         0   none ,g         * 
+  _R_END
+                                  003012cc         0   none ,g         * 
+  _D_ROM
+                                  003012d0         0   none ,g         * 
+FILE=_ctype
+                                  003012d4  003013d3       100
+  __ctype
+                                  003012d4       100   data ,g         * 
+
+SECTION=B_BR_Size
+FILE=D:\Documents\GTR\DataTest\Debug\DataTest.obj
+                                  08100000  08100003         4
+  _BR_Size
+                                  08100000         4   data ,g         * 
+
+SECTION=B
+FILE=_errno
+                                  08100004  08100007         4
+  __errno
+                                  08100004         4   data ,g         * 
+
+SECTION=R
+FILE=D:\Program Files\CASIO\fx-9860G SDK\OS\FX\lib\setup.obj
+                                  08100008  0810000b         4
+  _gb_OnAppClose
+                                  08100008         4   data ,g         * 
+
+Absolute value symbols
+FILE=__modlu
+  zerodiv
+                                  0000044e         0   none ,l         * 
+FILE=_Bdel_cychdr
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_Bdisp_AllClr_DDVRAM
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_BfileFLS_CloseFile
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_Bkey_Set_RepeatTime_Default
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_CallbackAtQuitMainFunction
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_flsFindClose
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_free
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_getkey
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_GLibAddinAplExecutionCheck
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_Hmem_SetMMU
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_malloc
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_Print
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=__divls
+  zerodiv
+                                  0000044e         0   none ,l         * 
+FILE=_DD_GET
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_locate
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=_PrintMiniSd
+  __JumpTableTOP
+                                  80010070         0   none ,l         * 
+FILE=__divlu
+  zerodiv
+                                  0000044e         0   none ,l         * 
+
+*** Delete Symbols ***
+
+SYMBOL                                SIZE    INFO
+
+*** Variable Accessible with Abs8 ***
+
+SYMBOL                                SIZE    COUNTS  OPTIMIZE
+
+*** Variable Accessible with Abs16 ***
+
+SYMBOL                                SIZE    COUNTS  OPTIMIZE
+
+*** Function Call ***
+
+SYMBOL                              COUNTS  OPTIMIZE
