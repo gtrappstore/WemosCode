@@ -11,6 +11,8 @@
 #include "stddef.h"
 #include "net.h"
 
+#include "stdio.h"
+
 
 //****************************************************************************
 //  AddIn_main (Sample program main function)
@@ -39,9 +41,18 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
         Print((unsigned char*) "RECEIVED");
 
         for (key = 0; netList != NULL; key++, netList = netList->next) {
+            unsigned char text[51];
+
             locate(1, key + 2);
-            Print(netList->network.ssid);
+            sprintf(text, "%s %d %d", netList->network.ssid, netList->network.rssi, netList->network.encType);
+            Print(text);
+//            Print(netList->network.ssid);
         }
+
+        GetKey(&key);
+        connect(key - 49, (unsigned char*) "123456789");
+
+//        disconnect();
     } else {
         Print((unsigned char*) "ERROR");
     }

@@ -91,7 +91,7 @@ OptionA=0
 
 [_9]
 Type=15
-Order=0
+Order=1
 Top=3420
 Left=19545
 Height=6345
@@ -102,14 +102,14 @@ OptionA=0
 
 [_32]
 Type=16
-Order=1
+Order=0
 Top=0
 Left=2205
 Height=13755
 Width=12285
 State=0
 Flags=00000020
-Setting=41:70:DataTest.c
+Setting=47:109:DataTest.c
 OptionA=0
 
 [_33]

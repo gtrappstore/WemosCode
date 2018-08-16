@@ -33,6 +33,7 @@ int receiveString(unsigned char* buf, int maxLen);
 int receiveStringTimeout(unsigned char* buf, int maxLen, int timeout);
 
 void freeData(Data* data);
+void freeNetList(NetworkList* netList);
 
 unsigned int calculateChecksum(unsigned char* buf, int len);
 
@@ -40,5 +41,8 @@ Data* receiveData(int retryCount);
 Data* receiveDataTimeout(int timeout, int retryCount);
 
 NetworkList* getAvailableNetworks();
+int connect(int index, unsigned char* pass);
+int disconnect();
+Network* getNetworkInfo();
 
 #endif

@@ -176,6 +176,16 @@ void freeData(Data* data) {
 	}
 }
 
+void freeNetList(NetworkList* netList) {
+	if (netList != NULL) {
+		freeNetList(netList->next);
+		if (netList->network.ssid != NULL) {
+			free(netList->network.ssid);
+		}
+		free(netList);
+	}
+}
+
 NetworkList* getAvailableNetworks() {
 	int status;
 	Data* data = NULL;
@@ -240,4 +250,82 @@ NetworkList* getAvailableNetworks() {
 	freeData(data);
 	
 	return head;
+}
+
+int connect(int index, unsigned char* pass) {
+	unsigned char* buf[11];
+	int status;
+	
+	sendCommand((unsigned char*) "CONNECT");
+	sprintf(buf, "%d", index);
+	Serial_BufferedTransmitNBytes(buf, strlen(buf) + 1);
+	Serial_BufferedTransmitNBytes(pass, strlen(pass) + 1);
+	
+	status = receiveStatus();
+	
+	if (status == STATUS_OK) {
+		return 1;
+	}
+	
+	return 0;
+}
+
+int disconnect() {
+	int status;
+	
+	sendCommand((unsigned char*) "DISCONNECT");
+	status = receiveStatus();
+	
+	if (status == STATUS_OK) {
+		return 1;
+	}
+	
+	return 0;
+}
+
+Network getNetworkInfo() {
+	int status;
+	Network net;
+	
+	net.ssid = NULL;
+	net.rssi = 0;
+	net.encType = 0;
+	
+	sendCommand((unsigned char*) "GETNETINFO");
+	status = receiveStatus();
+	
+	if (status != STATUS_OK) {
+		return NULL;
+	}
+	
+	data = receiveDataTimeout(500, 1);
+	if (data == NULL) {
+		return NULL;
+	}
+	
+	{
+		int counter = 0;
+		int ssidLength;
+		
+		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
+			break;
+		}
+		
+		ssidLength = strlen(&data->buf[counter]);
+		
+		net.ssid = (unsigned char*) malloc(ssidLength + 1);
+		strncpy(net.ssid, &data->buf[counter], ssidLength);
+		counter += ssidLength + 1;
+		
+		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
+			free(net.ssid);
+			break;
+		}
+		
+		net.rssi = atoi(&data->buf[counter]);
+	}
+	
+	freeData(data);
+	
+	return net;
 }

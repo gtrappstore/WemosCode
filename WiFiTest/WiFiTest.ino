@@ -53,26 +53,15 @@ void loop() {
         } else if (String("CONNECT").equals(command)) {
           softSer.println("CONNECT");
           sendCommandAck();
-          connectToNetwork();
+          connect();
         } else if (String("DISCONNECT").equals(command)) {
           softSer.println("DISCONNECT");
           sendCommandAck();
-          WiFi.disconnect();
-          sendCommandAck("OF");
+          disconnect();
         } else if (String("GETNETINFO").equals(command)) {
           softSer.println("GETNETINFO");
           sendCommandAck();
-
-          if (WiFi.isConnected()) {
-            softSer.println("Connected to: " + WiFi.SSID());
-            Serial.print(WiFi.SSID());
-            int rssi = WiFi.RSSI();
-            Serial.write('\t');
-            Serial.print(rssi);
-            softSer.print(rssi);
-         }
-      
-          Serial.write((byte) 0);
+          getNetInfo();
         } else if (String("SEARCH").equals(command)) {
           softSer.println("SEARCH");
           sendCommandAck();
@@ -106,7 +95,7 @@ void getNetworks() {
     len += String(WiFi.RSSI(i)).length() + 1;
     len += String(WiFi.encryptionType(i)).length() + 1;
 
-    softSer.println(WiFi.SSID(i));
+    softSer.println(WiFi.SSID(i) + " " + String(WiFi.RSSI(i)) + " " + String(WiFi.encryptionType(i)));
   }
 
   buf = (unsigned char*) malloc(len);
@@ -131,8 +120,7 @@ void getNetworks() {
 }
 
 
-void connectToNetwork() {
-
+void connect() {
   String netIndex = serialReadString();
   int selectedNetwork = netIndex.toInt();
   softSer.println("Selection: " + String(selectedNetwork));
@@ -141,42 +129,40 @@ void connectToNetwork() {
   softSer.println(WiFi.SSID(selectedNetwork) + ": " + password);
 
   WiFi.begin(WiFi.SSID(selectedNetwork).c_str(), password.c_str());
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    softSer.print(".");
-  }
-
-  softSer.println("");
-  softSer.println("WiFi connected");
-  softSer.println("IP address: ");
-  softSer.println(WiFi.localIP());
-
-  sendCommandAck("OF");
 }
 
+void disconnect() {
+  WiFi.disconnect();
+}
 
-void getNets(){
-  int n = WiFi.scanNetworks();
-  for (int i = 0; i < n; i++) {
-    // Print SSID and RSSI for each network found
-    softSer.print(i);
-    softSer.print(": ");
-    softSer.print(WiFi.SSID(i));
-    softSer.print(" (");
-    softSer.print(WiFi.RSSI(i));
-    softSer.print(")");
-    softSer.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+void getNetInfo() {
+  unsigned char* buf;
+  int len = 0;
+  int counter = 0;
+  
+  if (WiFi.isConnected()) {
+    softSer.println("Connected to: " + WiFi.SSID() + " " + String(WiFi.RSSI()));
     
-    Serial.print(WiFi.SSID(i));
-    Serial.print("\n");
+    len += WiFi.SSID().length() + 1;
+    len += String(WiFi.RSSI()).length() + 1;
+    buf = (unsigned char*) malloc(len);
+
+    int tmp;
+    tmp = WiFi.SSID().length() + 1;
+    memcpy(&buf[counter], WiFi.SSID().c_str(), tmp);
+    counter += tmp;
+
+    tmp = String(WiFi.RSSI()).length() + 1;
+    memcpy(&buf[counter], String(WiFi.RSSI()).c_str(), tmp);
+    counter += tmp;
+  } else {
+    len = 2;
+    buf = (unsigned char*) malloc(len);
+    memset(buf, 0, len);
   }
 
-  Serial.write((byte) 0);
-
-  softSer.println("");
-  
-  
+  sendData(buf, len);
+  free(buf);
 }
 
 

@@ -5,8 +5,8 @@
 # Directory defines
 TCDIR = D:\Program Files\CASIO\fx-9860G SDK\OS\SH
 OSDIR = D:\Program Files\CASIO\fx-9860G SDK\OS
-APPDIR = D:\Documents\GTR\DataTest
-OUTDIR = D:\Documents\GTR\DataTest\Debug
+APPDIR = D:\Documents\GTR\Wifi\DataTest
+OUTDIR = D:\Documents\GTR\Wifi\DataTest\Debug
 
 ################
 # Main Defines

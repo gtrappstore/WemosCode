@@ -10,7 +10,7 @@ if exist FXADDINror.bin  del FXADDINror.bin
 cd ..
 if not exist debug\FXADDINror.bin  goto error
 
-"D:\Program Files\CASIO\fx-9860G SDK\Tools\MakeAddinHeader363.exe" "D:\Documents\GTR\DataTest"
+"D:\Program Files\CASIO\fx-9860G SDK\Tools\MakeAddinHeader363.exe" "D:\Documents\GTR\Wifi\DataTest"
 if not exist DATATEST.G1A  goto error
 echo Build has completed.
 goto end
