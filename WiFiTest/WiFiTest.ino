@@ -5,6 +5,7 @@
 #define LED D4
 
 SoftwareSerial softSer(3, 1);
+WiFiClient netClient;
 
 void setup() {
   // put your setup code here, to run once:
@@ -32,12 +33,16 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
+  if (netClient.status() == 0 && WiFi.status() == WL_CONNECTED) {
+    netClient.connect(WiFi.gatewayIP(), 8266);
+  }
+
   if (Serial.available() > 0) {
     byte data = Serial.read();
     softSer.write(data);
 
     if (data == 219) {
-      String command = serialReadString(500, 10);
+      String command = Serial.readStringUntil(0);
 
       softSer.println("Hey, 219");
 
@@ -80,6 +85,73 @@ void loop() {
           sendCommandAck("UC");
         }
       }
+    } else if (data == 221) {
+      String command = Serial.readStringUntil(0);
+
+      if (String("NETDATA").equals(command)) {
+        String lenStr = Serial.readStringUntil(0);
+        unsigned long len = lenStr.toInt();
+
+        String checksum = Serial.readStringUntil(0);
+        String appName = Serial.readStringUntil(0);
+
+        netClient.write((byte) 221);
+        netClient.print("NETDATA");
+        netClient.write((byte) 0);
+        netClient.print(lenStr);
+        netClient.write((byte) 0);
+        netClient.print(checksum);
+        netClient.write((byte) 0);
+        netClient.print(appName);
+        netClient.write((byte) 0);
+
+        unsigned long counter = 0;
+        while (counter < len) {
+          int b = Serial.read();
+          if (b != -1) {
+            netClient.write(b);
+            counter++;
+          }
+        }
+
+        softSer.println(String(counter) + String(" Bytes written"));
+      }
+    }
+  }
+
+  if (netClient.available() > 0) {
+    byte data = netClient.read();
+    if (data == 221) {
+      String command = netClient.readStringUntil(0);
+
+      if (String("NETDATA").equals(command)) {
+        String lenStr = netClient.readStringUntil(0);
+        unsigned long len = lenStr.toInt();
+
+        String checksum = netClient.readStringUntil(0);
+        String appName = netClient.readStringUntil(0);
+
+        Serial.write((byte) 221);
+        Serial.print("NETDATA");
+        Serial.write((byte) 0);
+        Serial.print(lenStr);
+        Serial.write((byte) 0);
+        Serial.print(checksum);
+        Serial.write((byte) 0);
+        Serial.print(appName);
+        Serial.write((byte) 0);
+
+        unsigned long counter = 0;
+        while (counter < len) {
+          int b = netClient.read();
+          if (b != -1) {
+            Serial.write(b);
+            counter++;
+          }
+        }
+
+        softSer.println(String(counter) + String(" Bytes written"));
+      }
     }
   }
 }
@@ -121,11 +193,11 @@ void getNetworks() {
 
 
 void connect() {
-  String netIndex = serialReadString();
+  String netIndex = Serial.readStringUntil(0);
   int selectedNetwork = netIndex.toInt();
   softSer.println("Selection: " + String(selectedNetwork));
 
-  String password = serialReadString();
+  String password = Serial.readStringUntil(0);
   softSer.println(WiFi.SSID(selectedNetwork) + ": " + password);
 
   WiFi.begin(WiFi.SSID(selectedNetwork).c_str(), password.c_str());
@@ -168,7 +240,7 @@ void getNetInfo() {
 
 void getWebContent() {
   
-  String modeString=serialReadString();
+  String modeString=Serial.readStringUntil(0);
   int mode=modeString.toInt();
   /*modes: 
   0=all
@@ -176,8 +248,8 @@ void getWebContent() {
   2=only headers
   */
   
-  String url = serialReadString();
-  String portString= serialReadString();
+  String url = Serial.readStringUntil(0);
+  String portString= Serial.readStringUntil(0);
   int port=portString.toInt();
   
   softSer.println(url); //GET muss mit in der URL stehen
@@ -288,7 +360,7 @@ String receiveAck() {
     if (Serial.available() > 0) {
       unsigned char c = Serial.read();
       if (c == 220) {
-        return serialReadString();
+        return Serial.readStringUntil(0);
       }
     }
 
@@ -358,35 +430,6 @@ String serialReadString(long timeout) {
 
     yield();
   }
-}
-
-String serialReadString(int timeout, int maxLength) {
-  char c;
-  String resp = "";
-  int startTime = millis();
-  
-  while (true) {
-    if (Serial.available() > 0) {
-      c = Serial.read();
-      if (c == 0) {
-        break;
-      } else {
-        resp += c;
-      }
-    }
-
-    yield(); // to prevent watchdog timeout
-
-    if (resp.length() >= maxLength) {
-      break;
-    }
-
-    if (millis() - startTime > timeout) {
-      return String();
-    }
-  }
-
-  return resp;
 }
 
 void downloadPic(String appNumber){
