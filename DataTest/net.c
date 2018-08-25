@@ -165,7 +165,121 @@ Data* receiveDataTimeout(int timeout, int retryCount) {
 	return data;
 }
 
+void sendNetData(unsigned char* buf, unsigned int length) {
+	unsigned char text[11];
+	unsigned int counter = 0;
+	
+	Serial_BufferedTransmitOneByte((unsigned char) 221);
+	Serial_BufferedTransmitNBytes("NETDATA", strlen("NETDATA") + 1);
+	
+	sprintf(text, "%u", length);
+	Serial_BufferedTransmitNBytes(text, strlen(text) + 1);
+	
+	sprintf(text, "%u", calculateChecksum(buf, length));
+	Serial_BufferedTransmitNBytes(text, strlen(text) + 1);
+	
+	GetAppName(text);
+	Serial_BufferedTransmitNBytes(text, strlen(text) + 1);
+	
+	while (counter < length) {
+		int bytes = length - counter;
+		
+		if (bytes > 256) {
+			bytes = 256;
+		}
+		
+		while (Serial_BufferedTransmitNBytes(&buf[counter], bytes) == 2) {
+			bytes = bytes / 2;
+		}
+		
+		counter += bytes;
+	}
+}
+
+NetData* receiveNetData() {
+	return receiveNetDataTimeout(500);
+}
+
+NetData* receiveNetDataTimeout(int timeout) {
+	int startTicks = RTC_GetTicks();
+	NetData* data = NULL;
+	unsigned char buf[11];
+	int retry = 0;
+	
+	while (!RTC_Elapsed_ms(startTicks, timeout)) {
+		unsigned char c;
+		
+		if (Serial_ReadOneByte(&c) == 0 && c == 221) {
+			receiveStringTimeout(buf, 11, 1000);
+			if (strcmp(buf, "NETDATA", 7) == 0) {
+				int counter = 0;
+				short received;
+				data = (NetData*) malloc(sizeof(NetData));
+				
+				if (!receiveStringTimeout(buf, 11, 1000)) {
+					retry = 1;
+					break;
+				}
+				data->length = atoi(buf);
+				
+				if (!receiveStringTimeout(buf, 11, 1000)) {
+					retry = 1;
+					break;
+				}
+				data->checksum = (unsigned int) atol(buf);
+				
+				if (!receiveStringTimeout(buf, 11, 1000)) {
+					retry = 1;
+					break;
+				}
+				memcpy(data->appName, buf, 9);
+				
+				startTicks = RTC_GetTicks();
+				data->buf = (unsigned char*) malloc(data->length);
+				while (1) {
+					Serial_ReadNBytes(&data->buf[counter], data->length - counter, &received);
+					counter += received;
+					
+					if (counter >= data->length) {
+						if (data->checksum != calculateChecksum(data->buf, data->length)) {
+							retry = 1;
+						}
+						
+						break;
+					}
+
+					if (RTC_Elapsed_ms(startTicks, 1000)) {
+						freeNetData(data);
+						data = NULL;
+						break;
+					}
+				}
+
+				break;
+			}
+		}
+	}
+	
+	if (retry == 1) {
+		freeNetData(data);
+		data = NULL;
+	}
+	
+	return data;
+}
+
 void freeData(Data* data) {
+	if (data != NULL) {
+		if (data->buf != NULL) {
+			free(data->buf);
+			data->buf = NULL;
+		}
+		
+		free(data);
+	}
+}
+
+void freeNetData(NetData* data) {
 	if (data != NULL) {
 		if (data->buf != NULL) {
 			free(data->buf);
@@ -286,6 +400,7 @@ int disconnect() {
 Network getNetworkInfo() {
 	int status;
 	Network net;
+	Data* data;
 	
 	net.ssid = NULL;
 	net.rssi = 0;
@@ -295,12 +410,12 @@ Network getNetworkInfo() {
 	status = receiveStatus();
 	
 	if (status != STATUS_OK) {
-		return NULL;
+		return net;
 	}
 	
 	data = receiveDataTimeout(500, 1);
 	if (data == NULL) {
-		return NULL;
+		return net;
 	}
 	
 	{
@@ -308,7 +423,7 @@ Network getNetworkInfo() {
 		int ssidLength;
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
-			break;
+			return net;
 		}
 		
 		ssidLength = strlen(&data->buf[counter]);
@@ -319,7 +434,7 @@ Network getNetworkInfo() {
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
 			free(net.ssid);
-			break;
+			return net;
 		}
 		
 		net.rssi = atoi(&data->buf[counter]);

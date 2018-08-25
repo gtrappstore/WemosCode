@@ -25,6 +25,7 @@
 	SYSCALL 241,	_Keyboard_ClrBuffer
 
 	SYSCALL 0005,	_App_RegisterAddins
+	SYSCALL 462,	_GetAppName
 
 	SYSCALL 03B,	_RTC_GetTicks
 	SYSCALL 03C,	_RTC_Elapsed_ms

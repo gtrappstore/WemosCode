@@ -18,6 +18,7 @@ int Keyboard_KeyDown();
 void Keyboard_ClrBuffer();
 
 int App_RegisterAddins();
+char* GetAppName(char* dest);
 
 int RTC_GetTicks();
 int RTC_Elapsed_ms( int start_value, int duration_in_ms );
