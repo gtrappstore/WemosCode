@@ -56,5 +56,7 @@ NetworkList* getAvailableNetworks();
 int connect(int index, unsigned char* pass);
 int disconnect();
 Network getNetworkInfo();
+int startAP(unsigned char* ssid, unsigned char* password);
+int stopAP();
 
 #endif

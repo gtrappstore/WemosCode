@@ -2,17 +2,22 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 
-#define LED D4
+#define LED LED_BUILTIN
 
-SoftwareSerial softSer(3, 1);
-WiFiClient netClient;
+ SoftwareSerial softSer(3, 1);
+
+const int MAX_CLIENTS = 8;
+int connectedClients = 0;
+
+WiFiClient* clients[MAX_CLIENTS];
+WiFiServer netServer(8266);
 
 void setup() {
   // put your setup code here, to run once:
   pinMode(LED, OUTPUT);
-  Serial.begin(9600, SERIAL_8N1);
+  Serial.begin(115200, SERIAL_8N1);
   Serial.swap();
-  softSer.begin(9600);
+  softSer.begin(115200);
   pinMode(3, INPUT);
   pinMode(1, OUTPUT);
 
@@ -23,18 +28,46 @@ void setup() {
   randomSeed(analogRead(0));
 
   softSer.println("Started");
-
-/*
-  softSer.println("CHECKSUM: " + String(checksum((unsigned char*) "Test String\0", 13)));
-  sendData((unsigned char*) "Test String\0", 13);
-  */
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  
+  if (WiFi.getMode() == WIFI_STA) {
+    if (WiFi.isConnected()) {
+      if (clients[0] == NULL) {
+        clients[0] = new WiFiClient();
+      }
 
-  if (netClient.status() == 0 && WiFi.status() == WL_CONNECTED) {
-    netClient.connect(WiFi.gatewayIP(), 8266);
+      if (!clients[0]->connected()) {
+        clients[0]->connect(WiFi.gatewayIP(), 8266);
+        connectedClients = 1;
+      }
+    }
+  } else if (WiFi.getMode() == WIFI_AP) {
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+      if (NULL != clients[i] && !clients[i]->connected()) {
+        clients[i]->stop();
+        delete clients[i];
+        clients[i] = NULL;
+        connectedClients--;
+        softSer.println("Client disconnected: " + String(connectedClients));
+      }
+    }
+
+    WiFiClient newClient = netServer.available();
+
+    if (newClient) {
+      for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (NULL == clients[i]) {
+          clients[i] = new WiFiClient(newClient);
+          clients[i]->setNoDelay(true);
+          connectedClients++;
+          softSer.println("Client connected: " + String(connectedClients));
+          break;
+        }
+      }
+    }
   }
 
   if (Serial.available() > 0) {
@@ -52,7 +85,7 @@ void loop() {
         softSer.print("Command Received: ");
 
         if (String("GETNETS").equals(command)) {
-          softSer.println("GETNETS");
+         softSer.println("GETNETS");
           sendCommandAck();
           getNetworks();
         } else if (String("CONNECT").equals(command)) {
@@ -67,6 +100,14 @@ void loop() {
           softSer.println("GETNETINFO");
           sendCommandAck();
           getNetInfo();
+        } else if (String("STARTAP").equals(command)) {
+          softSer.println("STARTAP");
+          sendCommandAck();
+          startAP();
+        } else if (String("STOPAP").equals(command)) {
+          softSer.println("STOPAP");
+          sendCommandAck();
+          stopAP();
         } else if (String("SEARCH").equals(command)) {
           softSer.println("SEARCH");
           sendCommandAck();
@@ -89,70 +130,77 @@ void loop() {
       String command = Serial.readStringUntil(0);
 
       if (String("NETDATA").equals(command)) {
-        String lenStr = Serial.readStringUntil(0);
-        unsigned long len = lenStr.toInt();
-
-        String checksum = Serial.readStringUntil(0);
-        String appName = Serial.readStringUntil(0);
-
-        netClient.write((byte) 221);
-        netClient.print("NETDATA");
-        netClient.write((byte) 0);
-        netClient.print(lenStr);
-        netClient.write((byte) 0);
-        netClient.print(checksum);
-        netClient.write((byte) 0);
-        netClient.print(appName);
-        netClient.write((byte) 0);
-
-        unsigned long counter = 0;
-        while (counter < len) {
-          int b = Serial.read();
-          if (b != -1) {
-            netClient.write(b);
-            counter++;
-          }
-        }
-
-        softSer.println(String(counter) + String(" Bytes written"));
+        softSer.println("Spreading NetData from GTR...");
+        spreadNetData(&Serial, (Stream**) clients, connectedClients);
       }
     }
   }
 
-  if (netClient.available() > 0) {
-    byte data = netClient.read();
-    if (data == 221) {
-      String command = netClient.readStringUntil(0);
+  for (int i = 0; i < MAX_CLIENTS; i++) {
+    if (NULL != clients[i]) {
+      byte data = clients[i]->read();
+      if (data == 221) {
+        String command = clients[i]->readStringUntil(0);
 
-      if (String("NETDATA").equals(command)) {
-        String lenStr = netClient.readStringUntil(0);
-        unsigned long len = lenStr.toInt();
-
-        String checksum = netClient.readStringUntil(0);
-        String appName = netClient.readStringUntil(0);
-
-        Serial.write((byte) 221);
-        Serial.print("NETDATA");
-        Serial.write((byte) 0);
-        Serial.print(lenStr);
-        Serial.write((byte) 0);
-        Serial.print(checksum);
-        Serial.write((byte) 0);
-        Serial.print(appName);
-        Serial.write((byte) 0);
-
-        unsigned long counter = 0;
-        while (counter < len) {
-          int b = netClient.read();
-          if (b != -1) {
-            Serial.write(b);
-            counter++;
+        if (String("NETDATA").equals(command)) {
+          Stream* outputs[connectedClients];
+          outputs[0] = &Serial;
+          int index = 1;
+          for (int j = 0; j < MAX_CLIENTS; j++) {
+            if (NULL != clients[j] && i != j) {
+              outputs[index] = clients[j];
+              index++;
+            }
           }
-        }
 
-        softSer.println(String(counter) + String(" Bytes written"));
+          softSer.println("Spreading NetData from Client " + String(i) + " " + String(connectedClients) + " " + String(index));
+          spreadNetData(clients[i], outputs, index);
+        }
       }
     }
+
+    yield();
+  }
+}
+
+void spreadNetData(Stream* input, Stream* outputs[], int numOutputs) {
+  String lenStr = input->readStringUntil(0);
+  unsigned long len = lenStr.toInt();
+
+  String checksum = input->readStringUntil(0);
+  String appName = input->readStringUntil(0);
+
+  byte data[min((int) len, 512)]; // let the data-buffer be max. 512 byte long
+
+  for (int i = 0; i < numOutputs; i++) {
+    if (NULL != outputs[i]) {
+      outputs[i]->write((byte) 221);
+      outputs[i]->print("NETDATA");
+      outputs[i]->write((byte) 0);
+      outputs[i]->print(lenStr);
+      outputs[i]->write((byte) 0);
+      outputs[i]->print(checksum);
+      outputs[i]->write((byte) 0);
+      outputs[i]->print(appName);
+      outputs[i]->write((byte) 0);
+      outputs[i]->flush();
+    }
+  }
+
+  unsigned long counter = 0;
+  while (counter < len) {
+    int numShouldRead = min((int) sizeof(data), (int) (len - counter));
+    int numRead = input->readBytes(data, numShouldRead);
+
+    for (int i = 0; i < numOutputs; i++) {
+      if (NULL != outputs[i]) {
+        outputs[i]->write(data, numRead);
+        outputs[i]->flush();
+      }
+    }
+
+    counter += numRead;
+    yield();
   }
 }
 
@@ -211,15 +259,38 @@ void getNetInfo() {
   unsigned char* buf;
   int len = 0;
   int counter = 0;
-  
-  if (WiFi.isConnected()) {
-    softSer.println("Connected to: " + WiFi.SSID() + " " + String(WiFi.RSSI()));
+
+  if (WiFi.getMode() == WIFI_AP) {
+    len += 2;
+    len += WiFi.softAPSSID().length() + 1;
+    len += 2;
+    buf = (unsigned char*) malloc(len);
+
+    int tmp;
+    tmp = 2;
+    memcpy(&buf[counter], String("1").c_str(), tmp);
+    counter += tmp;
     
+    tmp = WiFi.softAPSSID().length() + 1;
+    memcpy(&buf[counter], WiFi.softAPSSID().c_str(), tmp);
+    counter += tmp;
+
+    tmp = 2;
+    memcpy(&buf[counter], String("0").c_str(), tmp);
+    counter += tmp;
+  } else if (WiFi.isConnected()) {
+    softSer.println("Connected to: " + WiFi.SSID() + " " + String(WiFi.RSSI()));
+
+    len += 2;
     len += WiFi.SSID().length() + 1;
     len += String(WiFi.RSSI()).length() + 1;
     buf = (unsigned char*) malloc(len);
 
     int tmp;
+    tmp = 2;
+    memcpy(&buf[counter], String("0").c_str(), tmp);
+    counter += tmp;
+    
     tmp = WiFi.SSID().length() + 1;
     memcpy(&buf[counter], WiFi.SSID().c_str(), tmp);
     counter += tmp;
@@ -228,7 +299,7 @@ void getNetInfo() {
     memcpy(&buf[counter], String(WiFi.RSSI()).c_str(), tmp);
     counter += tmp;
   } else {
-    len = 2;
+    len = 3;
     buf = (unsigned char*) malloc(len);
     memset(buf, 0, len);
   }
@@ -237,9 +308,44 @@ void getNetInfo() {
   free(buf);
 }
 
+void startAP() {
+  String ssid = Serial.readStringUntil(0);
+  softSer.println("Hotspot: " + ssid);
+
+  String password = Serial.readStringUntil(0);
+
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP(ssid.c_str(), password.c_str());
+  netServer.begin();
+
+  for (int i = 0; i < MAX_CLIENTS; i++) {
+    if (NULL != clients[i]) {
+      clients[i]->stop();
+      delete clients[i];
+      clients[i] = NULL;
+    }
+  }
+
+  connectedClients = 0;
+}
+
+void stopAP() {
+  WiFi.softAPdisconnect(false);
+  WiFi.mode(WIFI_STA);
+  netServer.stop();
+
+  for (int i = 0; i < MAX_CLIENTS; i++) {
+    if (NULL != clients[i]) {
+      clients[i]->stop();
+      delete clients[i];
+      clients[i] = NULL;
+    }
+  }
+
+  connectedClients = 0;
+}
 
 void getWebContent() {
-  
   String modeString=Serial.readStringUntil(0);
   int mode=modeString.toInt();
   /*modes: 
@@ -252,8 +358,8 @@ void getWebContent() {
   String portString= Serial.readStringUntil(0);
   int port=portString.toInt();
   
-  softSer.println(url); //GET muss mit in der URL stehen
-  softSer.println("Port:"+portString);
+//  softSer.println(url); //GET muss mit in der URL stehen
+//  softSer.println("Port:"+portString);
   
   WiFiClient wfClient;
 
@@ -264,7 +370,7 @@ void getWebContent() {
 
   wfClient.print(url);
 
-  softSer.println("request sent");
+//  softSer.println("request sent");
 
   int contentLength = 0;
   String contentLengthStr;
@@ -275,13 +381,13 @@ void getWebContent() {
     String line = wfClient.readStringUntil('\n');
     header=header+line;
     
-    softSer.println(line);
+//    softSer.println(line);
     if (line.startsWith("Content-Length")) {
       contentLengthStr = line.substring(line.indexOf(":") + 2);
-      softSer.println("--- " + contentLengthStr + " ---");
+//      softSer.println("--- " + contentLengthStr + " ---");
       contentLength = contentLengthStr.toInt();
     } else if (line == "\r") {
-      softSer.println("headers received");
+//      softSer.println("headers received");
       break;
     }
   }
@@ -290,7 +396,7 @@ void getWebContent() {
     sendData((unsigned char*) header.c_str(), header.length());
   }
 
-  softSer.println(contentLengthStr);
+//  softSer.println(contentLengthStr);
 
   unsigned char buf[256];
  
@@ -309,7 +415,7 @@ void getWebContent() {
     }
       
     counter += len;
-    softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
+//    softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
     } 
     yield();
   }
@@ -443,7 +549,7 @@ void downloadPic(String appNumber){
   int port = 80; // prefer HTTP over HTTPS cause of cert problems
 
   if (!wfClient.connect(host.c_str(), port)) {
-    softSer.println("connection failed");
+//    softSer.println("connection failed");
     return;
   }
 
@@ -452,25 +558,25 @@ void downloadPic(String appNumber){
                "User-Agent: BuildFailureDetectorESP8266\r\n" +
                "Connection: close\r\n\r\n");
 
-  softSer.println("request sent");
+//  softSer.println("request sent");
 
   int contentLength = 0;
   String contentLengthStr;
 
   while(wfClient.connected()) {
     String line = wfClient.readStringUntil('\n');
-    softSer.println(line);
+//    softSer.println(line);
     if (line.startsWith("Content-Length")) {
       contentLengthStr = line.substring(line.indexOf(":") + 2);
-      softSer.println("--- " + contentLengthStr + " ---");
+//      softSer.println("--- " + contentLengthStr + " ---");
       contentLength = contentLengthStr.toInt();
     } else if (line == "\r") {
-      softSer.println("headers received");
+//      softSer.println("headers received");
       break;
     }
   }
   
-  softSer.println(contentLengthStr);
+//  softSer.println(contentLengthStr);
 
   unsigned char buf[contentLength];
 
@@ -481,7 +587,7 @@ void downloadPic(String appNumber){
       //Serial.write(buf, len);
 
       counter += len;
-      softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
+//      softSer.println(String(len) + " Bytes written (" + String(counter) + ")");
     }
     yield();
   }

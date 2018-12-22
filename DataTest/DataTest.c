@@ -60,12 +60,36 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
 	unsigned short keycode;
 	bool alpha = false;
 	int lastKeyTicks = RTC_GetTicks();
-	Bdisp_AllClr_DDVRAM();
+	bool needRedraw = true;
+	
+	while (true) {
+		Bdisp_AllClr_DDVRAM();
+	
+		locate(1, 1);
+		Print((unsigned char*) "F1 - Create Chatroom");
+		locate(1, 2);
+		Print((unsigned char*) "F2 - Join Chatroom");
+	
+		GetKey(&key);
+	
+		if (key == KEY_CTRL_F1) {
+			openSerial();
+			startAP("ESP Chat", "123456789");
+			break;
+		} else if (key == KEY_CTRL_F2) {
+			openSerial();
+			connectScreen();
+			break;
+		}
+	}
 
-	openSerial();
-	connectScreen();
-
+//	openSerial();
+//	connectScreen();
+//	startAP("ESP Test", "123456789");
+	
 	memset(buf, 0, 512);
+
+	Keyboard_ClrBuffer();
 	
 	while (1) {
 		int index = 0;
@@ -83,11 +107,13 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
 				messageList = msgElement;
 				
 				memset(buf, 0, 512);
+				needRedraw = true;
 				
 				sendNetData(msgElement->message.msg, strlen(msgElement->message.msg));
 			} else if (col == 4 && row == 5) { // DEL
 				if (strlen(buf) > 0) {
 					buf[strlen(buf) - 1] = 0;
+					needRedraw = true;
 				}
 			} else if (col == 7 && row == 8) { // ALPHA
 					alpha = !alpha;
@@ -96,6 +122,7 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
 				
 				if (c != 0) {
 					buf[strlen(buf)] = c;
+					needRedraw = true;
 				}
 			}
 			
@@ -114,21 +141,28 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
 			
 			msgElement->next = messageList;
 			messageList = msgElement;
+			
+			needRedraw = true;
 		}
 		
-		index = strlen(buf) - 32;
-		
-		if (index < 0) {
-			index = 0;
+		if (needRedraw) {
+			Bdisp_AllClr_DDVRAM();
+			index = strlen(buf);
+			if (index > 0) {
+				if (index > 32) {
+					index -= 32;
+				} else {
+					index = 0;
+				}
+			
+				PrintMini(0, 59, &buf[index], MINI_OVER);
+			}
+			Bdisp_DrawLineVRAM(0, 57, 127, 57);
+			drawMessages(messageList);
+			Bdisp_PutDisp_DD();
+			
+			needRedraw = false;
 		}
-		
-		Bdisp_AllClr_DDVRAM();
-		PrintMini(0, 59, &buf[index], MINI_OVER);
-		Bdisp_DrawLineVRAM(0, 57, 127, 57);
-		
-		drawMessages(messageList);
-		
-		Bdisp_PutDisp_DD();
 	}
 	
 	
@@ -181,7 +215,7 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
 void connectScreen() {
 	unsigned int key;
 	NetworkList* netList = NULL;
-	unsigned char text[22];
+	unsigned char text[100];
 	
 	netList = getAvailableNetworks();
 		
@@ -205,12 +239,14 @@ void connectScreen() {
 		Print((unsigned char*) "Connecting...");
 		Bdisp_PutDisp_DD();
 
-		Sleep(10000);
+		Sleep(2000);
 	} else {
 		locate(1, 1);
 		Print((unsigned char*) "No Networks");
 		GetKey(&key);
 	}
+	
+	Bdisp_AllClr_DDVRAM();
 	
 	freeNetList(netList);
 }

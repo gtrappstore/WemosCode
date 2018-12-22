@@ -1,4 +1,4 @@
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    1
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    1
 
 ************ OBJECT LISTING ************
 
@@ -56,1486 +56,1672 @@ SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
       DataTest.c    48    //****************************************************************************
       DataTest.c    49    int AddIn_main(int isAppli, unsigned short OptionNum)
 P   00000000              _AddIn_main:                     ; function: AddIn_main
-                                                           ; frame size=628
-    00000000 9085                   MOV.W       L627,R0    ; H'FD9C
-      DataTest.c    50    {
-      DataTest.c    51            unsigned int key;
+                                                           ; frame size=640
+    00000000 9070                   MOV.W       L653,R0    ; H'FD90
+    00000002 EA01                   MOV         #1,R10
+    00000004 DB3B                   MOV.L       L653+16,R11; _Print
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    2
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    2
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
+    00000006 ED00                   MOV         #0,R13
+      DataTest.c    50    {
+      DataTest.c    51            unsigned int key;
       DataTest.c    52            NetworkList* netList = NULL;
       DataTest.c    53            NetData* data = NULL;
       DataTest.c    54            int startMillis;
       DataTest.c    55            unsigned char text[22];
       DataTest.c    56            unsigned char buf[512];
       DataTest.c    57            MessageList* messageList = NULL;
-    00000002 ED00                   MOV         #0,R13
       DataTest.c    58            NetData* netData = NULL;
       DataTest.c    59            int col, row;
       DataTest.c    60            unsigned short keycode;
       DataTest.c    61            bool alpha = false;
       DataTest.c    62            int lastKeyTicks = RTC_GetTicks();
-    00000004 D343                   MOV.L       L627+6,R3  ; _RTC_GetTicks
-    00000006 3F0C                   ADD         R0,R15
-    00000008 68D3                   MOV         R13,R8
-    0000000A 430B                   JSR         @R3
-    0000000C 1FD3                   MOV.L       R13,@(12,R15)
-      DataTest.c    63            Bdisp_AllClr_DDVRAM();
-    0000000E D342                   MOV.L       L627+10,R3 ; _Bdisp_AllClr_DDVRAM
-    00000010 430B                   JSR         @R3
-    00000012 1F05                   MOV.L       R0,@(20,R15)
-      DataTest.c    64    
-      DataTest.c    65            openSerial();
-    00000014 D241                   MOV.L       L627+14,R2 ; _openSerial
-    00000016 420B                   JSR         @R2
-    00000018 0009                   NOP
-      DataTest.c    66            connectScreen();
-    0000001A B150                   BSR         _connectScreen
-    0000001C 0009                   NOP
-      DataTest.c    67    
-      DataTest.c    68            memset(buf, 0, 512);
-    0000001E 6EF3                   MOV         R15,R14
-    00000020 9676                   MOV.W       L627+2,R6  ; H'0200
-    00000022 6583                   MOV         R8,R5
-    00000024 D23E                   MOV.L       L627+18,R2 ; _memset
-    00000026 7E4C                   ADD         #76,R14
-    00000028 420B                   JSR         @R2
-    0000002A 64E3                   MOV         R14,R4
-    0000002C D93D                   MOV.L       L627+22,R9 ; _malloc
-    0000002E DC3E                   MOV.L       L627+26,R12; _strlen
-      DataTest.c    69            
-      DataTest.c    70            while (1) {
-    00000030              L546:                             
-      DataTest.c    71                    int index = 0;
-      DataTest.c    72                    
-      DataTest.c    73                    if (RTC_Elapsed_ms(lastKeyTicks, 200) && Keyboard_GetKeyWait(&col, &row, 1, 0, 0, &keycode
+    00000008 D33C                   MOV.L       L653+24,R3 ; _RTC_GetTicks
+    0000000A 3F0C                   ADD         R0,R15
+    0000000C D838                   MOV.L       L653+12,R8 ; _malloc
+    0000000E 6EF3                   MOV         R15,R14
+    00000010 1FD4                   MOV.L       R13,@(16,R15)
+    00000012 7E58                   ADD         #88,R14
+    00000014 DC38                   MOV.L       L653+20,R12; _strlen
+    00000016 430B                   JSR         @R3
+    00000018 1FD6                   MOV.L       R13,@(24,R15)
+    0000001A 1F07                   MOV.L       R0,@(28,R15)
+      DataTest.c    63            bool needRedraw = true;
+    0000001C 1FA8                   MOV.L       R10,@(32,R15)
+    0000001E D938                   MOV.L       L653+28,R9 ; _openSerial
+      DataTest.c    64            
+      DataTest.c    65            while (true) {
+    00000020              L563:                             
+      DataTest.c    66                    Bdisp_AllClr_DDVRAM();
+    00000020 D238                   MOV.L       L653+32,R2 ; _Bdisp_AllClr_DDVRAM
+    00000022 420B                   JSR         @R2
+    00000024 0009                   NOP
+      DataTest.c    67            
+      DataTest.c    68                    locate(1, 1);
+    00000026 E501                   MOV         #1,R5
+    00000028 D337                   MOV.L       L653+36,R3 ; _locate
+    0000002A 430B                   JSR         @R3
+    0000002C 6453                   MOV         R5,R4
+      DataTest.c    69                    Print((unsigned char*) "F1 - Create Chatroom");
+    0000002E D437                   MOV.L       L653+40,R4 ; L400
+    00000030 4B0B                   JSR         @R11
+    00000032 0009                   NOP
+      DataTest.c    70                    locate(1, 2);
+    00000034 D234                   MOV.L       L653+36,R2 ; _locate
+    00000036 E502                   MOV         #2,R5
+    00000038 420B                   JSR         @R2
+    0000003A E401                   MOV         #1,R4
+      DataTest.c    71                    Print((unsigned char*) "F2 - Join Chatroom");
+    0000003C D434                   MOV.L       L653+44,R4 ; L401
+    0000003E 4B0B                   JSR         @R11
+    00000040 0009                   NOP
+      DataTest.c    72            
+      DataTest.c    73                    GetKey(&key);
+    00000042 D334                   MOV.L       L653+48,R3 ; _GetKey
+    00000044 430B                   JSR         @R3
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    3
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000046 64F3                   MOV         R15,R4
+      DataTest.c    74            
+      DataTest.c    75                    if (key == KEY_CTRL_F1) {
+    00000048 924D                   MOV.W       L653+2,R2  ; H'7539
+    0000004A 63F2                   MOV.L       @R15,R3
+    0000004C 3320                   CMP/EQ      R2,R3
+    0000004E 8B10                   BF          L564
+      DataTest.c    76                            openSerial();
+    00000050 490B                   JSR         @R9
+    00000052 0009                   NOP
+      DataTest.c    77                            startAP("ESP Chat", "123456789");
+    00000054 D530                   MOV.L       L653+52,R5 ; L404
+    00000056 D431                   MOV.L       L653+56,R4 ; L403
+    00000058 D331                   MOV.L       L653+60,R3 ; _startAP
+    0000005A 430B                   JSR         @R3
+    0000005C 0009                   NOP
+      DataTest.c    78                            break;
+    0000005E              L565:                             
+      DataTest.c    79                    } else if (key == KEY_CTRL_F2) {
+      DataTest.c    80                            openSerial();
+      DataTest.c    81                            connectScreen();
+      DataTest.c    82                            break;
+      DataTest.c    83                    }
+      DataTest.c    84            }
+      DataTest.c    85    
+      DataTest.c    86    //      openSerial();
+      DataTest.c    87    //      connectScreen();
+      DataTest.c    88    //      startAP("ESP Test", "123456789");
+      DataTest.c    89            
+      DataTest.c    90            memset(buf, 0, 512);
+    0000005E E500                   MOV         #0,R5
+    00000060 D330                   MOV.L       L653+64,R3 ; _memset
+    00000062 9641                   MOV.W       L653+4,R6  ; H'0200
+    00000064 430B                   JSR         @R3
+    00000066 64E3                   MOV         R14,R4
+      DataTest.c    91    
+      DataTest.c    92            Keyboard_ClrBuffer();
+    00000068 D22F                   MOV.L       L653+68,R2 ; _Keyboard_ClrBuffer
+    0000006A 420B                   JSR         @R2
+    0000006C 0009                   NOP
+      DataTest.c    93            
+      DataTest.c    94            while (1) {
+    0000006E A00A                   BRA         L569
+    00000070 0009                   NOP
+    00000072              L564:                             
+    00000072 913A                   MOV.W       L653+6,R1  ; H'753A
+    00000074 63F2                   MOV.L       @R15,R3
+    00000076 3310                   CMP/EQ      R1,R3
+    00000078 8BD2                   BF          L563
+    0000007A 490B                   JSR         @R9
+    0000007C 0009                   NOP
+    0000007E B160                   BSR         _connectScreen
+    00000080 0009                   NOP
+    00000082 AFEC                   BRA         L565
+    00000084 0009                   NOP
+    00000086              L569:                             
+      DataTest.c    95                    int index = 0;
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    4
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      DataTest.c    96                    
+      DataTest.c    97                    if (RTC_Elapsed_ms(lastKeyTicks, 200) && Keyboard_GetKeyWait(&col, &row, 1, 0, 0, &keycode
                          +) == 1) {
-    00000030 956F                   MOV.W       L627+4,R5  ; H'00C8
-    00000032 D33E                   MOV.L       L627+30,R3 ; _RTC_Elapsed_ms
-    00000034 430B                   JSR         @R3
-    00000036 54F5                   MOV.L       @(20,R15),R4
-    00000038 2008                   TST         R0,R0
-    0000003A 8B01                   BF          L628
-    0000003C A08D                   BRA         L547
-    0000003E 0009                   NOP
-    00000040              L628:                             
-    00000040 63F3                   MOV         R15,R3
+    00000086 9931                   MOV.W       L653+8,R9  ; H'00C8
+    00000088 D328                   MOV.L       L653+72,R3 ; _RTC_Elapsed_ms
+    0000008A 6593                   MOV         R9,R5
+    0000008C 430B                   JSR         @R3
+    0000008E 54F7                   MOV.L       @(28,R15),R4
+    00000090 2008                   TST         R0,R0
+    00000092 8B01                   BF          L654
+    00000094 A0A2                   BRA         L570
+    00000096 0009                   NOP
+    00000098              L654:                             
+    00000098 63F3                   MOV         R15,R3
+    0000009A 7314                   ADD         #20,R3
+    0000009C 2F36                   MOV.L       R3,@-R15
+    0000009E E200                   MOV         #0,R2
+    000000A0 D323                   MOV.L       L653+76,R3 ; _Keyboard_GetKeyWait
+    000000A2 E601                   MOV         #1,R6
+    000000A4 2F26                   MOV.L       R2,@-R15
+    000000A6 6723                   MOV         R2,R7
+    000000A8 65F3                   MOV         R15,R5
+    000000AA 7510                   ADD         #16,R5
+    000000AC 64F3                   MOV         R15,R4
+    000000AE 430B                   JSR         @R3
+    000000B0 740C                   ADD         #12,R4
+    000000B2 8801                   CMP/EQ      #1,R0
+    000000B4 8D02                   BT/S        L655
+    000000B6 7F08                   ADD         #8,R15
+    000000B8 A090                   BRA         L570
+    000000BA 0009                   NOP
+    000000BC              L655:                             
+      DataTest.c    98                            if (col == 4 && row == 9) { // MENU
+    000000BC 50F1                   MOV.L       @(4,R15),R0
+    000000BE 8804                   CMP/EQ      #4,R0
+    000000C0 8B38                   BF          L571
+    000000C2 50F2                   MOV.L       @(8,R15),R0
+    000000C4 8809                   CMP/EQ      #9,R0
+    000000C6 8B35                   BF          L571
+      DataTest.c    99                                    Keyboard_GetKeyWait(&col, &row, 0, 0, 0, &keycode); // go to the menu
+    000000C8 D919                   MOV.L       L653+76,R9 ; _Keyboard_GetKeyWait
+    000000CA 62F3                   MOV         R15,R2
+    000000CC 7214                   ADD         #20,R2
+    000000CE E700                   MOV         #0,R7
+    000000D0 2F26                   MOV.L       R2,@-R15
+    000000D2 6673                   MOV         R7,R6
+    000000D4 2FD6                   MOV.L       R13,@-R15
+    000000D6 65F3                   MOV         R15,R5
+    000000D8 7510                   ADD         #16,R5
+    000000DA 64F3                   MOV         R15,R4
+    000000DC 490B                   JSR         @R9
+    000000DE 740C                   ADD         #12,R4
+    000000E0 A078                   BRA         L572
+    000000E2 7F08                   ADD         #8,R15
+    000000E4              L653:                             
+    000000E4 FD90                   .DATA.W     H'FD90
+    000000E6 7539                   .DATA.W     H'7539
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    3
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    00000042 7310                   ADD         #16,R3
-    00000044 2F36                   MOV.L       R3,@-R15
-    00000046 E200                   MOV         #0,R2
-    00000048 D339                   MOV.L       L627+34,R3 ; _Keyboard_GetKeyWait
-    0000004A E601                   MOV         #1,R6
-    0000004C 2F26                   MOV.L       R2,@-R15
-    0000004E 6723                   MOV         R2,R7
-    00000050 65F3                   MOV         R15,R5
-    00000052 750C                   ADD         #12,R5
-    00000054 64F3                   MOV         R15,R4
-    00000056 430B                   JSR         @R3
-    00000058 7408                   ADD         #8,R4
-    0000005A 8801                   CMP/EQ      #1,R0
-    0000005C 8D02                   BT/S        L629
-    0000005E 7F08                   ADD         #8,R15
-    00000060 A07B                   BRA         L547
-    00000062 0009                   NOP
-    00000064              L629:                             
-      DataTest.c    74                            if (col == 4 && row == 9) { // MENU
-    00000064 60F2                   MOV.L       @R15,R0
-    00000066 8804                   CMP/EQ      #4,R0
-    00000068 8B10                   BF          L548
-    0000006A 50F1                   MOV.L       @(4,R15),R0
-    0000006C 8809                   CMP/EQ      #9,R0
-    0000006E 8B0D                   BF          L548
-      DataTest.c    75                                    Keyboard_GetKeyWait(&col, &row, 0, 0, 0, &keycode); // go to the menu
-    00000070 D32F                   MOV.L       L627+34,R3 ; _Keyboard_GetKeyWait
-    00000072 62F3                   MOV         R15,R2
-    00000074 7210                   ADD         #16,R2
-    00000076 E700                   MOV         #0,R7
-    00000078 2F26                   MOV.L       R2,@-R15
-    0000007A 6673                   MOV         R7,R6
-    0000007C 2FD6                   MOV.L       R13,@-R15
-    0000007E 65F3                   MOV         R15,R5
-    00000080 750C                   ADD         #12,R5
-    00000082 64F3                   MOV         R15,R4
-    00000084 430B                   JSR         @R3
-    00000086 7408                   ADD         #8,R4
-    00000088 A063                   BRA         L549
-    0000008A 7F08                   ADD         #8,R15
-    0000008C              L548:                             
-      DataTest.c    76                            } else if (col == 3 && row == 2) { // EXE
-    0000008C 60F2                   MOV.L       @R15,R0
-    0000008E 8803                   CMP/EQ      #3,R0
-    00000090 8B23                   BF          L550
-    00000092 50F1                   MOV.L       @(4,R15),R0
-    00000094 8802                   CMP/EQ      #2,R0
-    00000096 8B20                   BF          L550
-      DataTest.c    77                                    MessageList* msgElement = (MessageList*) malloc(sizeof(MessageList));
-    00000098 490B                   JSR         @R9
-    0000009A E40C                   MOV         #12,R4
-    0000009C 6B03                   MOV         R0,R11
-      DataTest.c    78                                    msgElement->message.msg = (unsigned char*) malloc(strlen(buf) + 1);
-    0000009E 4C0B                   JSR         @R12
-    000000A0 64E3                   MOV         R14,R4
-    000000A2 6403                   MOV         R0,R4
-    000000A4 490B                   JSR         @R9
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    4
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    5
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-    000000A6 7401                   ADD         #1,R4
-    000000A8 2B02                   MOV.L       R0,@R11
-      DataTest.c    79                                    memcpy(msgElement->message.msg, buf, strlen(buf) + 1);
-    000000AA 4C0B                   JSR         @R12
-    000000AC 64E3                   MOV         R14,R4
-    000000AE 6603                   MOV         R0,R6
-    000000B0 D220                   MOV.L       L627+38,R2 ; _memcpy
-    000000B2 65E3                   MOV         R14,R5
-    000000B4 7601                   ADD         #1,R6
-    000000B6 420B                   JSR         @R2
-    000000B8 64B2                   MOV.L       @R11,R4
-      DataTest.c    80                                    msgElement->message.user = 0;
-      DataTest.c    81                                    
-      DataTest.c    82                                    msgElement->next = messageList;
-      DataTest.c    83                                    messageList = msgElement;
-      DataTest.c    84                                    
-      DataTest.c    85                                    memset(buf, 0, 512);
-    000000BA E500                   MOV         #0,R5
-    000000BC D318                   MOV.L       L627+18,R3 ; _memset
-    000000BE 1BD1                   MOV.L       R13,@(4,R11)
-    000000C0 1B82                   MOV.L       R8,@(8,R11)
-    000000C2 68B3                   MOV         R11,R8
-    000000C4 9624                   MOV.W       L627+2,R6  ; H'0200
-    000000C6 430B                   JSR         @R3
-    000000C8 64E3                   MOV         R14,R4
-      DataTest.c    86                                    
-      DataTest.c    87                                    sendNetData(msgElement->message.msg, strlen(msgElement->message.msg));
-    000000CA 4C0B                   JSR         @R12
-    000000CC 64B2                   MOV.L       @R11,R4
-    000000CE 6503                   MOV         R0,R5
-    000000D0 D219                   MOV.L       L627+42,R2 ; _sendNetData
-    000000D2 420B                   JSR         @R2
-    000000D4 64B2                   MOV.L       @R11,R4
-    000000D6 A03C                   BRA         L549
-    000000D8 0009                   NOP
-    000000DA              L550:                             
-      DataTest.c    88                            } else if (col == 4 && row == 5) { // DEL
-    000000DA 60F2                   MOV.L       @R15,R0
-    000000DC 8804                   CMP/EQ      #4,R0
-    000000DE 8B0B                   BF          L552
-    000000E0 50F1                   MOV.L       @(4,R15),R0
-    000000E2 8805                   CMP/EQ      #5,R0
-    000000E4 8B08                   BF          L552
-      DataTest.c    89                                    if (strlen(buf) > 0) {
-    000000E6 4C0B                   JSR         @R12
-    000000E8 64E3                   MOV         R14,R4
-    000000EA 4015                   CMP/PL      R0
-    000000EC 8B31                   BF          L549
-      DataTest.c    90                                            buf[strlen(buf) - 1] = 0;
-    000000EE 4C0B                   JSR         @R12
-    000000F0 64E3                   MOV         R14,R4
-    000000F2 70FF                   ADD         #-1,R0
-    000000F4 A02D                   BRA         L549
-    000000F6 0ED4                   MOV.B       R13,@(R0,R14)
-    000000F8              L552:                             
-      DataTest.c    91                                    }
-      DataTest.c    92                            } else if (col == 7 && row == 8) { // ALPHA
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    5
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    000000F8 60F2                   MOV.L       @R15,R0
-    000000FA 8807                   CMP/EQ      #7,R0
-    000000FC 8B1E                   BF          L555
-    000000FE 50F1                   MOV.L       @(4,R15),R0
-    00000100 8808                   CMP/EQ      #8,R0
-    00000102 8B1B                   BF          L555
-      DataTest.c    93                                            alpha = !alpha;
-    00000104 50F3                   MOV.L       @(12,R15),R0
-    00000106 2008                   TST         R0,R0
-    00000108 0029                   MOVT        R0
-    0000010A A022                   BRA         L549
-    0000010C 1F03                   MOV.L       R0,@(12,R15)
-    0000010E              L627:                             
-    0000010E FD9C                   .DATA.W     H'FD9C
-    00000110 0200                   .DATA.W     H'0200
-    00000112 00C8                   .DATA.W     H'00C8
-    00000114 <00000000>             .DATA.L     _RTC_GetTicks
-    00000118 <00000000>             .DATA.L     _Bdisp_AllClr_DDVRAM
-    0000011C <00000000>             .DATA.L     _openSerial
-    00000120 <00000000>             .DATA.L     _memset
-    00000124 <00000000>             .DATA.L     _malloc
-    00000128 <00000000>             .DATA.L     _strlen
+    000000E8 0200                   .DATA.W     H'0200
+    000000EA 753A                   .DATA.W     H'753A
+    000000EC 00C8                   .DATA.W     H'00C8
+    000000EE 0000                   .DATA.W     0
+    000000F0 <00000000>             .DATA.L     _malloc
+    000000F4 <00000000>             .DATA.L     _Print
+    000000F8 <00000000>             .DATA.L     _strlen
+    000000FC <00000000>             .DATA.L     _RTC_GetTicks
+    00000100 <00000000>             .DATA.L     _openSerial
+    00000104 <00000000>             .DATA.L     _Bdisp_AllClr_DDVRAM
+    00000108 <00000000>             .DATA.L     _locate
+    0000010C <00000000>             .DATA.L     L400
+    00000110 <00000000>             .DATA.L     L401
+    00000114 <00000000>             .DATA.L     _GetKey
+    00000118 <00000000>             .DATA.L     L404
+    0000011C <00000000>             .DATA.L     L403
+    00000120 <00000000>             .DATA.L     _startAP
+    00000124 <00000000>             .DATA.L     _memset
+    00000128 <00000000>             .DATA.L     _Keyboard_ClrBuffer
     0000012C <00000000>             .DATA.L     _RTC_Elapsed_ms
     00000130 <00000000>             .DATA.L     _Keyboard_GetKeyWait
-    00000134 <00000000>             .DATA.L     _memcpy
-    00000138 <00000000>             .DATA.L     _sendNetData
-    0000013C              L555:                             
-      DataTest.c    94                            } else {
-      DataTest.c    95                                    unsigned char c = getCharFromInput(col, row, alpha);
-    0000013C 56F3                   MOV.L       @(12,R15),R6
-    0000013E 55F1                   MOV.L       @(4,R15),R5
-    00000140 B168                   BSR         _getCharFromInput
-    00000142 64F2                   MOV.L       @R15,R4
-    00000144 6B03                   MOV         R0,R11
-      DataTest.c    96                                    
-      DataTest.c    97                                    if (c != 0) {
-    00000146 62BC                   EXTU.B      R11,R2
-    00000148 2228                   TST         R2,R2
-    0000014A 8902                   BT          L549
-      DataTest.c    98                                            buf[strlen(buf)] = c;
-    0000014C 4C0B                   JSR         @R12
-    0000014E 64E3                   MOV         R14,R4
-    00000150 0EB4                   MOV.B       R11,@(R0,R14)
-    00000152              L549:                             
-      DataTest.c    99                                    }
-      DataTest.c   100                            }
-      DataTest.c   101                            
-      DataTest.c   102                            lastKeyTicks = RTC_GetTicks();
-    00000152 D241                   MOV.L       L630+6,R2  ; _RTC_GetTicks
-    00000154 420B                   JSR         @R2
-    00000156 0009                   NOP
-    00000158 1F05                   MOV.L       R0,@(20,R15)
-    0000015A              L547:                             
-      DataTest.c   103                    }
-      DataTest.c   104                    
-      DataTest.c   105                    Keyboard_ClrBuffer();
-    0000015A D340                   MOV.L       L630+10,R3 ; _Keyboard_ClrBuffer
+    00000134              L571:                             
+      DataTest.c   100                            } else if (col == 3 && row == 2) { // EXE
+    00000134 50F1                   MOV.L       @(4,R15),R0
+    00000136 8803                   CMP/EQ      #3,R0
+    00000138 8B26                   BF          L573
+    0000013A 50F2                   MOV.L       @(8,R15),R0
+    0000013C 8802                   CMP/EQ      #2,R0
+    0000013E 8B23                   BF          L573
+      DataTest.c   101                                    MessageList* msgElement = (MessageList*) malloc(sizeof(MessageList));
+    00000140 480B                   JSR         @R8
+    00000142 E40C                   MOV         #12,R4
+    00000144 6903                   MOV         R0,R9
+      DataTest.c   102                                    msgElement->message.msg = (unsigned char*) malloc(strlen(buf) + 1);
+    00000146 4C0B                   JSR         @R12
+    00000148 64E3                   MOV         R14,R4
+    0000014A 6403                   MOV         R0,R4
+    0000014C 480B                   JSR         @R8
+    0000014E 7401                   ADD         #1,R4
+    00000150 2902                   MOV.L       R0,@R9
+      DataTest.c   103                                    memcpy(msgElement->message.msg, buf, strlen(buf) + 1);
+    00000152 4C0B                   JSR         @R12
+    00000154 64E3                   MOV         R14,R4
+    00000156 6603                   MOV         R0,R6
+    00000158 D23B                   MOV.L       L656+4,R2  ; _memcpy
+    0000015A 65E3                   MOV         R14,R5
+    0000015C 7601                   ADD         #1,R6
+    0000015E 420B                   JSR         @R2
+    00000160 6492                   MOV.L       @R9,R4
+      DataTest.c   104                                    msgElement->message.user = 0;
+      DataTest.c   105                                    
+      DataTest.c   106                                    msgElement->next = messageList;
+      DataTest.c   107                                    messageList = msgElement;
+      DataTest.c   108                                    
+      DataTest.c   109                                    memset(buf, 0, 512);
+    00000162 E500                   MOV         #0,R5
+    00000164 19D1                   MOV.L       R13,@(4,R9)
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    6
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    0000015C 430B                   JSR         @R3
-    0000015E 0009                   NOP
-      DataTest.c   106                    
-      DataTest.c   107                    netData = receiveNetDataTimeout(50);
-    00000160 D23F                   MOV.L       L630+14,R2 ; _receiveNetDataTimeout
-    00000162 420B                   JSR         @R2
-    00000164 E432                   MOV         #50,R4
-    00000166 6A03                   MOV         R0,R10
-      DataTest.c   108                    if (netData != NULL) {
-    00000168 2AA8                   TST         R10,R10
-    0000016A 8912                   BT          L559
-      DataTest.c   109                            MessageList* msgElement = (MessageList*) malloc(sizeof(MessageList));
-    0000016C 490B                   JSR         @R9
-    0000016E E40C                   MOV         #12,R4
-      DataTest.c   110                            msgElement->message.msg = (unsigned char*) malloc(netData->length + 1);
-    00000170 64A2                   MOV.L       @R10,R4
-    00000172 6B03                   MOV         R0,R11
-    00000174 490B                   JSR         @R9
-    00000176 7401                   ADD         #1,R4
-    00000178 2B02                   MOV.L       R0,@R11
-      DataTest.c   111                            memcpy(msgElement->message.msg, netData->buf, netData->length);
-    0000017A 66A2                   MOV.L       @R10,R6
-    0000017C 55A5                   MOV.L       @(20,R10),R5
-    0000017E D239                   MOV.L       L630+18,R2 ; _memcpy
-    00000180 420B                   JSR         @R2
-    00000182 6403                   MOV         R0,R4
-      DataTest.c   112                            msgElement->message.msg[netData->length] = 0;
-    00000184 63A2                   MOV.L       @R10,R3
-      DataTest.c   113                            msgElement->message.user = 1;
-    00000186 E201                   MOV         #1,R2
-    00000188 60B2                   MOV.L       @R11,R0
-    0000018A 03D4                   MOV.B       R13,@(R0,R3)
-    0000018C 1B21                   MOV.L       R2,@(4,R11)
-      DataTest.c   114                            
-      DataTest.c   115                            msgElement->next = messageList;
-    0000018E 1B82                   MOV.L       R8,@(8,R11)
-      DataTest.c   116                            messageList = msgElement;
-    00000190 68B3                   MOV         R11,R8
-    00000192              L559:                             
-      DataTest.c   117                    }
-      DataTest.c   118                    
-      DataTest.c   119                    index = strlen(buf) - 32;
-    00000192 4C0B                   JSR         @R12
-    00000194 64E3                   MOV         R14,R4
-    00000196 6B03                   MOV         R0,R11
-    00000198 7BE0                   ADD         #-32,R11
-      DataTest.c   120                    
-      DataTest.c   121                    if (index < 0) {
-    0000019A 4B11                   CMP/PZ      R11
-    0000019C 8900                   BT          L560
-      DataTest.c   122                            index = 0;
-    0000019E 6BD3                   MOV         R13,R11
-    000001A0              L560:                             
-      DataTest.c   123                    }
-      DataTest.c   124                    
-      DataTest.c   125                    Bdisp_AllClr_DDVRAM();
-    000001A0 D231                   MOV.L       L630+22,R2 ; _Bdisp_AllClr_DDVRAM
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    7
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    6
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-    000001A2 420B                   JSR         @R2
-    000001A4 0009                   NOP
-      DataTest.c   126                    PrintMini(0, 59, &buf[index], MINI_OVER);
-    000001A6 E710                   MOV         #16,R7
-    000001A8 D330                   MOV.L       L630+26,R3 ; _PrintMini
-    000001AA 66B3                   MOV         R11,R6
-    000001AC 36EC                   ADD         R14,R6
-    000001AE E53B                   MOV         #59,R5
-    000001B0 430B                   JSR         @R3
-    000001B2 E400                   MOV         #0,R4
-      DataTest.c   127                    Bdisp_DrawLineVRAM(0, 57, 127, 57);
-    000001B4 D22E                   MOV.L       L630+30,R2 ; _Bdisp_DrawLineVRAM
-    000001B6 E739                   MOV         #57,R7
-    000001B8 E67F                   MOV         #127,R6
-    000001BA 6573                   MOV         R7,R5
-    000001BC 420B                   JSR         @R2
-    000001BE E400                   MOV         #0,R4
-      DataTest.c   128                    
-      DataTest.c   129                    drawMessages(messageList);
-    000001C0 B0DE                   BSR         _drawMessages
-    000001C2 6483                   MOV         R8,R4
-      DataTest.c   130                    
-      DataTest.c   131                    Bdisp_PutDisp_DD();
-    000001C4 D22B                   MOV.L       L630+34,R2 ; _Bdisp_PutDisp_DD
-    000001C6 420B                   JSR         @R2
-    000001C8 0009                   NOP
-    000001CA AF31                   BRA         L546
-    000001CC 0009                   NOP
-    000001CE              L563:                             
-      DataTest.c   132            }
-      DataTest.c   133            
-      DataTest.c   134            
-      DataTest.c   135            
-      DataTest.c   136            netList = getAvailableNetworks();
-      DataTest.c   137    
-      DataTest.c   138            locate(1, 1);
-      DataTest.c   139    
-      DataTest.c   140            if (netList != NULL) {
-      DataTest.c   141                    Print((unsigned char*) "RECEIVED");
-      DataTest.c   142    
-      DataTest.c   143                    for (key = 0; netList != NULL; key++, netList = netList->next) {
-      DataTest.c   144                            unsigned char text[51];
-      DataTest.c   145    
-      DataTest.c   146                            locate(1, key + 2);
-    000001CE 55F2                   MOV.L       @(8,R15),R5
-    000001D0 7502                   ADD         #2,R5
-    000001D2 4B0B                   JSR         @R11
-    000001D4 E401                   MOV         #1,R4
-      DataTest.c   147                            sprintf(text, "%s %d %d", netList->network.ssid, netList->network.rssi, netList->n
-                         +etwork.encType);
-    000001D6 53E2                   MOV.L       @(8,R14),R3
-    000001D8 2F36                   MOV.L       R3,@-R15
-    000001DA 52E1                   MOV.L       @(4,R14),R2
-    000001DC 2F26                   MOV.L       R2,@-R15
-    000001DE 63E2                   MOV.L       @R14,R3
-    000001E0 D225                   MOV.L       L630+38,R2 ; L419
-    000001E2 2F36                   MOV.L       R3,@-R15
+    00000166 53F4                   MOV.L       @(16,R15),R3
+    00000168 966C                   MOV.W       L656,R6    ; H'0200
+    0000016A 1932                   MOV.L       R3,@(8,R9)
+    0000016C 1F94                   MOV.L       R9,@(16,R15)
+    0000016E D337                   MOV.L       L656+8,R3  ; _memset
+    00000170 430B                   JSR         @R3
+    00000172 64E3                   MOV         R14,R4
+      DataTest.c   110                                    needRedraw = true;
+    00000174 E201                   MOV         #1,R2
+    00000176 1F28                   MOV.L       R2,@(32,R15)
+      DataTest.c   111                                    
+      DataTest.c   112                                    sendNetData(msgElement->message.msg, strlen(msgElement->message.msg));
+    00000178 4C0B                   JSR         @R12
+    0000017A 6492                   MOV.L       @R9,R4
+    0000017C D334                   MOV.L       L656+12,R3 ; _sendNetData
+    0000017E 6503                   MOV         R0,R5
+    00000180 430B                   JSR         @R3
+    00000182 6492                   MOV.L       @R9,R4
+    00000184 A026                   BRA         L572
+    00000186 0009                   NOP
+    00000188              L573:                             
+      DataTest.c   113                            } else if (col == 4 && row == 5) { // DEL
+    00000188 50F1                   MOV.L       @(4,R15),R0
+    0000018A 8804                   CMP/EQ      #4,R0
+    0000018C 8B0B                   BF          L575
+    0000018E 50F2                   MOV.L       @(8,R15),R0
+    00000190 8805                   CMP/EQ      #5,R0
+    00000192 8B08                   BF          L575
+      DataTest.c   114                                    if (strlen(buf) > 0) {
+    00000194 4C0B                   JSR         @R12
+    00000196 64E3                   MOV         R14,R4
+    00000198 4015                   CMP/PL      R0
+    0000019A 8B1B                   BF          L572
+      DataTest.c   115                                            buf[strlen(buf) - 1] = 0;
+    0000019C 4C0B                   JSR         @R12
+    0000019E 64E3                   MOV         R14,R4
+    000001A0 70FF                   ADD         #-1,R0
+    000001A2 A016                   BRA         L513
+    000001A4 0ED4                   MOV.B       R13,@(R0,R14)
+    000001A6              L575:                             
+      DataTest.c   116                                            needRedraw = true;
+      DataTest.c   117                                    }
+      DataTest.c   118                            } else if (col == 7 && row == 8) { // ALPHA
+    000001A6 50F1                   MOV.L       @(4,R15),R0
+    000001A8 8807                   CMP/EQ      #7,R0
+    000001AA 8B07                   BF          L578
+    000001AC 50F2                   MOV.L       @(8,R15),R0
+    000001AE 8808                   CMP/EQ      #8,R0
+    000001B0 8B04                   BF          L578
+      DataTest.c   119                                            alpha = !alpha;
+    000001B2 50F6                   MOV.L       @(24,R15),R0
+    000001B4 2008                   TST         R0,R0
+    000001B6 0029                   MOVT        R0
+    000001B8 A00C                   BRA         L572
+    000001BA 1F06                   MOV.L       R0,@(24,R15)
+    000001BC              L578:                             
+      DataTest.c   120                            } else {
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    8
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    7
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-    000001E4 2F26                   MOV.L       R2,@-R15
-    000001E6 4A0B                   JSR         @R10
-    000001E8 6493                   MOV         R9,R4
-    000001EA 7F10                   ADD         #16,R15
-      DataTest.c   148                            Print(text);
-    000001EC 4C0B                   JSR         @R12
-    000001EE 6493                   MOV         R9,R4
-    000001F0 53F2                   MOV.L       @(8,R15),R3
-    000001F2 7301                   ADD         #1,R3
-    000001F4 1F32                   MOV.L       R3,@(8,R15)
-    000001F6 5EE3                   MOV.L       @(12,R14),R14
-    000001F8 2EE8                   TST         R14,R14
-    000001FA 8BE8                   BF          L563
-      DataTest.c   149    //            Print(netList->network.ssid);
-      DataTest.c   150                    }
-      DataTest.c   151    
-      DataTest.c   152                    GetKey(&key);
-    000001FC 64F3                   MOV         R15,R4
-    000001FE 480B                   JSR         @R8
-    00000200 7408                   ADD         #8,R4
-      DataTest.c   153                    connect(key - 49, (unsigned char*) "123456789");
-    00000202 D51E                   MOV.L       L630+42,R5 ; L420
-    00000204 54F2                   MOV.L       @(8,R15),R4
-    00000206 D31E                   MOV.L       L630+46,R3 ; _connect
+      DataTest.c   121                                    unsigned char c = getCharFromInput(col, row, alpha);
+    000001BC 56F6                   MOV.L       @(24,R15),R6
+    000001BE 55F2                   MOV.L       @(8,R15),R5
+    000001C0 B175                   BSR         _getCharFromInput
+    000001C2 54F1                   MOV.L       @(4,R15),R4
+    000001C4 6903                   MOV         R0,R9
+      DataTest.c   122                                    
+      DataTest.c   123                                    if (c != 0) {
+    000001C6 629C                   EXTU.B      R9,R2
+    000001C8 2228                   TST         R2,R2
+    000001CA 8903                   BT          L572
+      DataTest.c   124                                            buf[strlen(buf)] = c;
+    000001CC 4C0B                   JSR         @R12
+    000001CE 64E3                   MOV         R14,R4
+    000001D0 0E94                   MOV.B       R9,@(R0,R14)
+    000001D2              L513:
+      DataTest.c   125                                            needRedraw = true;
+    000001D2 1FA8                   MOV.L       R10,@(32,R15)
+    000001D4              L572:                             
+      DataTest.c   126                                    }
+      DataTest.c   127                            }
+      DataTest.c   128                            
+      DataTest.c   129                            lastKeyTicks = RTC_GetTicks();
+    000001D4 D31F                   MOV.L       L656+16,R3 ; _RTC_GetTicks
+    000001D6 430B                   JSR         @R3
+    000001D8 0009                   NOP
+    000001DA 1F07                   MOV.L       R0,@(28,R15)
+    000001DC              L570:                             
+      DataTest.c   130                    }
+      DataTest.c   131                    
+      DataTest.c   132                    Keyboard_ClrBuffer();
+    000001DC D31E                   MOV.L       L656+20,R3 ; _Keyboard_ClrBuffer
+    000001DE 430B                   JSR         @R3
+    000001E0 0009                   NOP
+      DataTest.c   133                    
+      DataTest.c   134                    netData = receiveNetDataTimeout(10);
+    000001E2 D91E                   MOV.L       L656+24,R9 ; _receiveNetDataTimeout
+    000001E4 490B                   JSR         @R9
+    000001E6 E40A                   MOV         #10,R4
+      DataTest.c   135                    if (netData != NULL) {
+    000001E8 2008                   TST         R0,R0
+    000001EA 8D18                   BT/S        L582
+    000001EC 1F03                   MOV.L       R0,@(12,R15)
+      DataTest.c   136                            MessageList* msgElement = (MessageList*) malloc(sizeof(MessageList));
+    000001EE 480B                   JSR         @R8
+    000001F0 E40C                   MOV         #12,R4
+    000001F2 6903                   MOV         R0,R9
+      DataTest.c   137                            msgElement->message.msg = (unsigned char*) malloc(netData->length + 1);
+    000001F4 54F3                   MOV.L       @(12,R15),R4
+    000001F6 6442                   MOV.L       @R4,R4
+    000001F8 480B                   JSR         @R8
+    000001FA 7401                   ADD         #1,R4
+    000001FC 2902                   MOV.L       R0,@R9
+      DataTest.c   138                            memcpy(msgElement->message.msg, netData->buf, netData->length);
+    000001FE 56F3                   MOV.L       @(12,R15),R6
+    00000200 55F3                   MOV.L       @(12,R15),R5
+    00000202 6662                   MOV.L       @R6,R6
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    8
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000204 5555                   MOV.L       @(20,R5),R5
+    00000206 D310                   MOV.L       L656+4,R3  ; _memcpy
     00000208 430B                   JSR         @R3
-    0000020A 74CF                   ADD         #-49,R4
-      DataTest.c   154    
-      DataTest.c   155                    Sleep(10000);
-    0000020C 9421                   MOV.W       L630,R4    ; H'2710
-    0000020E D21D                   MOV.L       L630+50,R2 ; _Sleep
-    00000210 420B                   JSR         @R2
-    00000212 0009                   NOP
-      DataTest.c   156                    sendNetData("Hurensohn", 9);
-    00000214 D41C                   MOV.L       L630+54,R4 ; L421
-    00000216 D31D                   MOV.L       L630+58,R3 ; _sendNetData
-    00000218 430B                   JSR         @R3
-    0000021A E509                   MOV         #9,R5
-      DataTest.c   157                    startMillis = RTC_GetTicks();
-    0000021C D20E                   MOV.L       L630+6,R2  ; _RTC_GetTicks
-    0000021E 420B                   JSR         @R2
-    00000220 0009                   NOP
-      DataTest.c   158                    data = receiveNetData();
-    00000222 D31B                   MOV.L       L630+62,R3 ; _receiveNetData
-    00000224 430B                   JSR         @R3
-    00000226 1F03                   MOV.L       R0,@(12,R15)
-      DataTest.c   159                    sprintf(text, "%d", RTC_GetTicks() - startMillis);
-    00000228 D20B                   MOV.L       L630+6,R2  ; _RTC_GetTicks
-    0000022A 420B                   JSR         @R2
-    0000022C 6E03                   MOV         R0,R14
-    0000022E 53F3                   MOV.L       @(12,R15),R3
-    00000230 D218                   MOV.L       L630+66,R2 ; L422
-    00000232 3038                   SUB         R3,R0
-    00000234 940E                   MOV.W       L630+2,R4  ; H'0254
-    00000236 2F06                   MOV.L       R0,@-R15
-    00000238 2F26                   MOV.L       R2,@-R15
-    0000023A 4A0B                   JSR         @R10
-    0000023C 34FC                   ADD         R15,R4
+    0000020A 6492                   MOV.L       @R9,R4
+      DataTest.c   139                            msgElement->message.msg[netData->length] = 0;
+    0000020C 52F3                   MOV.L       @(12,R15),R2
+    0000020E 6322                   MOV.L       @R2,R3
+    00000210 6092                   MOV.L       @R9,R0
+    00000212 03D4                   MOV.B       R13,@(R0,R3)
+      DataTest.c   140                            msgElement->message.user = 1;
+    00000214 19A1                   MOV.L       R10,@(4,R9)
+      DataTest.c   141                            
+      DataTest.c   142                            msgElement->next = messageList;
+    00000216 52F4                   MOV.L       @(16,R15),R2
+    00000218 1922                   MOV.L       R2,@(8,R9)
+      DataTest.c   143                            messageList = msgElement;
+    0000021A 1F94                   MOV.L       R9,@(16,R15)
+      DataTest.c   144                            
+      DataTest.c   145                            needRedraw = true;
+    0000021C 1FA8                   MOV.L       R10,@(32,R15)
+    0000021E              L582:                             
+      DataTest.c   146                    }
+      DataTest.c   147                    
+      DataTest.c   148                    if (needRedraw) {
+    0000021E 53F8                   MOV.L       @(32,R15),R3
+    00000220 2338                   TST         R3,R3
+    00000222 8B01                   BF          L657
+    00000224 AF2F                   BRA         L569
+    00000226 0009                   NOP
+    00000228              L657:                             
+      DataTest.c   149                            Bdisp_AllClr_DDVRAM();
+    00000228 D30D                   MOV.L       L656+28,R3 ; _Bdisp_AllClr_DDVRAM
+    0000022A 430B                   JSR         @R3
+    0000022C 0009                   NOP
+      DataTest.c   150                            index = strlen(buf);
+    0000022E 4C0B                   JSR         @R12
+    00000230 64E3                   MOV         R14,R4
+    00000232 6903                   MOV         R0,R9
+      DataTest.c   151                            if (index > 0) {
+    00000234 4915                   CMP/PL      R9
+    00000236 8B1C                   BF          L584
+      DataTest.c   152                                    if (index > 32) {
+    00000238 E420                   MOV         #32,R4
+    0000023A 3947                   CMP/GT      R4,R9
+    0000023C 8F12                   BF/S        L585
+      DataTest.c   153                                            index -= 32;
+      DataTest.c   154                                    } else {
+      DataTest.c   155                                            index = 0;
+      DataTest.c   156                                    }
+      DataTest.c   157                            
+      DataTest.c   158                                    PrintMini(0, 59, &buf[index], MINI_OVER);
+    0000023E E710                   MOV         #16,R7
+    00000240 A011                   BRA         L586
+    00000242 79E0                   ADD         #-32,R9
+    00000244              L656:                             
+    00000244 0200                   .DATA.W     H'0200
+    00000246 0000                   .DATA.W     0
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    9
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-      DataTest.c   160                    Bdisp_AllClr_VRAM();
-    0000023E D316                   MOV.L       L630+70,R3 ; _Bdisp_AllClr_VRAM
-    00000240 430B                   JSR         @R3
-    00000242 7F08                   ADD         #8,R15
-      DataTest.c   161                    locate(1, 1);
-    00000244 E501                   MOV         #1,R5
-    00000246 4B0B                   JSR         @R11
-    00000248 6453                   MOV         R5,R4
-      DataTest.c   162                    if (data != NULL) {
-    0000024A 2EE8                   TST         R14,R14
-    0000024C 8926                   BT          L564
-      DataTest.c   163                            Print(data->buf);
-    0000024E A026                   BRA         L626
-    00000250 54E5                   MOV.L       @(20,R14),R4
-    00000252              L630:                             
-    00000252 2710                   .DATA.W     H'2710
-    00000254 0254                   .DATA.W     H'0254
-    00000256 0000                   .DATA.W     0
-    00000258 <00000000>             .DATA.L     _RTC_GetTicks
-    0000025C <00000000>             .DATA.L     _Keyboard_ClrBuffer
-    00000260 <00000000>             .DATA.L     _receiveNetDataTimeout
-    00000264 <00000000>             .DATA.L     _memcpy
-    00000268 <00000000>             .DATA.L     _Bdisp_AllClr_DDVRAM
-    0000026C <00000000>             .DATA.L     _PrintMini
-    00000270 <00000000>             .DATA.L     _Bdisp_DrawLineVRAM
-    00000274 <00000000>             .DATA.L     _Bdisp_PutDisp_DD
-    00000278 <00000000>             .DATA.L     L419
-    0000027C <00000000>             .DATA.L     L420
-    00000280 <00000000>             .DATA.L     _connect
-    00000284 <00000000>             .DATA.L     _Sleep
-    00000288 <00000000>             .DATA.L     L421
-    0000028C <00000000>             .DATA.L     _sendNetData
-    00000290 <00000000>             .DATA.L     _receiveNetData
-    00000294 <00000000>             .DATA.L     L422
-    00000298 <00000000>             .DATA.L     _Bdisp_AllClr_VRAM
-    0000029C              L564:                             
-      DataTest.c   164                    } else {
-      DataTest.c   165                            Print((unsigned char*) "No Data");
-    0000029C D43F                   MOV.L       L631+4,R4  ; L425
-    0000029E              L626:                             
-    0000029E 4C0B                   JSR         @R12
-    000002A0 0009                   NOP
-      DataTest.c   166                    }
-      DataTest.c   167                    locate(1, 3);
-    000002A2 E503                   MOV         #3,R5
-    000002A4 4B0B                   JSR         @R11
-    000002A6 E401                   MOV         #1,R4
-      DataTest.c   168                    Print(text);
-    000002A8 9476                   MOV.W       L631,R4    ; H'024C
-    000002AA 4C0B                   JSR         @R12
-    000002AC 34FC                   ADD         R15,R4
-      DataTest.c   169                    disconnect();
-    000002AE D23C                   MOV.L       L631+8,R2  ; _disconnect
-    000002B0 420B                   JSR         @R2
-    000002B2 0009                   NOP
-    000002B4              L568:                             
-      DataTest.c   170            } else {
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   10
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    9
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-      DataTest.c   171                    Print((unsigned char*) "ERROR");
-      DataTest.c   172            }
+    00000248 <00000000>             .DATA.L     _memcpy
+    0000024C <00000000>             .DATA.L     _memset
+    00000250 <00000000>             .DATA.L     _sendNetData
+    00000254 <00000000>             .DATA.L     _RTC_GetTicks
+    00000258 <00000000>             .DATA.L     _Keyboard_ClrBuffer
+    0000025C <00000000>             .DATA.L     _receiveNetDataTimeout
+    00000260 <00000000>             .DATA.L     _Bdisp_AllClr_DDVRAM
+    00000264              L585:                             
+    00000264 69D3                   MOV         R13,R9
+    00000266              L586:                             
+    00000266 6693                   MOV         R9,R6
+    00000268 D344                   MOV.L       L658+8,R3  ; _PrintMini
+    0000026A E53B                   MOV         #59,R5
+    0000026C 36EC                   ADD         R14,R6
+    0000026E 430B                   JSR         @R3
+    00000270 E400                   MOV         #0,R4
+    00000272              L584:                             
+      DataTest.c   159                            }
+      DataTest.c   160                            Bdisp_DrawLineVRAM(0, 57, 127, 57);
+    00000272 E739                   MOV         #57,R7
+    00000274 D942                   MOV.L       L658+12,R9 ; _Bdisp_DrawLineVRAM
+    00000276 E67F                   MOV         #127,R6
+    00000278 6573                   MOV         R7,R5
+    0000027A 490B                   JSR         @R9
+    0000027C E400                   MOV         #0,R4
+      DataTest.c   161                            drawMessages(messageList);
+    0000027E B0F0                   BSR         _drawMessages
+    00000280 54F4                   MOV.L       @(16,R15),R4
+      DataTest.c   162                            Bdisp_PutDisp_DD();
+    00000282 D940                   MOV.L       L658+16,R9 ; _Bdisp_PutDisp_DD
+    00000284 490B                   JSR         @R9
+    00000286 0009                   NOP
+      DataTest.c   163                            
+      DataTest.c   164                            needRedraw = false;
+    00000288 E200                   MOV         #0,R2
+    0000028A AEFC                   BRA         L569
+    0000028C 1F28                   MOV.L       R2,@(32,R15)
+    0000028E              L589:                             
+      DataTest.c   165                    }
+      DataTest.c   166            }
+      DataTest.c   167            
+      DataTest.c   168            
+      DataTest.c   169            
+      DataTest.c   170            netList = getAvailableNetworks();
+      DataTest.c   171    
+      DataTest.c   172            locate(1, 1);
       DataTest.c   173    
-      DataTest.c   174            while(1){
-      DataTest.c   175                    GetKey(&key);
-    000002B4 64F3                   MOV         R15,R4
-    000002B6 480B                   JSR         @R8
-    000002B8 7408                   ADD         #8,R4
-    000002BA AFFB                   BRA         L568
-    000002BC 0009                   NOP
-      DataTest.c   176            }
-      DataTest.c   177    
-      DataTest.c   178            return 1;
-      DataTest.c   179    }
-      DataTest.c   180    
-      DataTest.c   181    void connectScreen() {
-    000002BE              _connectScreen:                  ; function: connectScreen
-                                                           ; frame size=76
-    000002BE 2FE6                   MOV.L       R14,@-R15
-    000002C0 2FD6                   MOV.L       R13,@-R15
-    000002C2 2FC6                   MOV.L       R12,@-R15
-    000002C4 2FB6                   MOV.L       R11,@-R15
-    000002C6 2FA6                   MOV.L       R10,@-R15
-    000002C8 2F96                   MOV.L       R9,@-R15
-    000002CA 2F86                   MOV.L       R8,@-R15
-    000002CC 4F22                   STS.L       PR,@-R15
-    000002CE 7FE4                   ADD         #-28,R15
-      DataTest.c   182            unsigned int key;
-      DataTest.c   183            NetworkList* netList = NULL;
-      DataTest.c   184            unsigned char text[22];
-      DataTest.c   185            
-      DataTest.c   186            netList = getAvailableNetworks();
-    000002D0 D334                   MOV.L       L631+12,R3 ; _getAvailableNetworks
-    000002D2 430B                   JSR         @R3
-    000002D4 0009                   NOP
-      DataTest.c   187                    
-      DataTest.c   188            Bdisp_AllClr_VRAM();
-    000002D6 D234                   MOV.L       L631+16,R2 ; _Bdisp_AllClr_VRAM
+      DataTest.c   174            if (netList != NULL) {
+      DataTest.c   175                    Print((unsigned char*) "RECEIVED");
+      DataTest.c   176    
+      DataTest.c   177                    for (key = 0; netList != NULL; key++, netList = netList->next) {
+      DataTest.c   178                            unsigned char text[51];
+      DataTest.c   179    
+      DataTest.c   180                            locate(1, key + 2);
+    0000028E 65F2                   MOV.L       @R15,R5
+    00000290 D33D                   MOV.L       L658+20,R3 ; _locate
+    00000292 7502                   ADD         #2,R5
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   10
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000294 430B                   JSR         @R3
+    00000296 E401                   MOV         #1,R4
+      DataTest.c   181                            sprintf(text, "%s %d %d", netList->network.ssid, netList->network.rssi, netList->n
+                         +etwork.encType);
+    00000298 5292                   MOV.L       @(8,R9),R2
+    0000029A 2F26                   MOV.L       R2,@-R15
+    0000029C 5391                   MOV.L       @(4,R9),R3
+    0000029E 2F36                   MOV.L       R3,@-R15
+    000002A0 6292                   MOV.L       @R9,R2
+    000002A2 2F26                   MOV.L       R2,@-R15
+    000002A4 D339                   MOV.L       L658+24,R3 ; L432
+    000002A6 2F36                   MOV.L       R3,@-R15
+    000002A8 D239                   MOV.L       L658+28,R2 ; _sprintf
+    000002AA 64F3                   MOV         R15,R4
+    000002AC 420B                   JSR         @R2
+    000002AE 7434                   ADD         #52,R4
+    000002B0 7F10                   ADD         #16,R15
+      DataTest.c   182                            Print(text);
+    000002B2 64F3                   MOV         R15,R4
+    000002B4 4B0B                   JSR         @R11
+    000002B6 7424                   ADD         #36,R4
+    000002B8 63F2                   MOV.L       @R15,R3
+    000002BA 7301                   ADD         #1,R3
+    000002BC 2F32                   MOV.L       R3,@R15
+    000002BE 5993                   MOV.L       @(12,R9),R9
+    000002C0 2998                   TST         R9,R9
+    000002C2 8BE4                   BF          L589
+      DataTest.c   183    //            Print(netList->network.ssid);
+      DataTest.c   184                    }
+      DataTest.c   185    
+      DataTest.c   186                    GetKey(&key);
+    000002C4 D233                   MOV.L       L658+32,R2 ; _GetKey
+    000002C6 420B                   JSR         @R2
+    000002C8 64F3                   MOV         R15,R4
+      DataTest.c   187                    connect(key - 49, (unsigned char*) "123456789");
+    000002CA D533                   MOV.L       L658+36,R5 ; L404
+    000002CC 64F2                   MOV.L       @R15,R4
+    000002CE D333                   MOV.L       L658+40,R3 ; _connect
+    000002D0 430B                   JSR         @R3
+    000002D2 74CF                   ADD         #-49,R4
+      DataTest.c   188    
+      DataTest.c   189                    Sleep(10000);
+    000002D4 944E                   MOV.W       L658,R4    ; H'2710
+    000002D6 D232                   MOV.L       L658+44,R2 ; _Sleep
     000002D8 420B                   JSR         @R2
-    000002DA 6903                   MOV         R0,R9
-      DataTest.c   189    
-      DataTest.c   190            if (netList != NULL) {
-    000002DC DA33                   MOV.L       L631+20,R10; _locate
-    000002DE 2998                   TST         R9,R9
-    000002E0 DB33                   MOV.L       L631+24,R11; _Print
-    000002E2 8937                   BT          L570
-      DataTest.c   191                    int lineIndex = 0;
-      DataTest.c   192                    NetworkList* netElement = netList;
-      DataTest.c   193                    
-      DataTest.c   194                    for (lineIndex = 0; netElement != NULL && lineIndex < 8; lineIndex++, netElement = netElem
-                         +ent->next) {
-    000002E4 D833                   MOV.L       L631+28,R8 ; L419
-    000002E6 6CF3                   MOV         R15,R12
-    000002E8 6E93                   MOV         R9,R14
-    000002EA 7C04                   ADD         #4,R12
-    000002EC A013                   BRA         L571
-    000002EE ED00                   MOV         #0,R13
+    000002DA 0009                   NOP
+      DataTest.c   190                    sendNetData("Hurensohn", 9);
+    000002DC D431                   MOV.L       L658+48,R4 ; L433
+    000002DE D332                   MOV.L       L658+52,R3 ; _sendNetData
+    000002E0 430B                   JSR         @R3
+    000002E2 E509                   MOV         #9,R5
+      DataTest.c   191                    startMillis = RTC_GetTicks();
+    000002E4 D231                   MOV.L       L658+56,R2 ; _RTC_GetTicks
+    000002E6 420B                   JSR         @R2
+    000002E8 0009                   NOP
+      DataTest.c   192                    data = receiveNetData();
+    000002EA D331                   MOV.L       L658+60,R3 ; _receiveNetData
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   11
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   11
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-    000002F0              L572:                             
-      DataTest.c   195                            locate(1, lineIndex + 1);
-    000002F0 65D3                   MOV         R13,R5
-    000002F2 7501                   ADD         #1,R5
-    000002F4 4A0B                   JSR         @R10
-    000002F6 E401                   MOV         #1,R4
-      DataTest.c   196                            sprintf(text, "%s %d %d", netElement->network.ssid, netElement->network.rssi, netE
-                         +lement->network.encType);
-    000002F8 53E2                   MOV.L       @(8,R14),R3
-    000002FA 2F36                   MOV.L       R3,@-R15
-    000002FC 52E1                   MOV.L       @(4,R14),R2
-    000002FE 2F26                   MOV.L       R2,@-R15
-    00000300 63E2                   MOV.L       @R14,R3
-    00000302 2F36                   MOV.L       R3,@-R15
-    00000304 2F86                   MOV.L       R8,@-R15
-    00000306 D22C                   MOV.L       L631+32,R2 ; _sprintf
-    00000308 420B                   JSR         @R2
-    0000030A 64C3                   MOV         R12,R4
-    0000030C 7F10                   ADD         #16,R15
-      DataTest.c   197                            Print(text);
-    0000030E 4B0B                   JSR         @R11
-    00000310 64C3                   MOV         R12,R4
-    00000312 7D01                   ADD         #1,R13
-    00000314 5EE3                   MOV.L       @(12,R14),R14
-    00000316              L571:                             
-    00000316 2EE8                   TST         R14,R14
-    00000318 8902                   BT          L573
-    0000031A E208                   MOV         #8,R2
-    0000031C 3D23                   CMP/GE      R2,R13
-    0000031E 8BE7                   BF          L572
-    00000320              L573:                             
-      DataTest.c   198                    }
-      DataTest.c   199    
-      DataTest.c   200                    GetKey(&key);
-    00000320 D226                   MOV.L       L631+36,R2 ; _GetKey
-    00000322 420B                   JSR         @R2
-    00000324 64F3                   MOV         R15,R4
-      DataTest.c   201                    connect(key - 49, (unsigned char*) "123456789");
-    00000326 D526                   MOV.L       L631+40,R5 ; L420
-    00000328 64F2                   MOV.L       @R15,R4
-    0000032A D326                   MOV.L       L631+44,R3 ; _connect
-    0000032C 430B                   JSR         @R3
-    0000032E 74CF                   ADD         #-49,R4
-      DataTest.c   202                    
-      DataTest.c   203                    Bdisp_AllClr_VRAM();
-    00000330 D21D                   MOV.L       L631+16,R2 ; _Bdisp_AllClr_VRAM
-    00000332 420B                   JSR         @R2
-    00000334 0009                   NOP
-      DataTest.c   204                    locate(1, 1);
-    00000336 E501                   MOV         #1,R5
-    00000338 4A0B                   JSR         @R10
-    0000033A 6453                   MOV         R5,R4
-      DataTest.c   205                    Print((unsigned char*) "Connecting...");
-    0000033C D422                   MOV.L       L631+48,R4 ; L437
-    0000033E 4B0B                   JSR         @R11
-    00000340 0009                   NOP
-      DataTest.c   206                    Bdisp_PutDisp_DD();
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   12
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    00000342 D322                   MOV.L       L631+52,R3 ; _Bdisp_PutDisp_DD
-    00000344 430B                   JSR         @R3
-    00000346 0009                   NOP
+    000002EC 430B                   JSR         @R3
+    000002EE 1F04                   MOV.L       R0,@(16,R15)
+      DataTest.c   193                    sprintf(text, "%d", RTC_GetTicks() - startMillis);
+    000002F0 D22E                   MOV.L       L658+56,R2 ; _RTC_GetTicks
+    000002F2 420B                   JSR         @R2
+    000002F4 6903                   MOV         R0,R9
+    000002F6 53F4                   MOV.L       @(16,R15),R3
+    000002F8 D22E                   MOV.L       L658+64,R2 ; L434
+    000002FA 3038                   SUB         R3,R0
+    000002FC 943B                   MOV.W       L658+2,R4  ; H'0260
+    000002FE 2F06                   MOV.L       R0,@-R15
+    00000300 2F26                   MOV.L       R2,@-R15
+    00000302 D123                   MOV.L       L658+28,R1 ; _sprintf
+    00000304 410B                   JSR         @R1
+    00000306 34FC                   ADD         R15,R4
+      DataTest.c   194                    Bdisp_AllClr_VRAM();
+    00000308 D32B                   MOV.L       L658+68,R3 ; _Bdisp_AllClr_VRAM
+    0000030A 430B                   JSR         @R3
+    0000030C 7F08                   ADD         #8,R15
+      DataTest.c   195                    locate(1, 1);
+    0000030E E501                   MOV         #1,R5
+    00000310 D21D                   MOV.L       L658+20,R2 ; _locate
+    00000312 420B                   JSR         @R2
+    00000314 6453                   MOV         R5,R4
+      DataTest.c   196                    if (data != NULL) {
+    00000316 2998                   TST         R9,R9
+    00000318 8901                   BT          L590
+      DataTest.c   197                            Print(data->buf);
+    0000031A A001                   BRA         L652
+    0000031C 5495                   MOV.L       @(20,R9),R4
+    0000031E              L590:                             
+      DataTest.c   198                    } else {
+      DataTest.c   199                            Print((unsigned char*) "No Data");
+    0000031E D427                   MOV.L       L658+72,R4 ; L437
+    00000320              L652:                             
+    00000320 4B0B                   JSR         @R11
+    00000322 0009                   NOP
+      DataTest.c   200                    }
+      DataTest.c   201                    locate(1, 3);
+    00000324 D318                   MOV.L       L658+20,R3 ; _locate
+    00000326 E503                   MOV         #3,R5
+    00000328 430B                   JSR         @R3
+    0000032A E401                   MOV         #1,R4
+      DataTest.c   202                    Print(text);
+    0000032C 9424                   MOV.W       L658+4,R4  ; H'0258
+    0000032E 4B0B                   JSR         @R11
+    00000330 34FC                   ADD         R15,R4
+      DataTest.c   203                    disconnect();
+    00000332 D223                   MOV.L       L658+76,R2 ; _disconnect
+    00000334 420B                   JSR         @R2
+    00000336 0009                   NOP
+    00000338              L594:                             
+      DataTest.c   204            } else {
+      DataTest.c   205                    Print((unsigned char*) "ERROR");
+      DataTest.c   206            }
       DataTest.c   207    
-      DataTest.c   208                    Sleep(10000);
-    00000348 9427                   MOV.W       L631+2,R4  ; H'2710
-    0000034A D221                   MOV.L       L631+56,R2 ; _Sleep
-    0000034C 420B                   JSR         @R2
-    0000034E 0009                   NOP
-    00000350 A009                   BRA         L574
-    00000352 0009                   NOP
-    00000354              L570:                             
-      DataTest.c   209            } else {
-      DataTest.c   210                    locate(1, 1);
-    00000354 E501                   MOV         #1,R5
-    00000356 4A0B                   JSR         @R10
-    00000358 6453                   MOV         R5,R4
-      DataTest.c   211                    Print((unsigned char*) "No Networks");
-    0000035A D41E                   MOV.L       L631+60,R4 ; L439
-    0000035C 4B0B                   JSR         @R11
-    0000035E 0009                   NOP
-      DataTest.c   212                    GetKey(&key);
-    00000360 D216                   MOV.L       L631+36,R2 ; _GetKey
-    00000362 420B                   JSR         @R2
-    00000364 64F3                   MOV         R15,R4
-    00000366              L574:                             
-      DataTest.c   213            }
-      DataTest.c   214            
-      DataTest.c   215            freeNetList(netList);
-    00000366 D31C                   MOV.L       L631+64,R3 ; _freeNetList
-    00000368 430B                   JSR         @R3
-    0000036A 6493                   MOV         R9,R4
-      DataTest.c   216    }
-    0000036C 7F1C                   ADD         #28,R15
-    0000036E 4F26                   LDS.L       @R15+,PR
-    00000370 68F6                   MOV.L       @R15+,R8
-    00000372 69F6                   MOV.L       @R15+,R9
-    00000374 6AF6                   MOV.L       @R15+,R10
-    00000376 6BF6                   MOV.L       @R15+,R11
-    00000378 6CF6                   MOV.L       @R15+,R12
-    0000037A 6DF6                   MOV.L       @R15+,R13
-    0000037C 000B                   RTS
-    0000037E 6EF6                   MOV.L       @R15+,R14
-      DataTest.c   217    
-      DataTest.c   218    void drawMessages(MessageList* messageList) {
-    00000380              _drawMessages:                   ; function: drawMessages
+      DataTest.c   208            while(1){
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   12
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      DataTest.c   209                    GetKey(&key);
+    00000338 D316                   MOV.L       L658+32,R3 ; _GetKey
+    0000033A 430B                   JSR         @R3
+    0000033C 64F3                   MOV         R15,R4
+    0000033E AFFB                   BRA         L594
+    00000340 0009                   NOP
+      DataTest.c   210            }
+      DataTest.c   211    
+      DataTest.c   212            return 1;
+      DataTest.c   213    }
+      DataTest.c   214    
+      DataTest.c   215    void connectScreen() {
+    00000342              _connectScreen:                  ; function: connectScreen
+                                                           ; frame size=152
+    00000342 2FE6                   MOV.L       R14,@-R15
+    00000344 2FD6                   MOV.L       R13,@-R15
+    00000346 2FC6                   MOV.L       R12,@-R15
+    00000348 2FB6                   MOV.L       R11,@-R15
+    0000034A 2FA6                   MOV.L       R10,@-R15
+    0000034C 2F96                   MOV.L       R9,@-R15
+    0000034E 2F86                   MOV.L       R8,@-R15
+    00000350 4F22                   STS.L       PR,@-R15
+    00000352 7F98                   ADD         #-104,R15
+      DataTest.c   216            unsigned int key;
+      DataTest.c   217            NetworkList* netList = NULL;
+      DataTest.c   218            unsigned char text[100];
+      DataTest.c   219            
+      DataTest.c   220            netList = getAvailableNetworks();
+    00000354 D31B                   MOV.L       L658+80,R3 ; _getAvailableNetworks
+    00000356 430B                   JSR         @R3
+    00000358 0009                   NOP
+      DataTest.c   221                    
+      DataTest.c   222            Bdisp_AllClr_VRAM();
+    0000035A D217                   MOV.L       L658+68,R2 ; _Bdisp_AllClr_VRAM
+    0000035C 420B                   JSR         @R2
+    0000035E 6903                   MOV         R0,R9
+      DataTest.c   223    
+      DataTest.c   224            if (netList != NULL) {
+    00000360 DA09                   MOV.L       L658+20,R10; _locate
+    00000362 2998                   TST         R9,R9
+    00000364 DB18                   MOV.L       L658+84,R11; _Print
+    00000366 8963                   BT          L596
+      DataTest.c   225                    int lineIndex = 0;
+      DataTest.c   226                    NetworkList* netElement = netList;
+      DataTest.c   227                    
+      DataTest.c   228                    for (lineIndex = 0; netElement != NULL && lineIndex < 8; lineIndex++, netElement = netElem
+                         +ent->next) {
+    00000368 D808                   MOV.L       L658+24,R8 ; L432
+    0000036A 6CF3                   MOV         R15,R12
+    0000036C 6E93                   MOV         R9,R14
+    0000036E 7C04                   ADD         #4,R12
+    00000370 A03F                   BRA         L597
+    00000372 ED00                   MOV         #0,R13
+    00000374              L658:                             
+    00000374 2710                   .DATA.W     H'2710
+    00000376 0260                   .DATA.W     H'0260
+    00000378 0258                   .DATA.W     H'0258
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   13
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    0000037A 0000                   .DATA.W     0
+    0000037C <00000000>             .DATA.L     _PrintMini
+    00000380 <00000000>             .DATA.L     _Bdisp_DrawLineVRAM
+    00000384 <00000000>             .DATA.L     _Bdisp_PutDisp_DD
+    00000388 <00000000>             .DATA.L     _locate
+    0000038C <00000000>             .DATA.L     L432
+    00000390 <00000000>             .DATA.L     _sprintf
+    00000394 <00000000>             .DATA.L     _GetKey
+    00000398 <00000000>             .DATA.L     L404
+    0000039C <00000000>             .DATA.L     _connect
+    000003A0 <00000000>             .DATA.L     _Sleep
+    000003A4 <00000000>             .DATA.L     L433
+    000003A8 <00000000>             .DATA.L     _sendNetData
+    000003AC <00000000>             .DATA.L     _RTC_GetTicks
+    000003B0 <00000000>             .DATA.L     _receiveNetData
+    000003B4 <00000000>             .DATA.L     L434
+    000003B8 <00000000>             .DATA.L     _Bdisp_AllClr_VRAM
+    000003BC <00000000>             .DATA.L     L437
+    000003C0 <00000000>             .DATA.L     _disconnect
+    000003C4 <00000000>             .DATA.L     _getAvailableNetworks
+    000003C8 <00000000>             .DATA.L     _Print
+    000003CC              L598:                             
+      DataTest.c   229                            locate(1, lineIndex + 1);
+    000003CC 65D3                   MOV         R13,R5
+    000003CE 7501                   ADD         #1,R5
+    000003D0 4A0B                   JSR         @R10
+    000003D2 E401                   MOV         #1,R4
+      DataTest.c   230                            sprintf(text, "%s %d %d", netElement->network.ssid, netElement->network.rssi, netE
+                         +lement->network.encType);
+    000003D4 53E2                   MOV.L       @(8,R14),R3
+    000003D6 2F36                   MOV.L       R3,@-R15
+    000003D8 52E1                   MOV.L       @(4,R14),R2
+    000003DA 2F26                   MOV.L       R2,@-R15
+    000003DC 63E2                   MOV.L       @R14,R3
+    000003DE 2F36                   MOV.L       R3,@-R15
+    000003E0 2F86                   MOV.L       R8,@-R15
+    000003E2 D23F                   MOV.L       L659+4,R2  ; _sprintf
+    000003E4 420B                   JSR         @R2
+    000003E6 64C3                   MOV         R12,R4
+    000003E8 7F10                   ADD         #16,R15
+      DataTest.c   231                            Print(text);
+    000003EA 4B0B                   JSR         @R11
+    000003EC 64C3                   MOV         R12,R4
+    000003EE 7D01                   ADD         #1,R13
+    000003F0 5EE3                   MOV.L       @(12,R14),R14
+    000003F2              L597:                             
+    000003F2 2EE8                   TST         R14,R14
+    000003F4 8902                   BT          L599
+    000003F6 E208                   MOV         #8,R2
+    000003F8 3D23                   CMP/GE      R2,R13
+    000003FA 8BE7                   BF          L598
+    000003FC              L599:                             
+      DataTest.c   232                    }
+      DataTest.c   233    
+      DataTest.c   234                    GetKey(&key);
+    000003FC D239                   MOV.L       L659+8,R2  ; _GetKey
+    000003FE 420B                   JSR         @R2
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   14
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000400 64F3                   MOV         R15,R4
+      DataTest.c   235                    connect(key - 49, (unsigned char*) "123456789");
+    00000402 D539                   MOV.L       L659+12,R5 ; L404
+    00000404 64F2                   MOV.L       @R15,R4
+    00000406 D339                   MOV.L       L659+16,R3 ; _connect
+    00000408 430B                   JSR         @R3
+    0000040A 74CF                   ADD         #-49,R4
+      DataTest.c   236                    
+      DataTest.c   237                    Bdisp_AllClr_VRAM();
+    0000040C D238                   MOV.L       L659+20,R2 ; _Bdisp_AllClr_VRAM
+    0000040E 420B                   JSR         @R2
+    00000410 0009                   NOP
+      DataTest.c   238                    locate(1, 1);
+    00000412 E501                   MOV         #1,R5
+    00000414 4A0B                   JSR         @R10
+    00000416 6453                   MOV         R5,R4
+      DataTest.c   239                    Print((unsigned char*) "Connecting...");
+    00000418 D436                   MOV.L       L659+24,R4 ; L449
+    0000041A 4B0B                   JSR         @R11
+    0000041C 0009                   NOP
+      DataTest.c   240                    Bdisp_PutDisp_DD();
+    0000041E D336                   MOV.L       L659+28,R3 ; _Bdisp_PutDisp_DD
+    00000420 430B                   JSR         @R3
+    00000422 0009                   NOP
+      DataTest.c   241    
+      DataTest.c   242                    Sleep(2000);
+    00000424 945A                   MOV.W       L659,R4    ; H'07D0
+    00000426 D235                   MOV.L       L659+32,R2 ; _Sleep
+    00000428 420B                   JSR         @R2
+    0000042A 0009                   NOP
+    0000042C A009                   BRA         L600
+    0000042E 0009                   NOP
+    00000430              L596:                             
+      DataTest.c   243            } else {
+      DataTest.c   244                    locate(1, 1);
+    00000430 E501                   MOV         #1,R5
+    00000432 4A0B                   JSR         @R10
+    00000434 6453                   MOV         R5,R4
+      DataTest.c   245                    Print((unsigned char*) "No Networks");
+    00000436 D432                   MOV.L       L659+36,R4 ; L451
+    00000438 4B0B                   JSR         @R11
+    0000043A 0009                   NOP
+      DataTest.c   246                    GetKey(&key);
+    0000043C D229                   MOV.L       L659+8,R2  ; _GetKey
+    0000043E 420B                   JSR         @R2
+    00000440 64F3                   MOV         R15,R4
+    00000442              L600:                             
+      DataTest.c   247            }
+      DataTest.c   248            
+      DataTest.c   249            Bdisp_AllClr_DDVRAM();
+    00000442 D330                   MOV.L       L659+40,R3 ; _Bdisp_AllClr_DDVRAM
+    00000444 430B                   JSR         @R3
+    00000446 0009                   NOP
+      DataTest.c   250            
+      DataTest.c   251            freeNetList(netList);
+    00000448 D22F                   MOV.L       L659+44,R2 ; _freeNetList
+    0000044A 420B                   JSR         @R2
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   15
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    0000044C 6493                   MOV         R9,R4
+      DataTest.c   252    }
+    0000044E 7F68                   ADD         #104,R15
+    00000450 4F26                   LDS.L       @R15+,PR
+    00000452 68F6                   MOV.L       @R15+,R8
+    00000454 69F6                   MOV.L       @R15+,R9
+    00000456 6AF6                   MOV.L       @R15+,R10
+    00000458 6BF6                   MOV.L       @R15+,R11
+    0000045A 6CF6                   MOV.L       @R15+,R12
+    0000045C 6DF6                   MOV.L       @R15+,R13
+    0000045E 000B                   RTS
+    00000460 6EF6                   MOV.L       @R15+,R14
+      DataTest.c   253    
+      DataTest.c   254    void drawMessages(MessageList* messageList) {
+    00000462              _drawMessages:                   ; function: drawMessages
                                                            ; frame size=24
-    00000380 2FE6                   MOV.L       R14,@-R15
-      DataTest.c   219            int lineIndex = 8;
-      DataTest.c   220            MessageList* msgElement = messageList;
-    00000382 6E43                   MOV         R4,R14
-    00000384 2FD6                   MOV.L       R13,@-R15
-    00000386 2FC6                   MOV.L       R12,@-R15
-    00000388 2FB6                   MOV.L       R11,@-R15
-      DataTest.c   221            
-      DataTest.c   222            for (lineIndex = 8; lineIndex >= 0 && msgElement != NULL; lineIndex--, msgElement = msgElement->ne
+    00000462 2FE6                   MOV.L       R14,@-R15
+    00000464 2FD6                   MOV.L       R13,@-R15
+      DataTest.c   255            int lineIndex = 8;
+      DataTest.c   256            MessageList* msgElement = messageList;
+    00000466 6E43                   MOV         R4,R14
+    00000468 2FC6                   MOV.L       R12,@-R15
+      DataTest.c   257            
+      DataTest.c   258            for (lineIndex = 8; lineIndex >= 0 && msgElement != NULL; lineIndex--, msgElement = msgElement->ne
                          +xt) {
+    0000046A EC3F                   MOV         #63,R12
+    0000046C 2FB6                   MOV.L       R11,@-R15
+    0000046E EB00                   MOV         #0,R11
+    00000470 2FA6                   MOV.L       R10,@-R15
+    00000472 4F22                   STS.L       PR,@-R15
+    00000474 DA25                   MOV.L       L659+48,R10; _PrintMini
+    00000476 A00F                   BRA         L601
+    00000478 ED08                   MOV         #8,R13
+    0000047A              L602:                             
+      DataTest.c   259                    int x = 0;
+      DataTest.c   260                    if (msgElement->message.user == 0) {
+    0000047A 52E1                   MOV.L       @(4,R14),R2
+    0000047C 2228                   TST         R2,R2
+    0000047E 8F01                   BF/S        L603
+    00000480 64B3                   MOV         R11,R4
+      DataTest.c   261                            x = 63;
+    00000482 64C3                   MOV         R12,R4
+    00000484              L603:                             
+      DataTest.c   262                    }
+      DataTest.c   263                    PrintMini(x, lineIndex * 6, msgElement->message.msg, MINI_OVER);
+    00000484 66E2                   MOV.L       @R14,R6
+    00000486 65D3                   MOV         R13,R5
+    00000488 E710                   MOV         #16,R7
+    0000048A 63D3                   MOV         R13,R3
+    0000048C 4500                   SHLL        R5
+    0000048E 4308                   SHLL2       R3
+    00000490 4A0B                   JSR         @R10
+    00000492 353C                   ADD         R3,R5
+    00000494 5EE2                   MOV.L       @(8,R14),R14
+    00000496 7DFF                   ADD         #-1,R13
+    00000498              L601:                             
+    00000498 4D11                   CMP/PZ      R13
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   13
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    0000038A EC3F                   MOV         #63,R12
-    0000038C 2FA6                   MOV.L       R10,@-R15
-    0000038E EB00                   MOV         #0,R11
-    00000390 4F22                   STS.L       PR,@-R15
-    00000392 DA12                   MOV.L       L631+68,R10; _PrintMini
-    00000394 A033                   BRA         L575
-    00000396 ED08                   MOV         #8,R13
-    00000398              L631:                             
-    00000398 024C                   .DATA.W     H'024C
-    0000039A 2710                   .DATA.W     H'2710
-    0000039C <00000000>             .DATA.L     L425
-    000003A0 <00000000>             .DATA.L     _disconnect
-    000003A4 <00000000>             .DATA.L     _getAvailableNetworks
-    000003A8 <00000000>             .DATA.L     _Bdisp_AllClr_VRAM
-    000003AC <00000000>             .DATA.L     _locate
-    000003B0 <00000000>             .DATA.L     _Print
-    000003B4 <00000000>             .DATA.L     L419
-    000003B8 <00000000>             .DATA.L     _sprintf
-    000003BC <00000000>             .DATA.L     _GetKey
-    000003C0 <00000000>             .DATA.L     L420
-    000003C4 <00000000>             .DATA.L     _connect
-    000003C8 <00000000>             .DATA.L     L437
-    000003CC <00000000>             .DATA.L     _Bdisp_PutDisp_DD
-    000003D0 <00000000>             .DATA.L     _Sleep
-    000003D4 <00000000>             .DATA.L     L439
-    000003D8 <00000000>             .DATA.L     _freeNetList
-    000003DC <00000000>             .DATA.L     _PrintMini
-    000003E0              L576:                             
-      DataTest.c   223                    int x = 0;
-      DataTest.c   224                    if (msgElement->message.user == 0) {
-    000003E0 52E1                   MOV.L       @(4,R14),R2
-    000003E2 2228                   TST         R2,R2
-    000003E4 8F01                   BF/S        L577
-    000003E6 64B3                   MOV         R11,R4
-      DataTest.c   225                            x = 63;
-    000003E8 64C3                   MOV         R12,R4
-    000003EA              L577:                             
-      DataTest.c   226                    }
-      DataTest.c   227                    PrintMini(x, lineIndex * 6, msgElement->message.msg, MINI_OVER);
-    000003EA E710                   MOV         #16,R7
-    000003EC 66E2                   MOV.L       @R14,R6
-    000003EE 65D3                   MOV         R13,R5
-    000003F0 63D3                   MOV         R13,R3
-    000003F2 4500                   SHLL        R5
-    000003F4 4308                   SHLL2       R3
-    000003F6 4A0B                   JSR         @R10
-    000003F8 353C                   ADD         R3,R5
-    000003FA 7DFF                   ADD         #-1,R13
-    000003FC 5EE2                   MOV.L       @(8,R14),R14
-    000003FE              L575:                             
-    000003FE 4D11                   CMP/PZ      R13
-    00000400 8B01                   BF          L578
-    00000402 2EE8                   TST         R14,R14
-    00000404 8BEC                   BF          L576
-    00000406              L578:                             
-      DataTest.c   228            }
-      DataTest.c   229    }
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   14
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   16
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-    00000406 4F26                   LDS.L       @R15+,PR
-    00000408 6AF6                   MOV.L       @R15+,R10
-    0000040A 6BF6                   MOV.L       @R15+,R11
-    0000040C 6CF6                   MOV.L       @R15+,R12
-    0000040E 6DF6                   MOV.L       @R15+,R13
-    00000410 000B                   RTS
-    00000412 6EF6                   MOV.L       @R15+,R14
-      DataTest.c   230    
-      DataTest.c   231    char getCharFromInput(int column, int row, bool alpha) {
-    00000414              _getCharFromInput:               ; function: getCharFromInput
-                                                           ; frame size=0
-      DataTest.c   232            switch (row) {
-    00000414 6053                   MOV         R5,R0
-    00000416 8802                   CMP/EQ      #2,R0
-    00000418 8911                   BT          L510
-    0000041A 8803                   CMP/EQ      #3,R0
-    0000041C 892E                   BT          L515
-    0000041E 8804                   CMP/EQ      #4,R0
-    00000420 8957                   BT          L521
-    00000422 8805                   CMP/EQ      #5,R0
-    00000424 8B01                   BF          L632
-    00000426 A07F                   BRA         L527
-    00000428 0009                   NOP
-    0000042A              L632:                             
-    0000042A 8806                   CMP/EQ      #6,R0
-    0000042C 8B01                   BF          L633
-    0000042E A096                   BRA         L531
-    00000430 0009                   NOP
-    00000432              L633:                             
-    00000432 8807                   CMP/EQ      #7,R0
-    00000434 8B01                   BF          L634
-    00000436 A0B9                   BRA         L538
-    00000438 0009                   NOP
-    0000043A              L634:                             
-    0000043A A0D2                   BRA         L579
-    0000043C 0009                   NOP
-    0000043E              L510:                            ; case label 
-      DataTest.c   233                    case 2:
-      DataTest.c   234                            switch (column) {
-    0000043E 6043                   MOV         R4,R0
-    00000440 8804                   CMP/EQ      #4,R0
-    00000442 8907                   BT          L511
-    00000444 8805                   CMP/EQ      #5,R0
-    00000446 8907                   BT          L512
-    00000448 8806                   CMP/EQ      #6,R0
-    0000044A 890B                   BT          L513
-    0000044C 8807                   CMP/EQ      #7,R0
-    0000044E 890F                   BT          L514
-    00000450 A0C7                   BRA         L579
-    00000452 0009                   NOP
-    00000454              L511:                            ; case label 
-      DataTest.c   235                                    case 4:
-      DataTest.c   236                                            return 0x87;
-    00000454 000B                   RTS
-    00000456 E087                   MOV         #-121,R0
-    00000458              L512:                            ; case label 
-      DataTest.c   237                                            break;
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   15
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-      DataTest.c   238                                    case 5:
-      DataTest.c   239                                            if (alpha) {
-    00000458 2668                   TST         R6,R6
-    0000045A 8901                   BT          L582
-      DataTest.c   240                                                    return 0x22;
-    0000045C 000B                   RTS
-    0000045E E022                   MOV         #34,R0
-    00000460              L582:                             
-      DataTest.c   241                                            } else {
-      DataTest.c   242                                                    return 0x0F;
-    00000460 000B                   RTS
-    00000462 E00F                   MOV         #15,R0
-    00000464              L513:                            ; case label 
-      DataTest.c   243                                            }
-      DataTest.c   244                                            break;
-      DataTest.c   245                                    case 6:
-      DataTest.c   246                                            if (alpha) {
-    00000464 2668                   TST         R6,R6
-    00000466 8901                   BT          L584
-      DataTest.c   247                                                    return ' ';
-    00000468 000B                   RTS
-    0000046A E020                   MOV         #32,R0
-    0000046C              L584:                             
-      DataTest.c   248                                            } else {
-      DataTest.c   249                                                    return 0x2E;
-    0000046C 000B                   RTS
-    0000046E E02E                   MOV         #46,R0
-    00000470              L514:                            ; case label 
-      DataTest.c   250                                            }
-      DataTest.c   251                                            break;
-      DataTest.c   252                                    case 7:
-      DataTest.c   253                                            if (alpha) {
-    00000470 2668                   TST         R6,R6
-    00000472 8901                   BT          L586
-      DataTest.c   254                                                    return 'Z';
-    00000474 000B                   RTS
-    00000476 E05A                   MOV         #90,R0
-    00000478              L586:                             
-      DataTest.c   255                                            } else {
-      DataTest.c   256                                                    return '0';
-    00000478 000B                   RTS
-    0000047A E030                   MOV         #48,R0
-    0000047C              L515:                            ; case label 
-      DataTest.c   257                                            }
-      DataTest.c   258                                            break;
-      DataTest.c   259                            }
-      DataTest.c   260                            break;
-      DataTest.c   261                    case 3:
-      DataTest.c   262                            switch (column) {
-    0000047C 6043                   MOV         R4,R0
-    0000047E 8803                   CMP/EQ      #3,R0
-    00000480 8909                   BT          L516
-    00000482 8804                   CMP/EQ      #4,R0
-    00000484 890D                   BT          L517
-    00000486 8805                   CMP/EQ      #5,R0
-    00000488 8911                   BT          L518
-    0000048A 8806                   CMP/EQ      #6,R0
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   16
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    0000048C 8915                   BT          L519
-    0000048E 8807                   CMP/EQ      #7,R0
-    00000490 8919                   BT          L520
-    00000492 A0A6                   BRA         L579
-    00000494 0009                   NOP
-    00000496              L516:                            ; case label 
-      DataTest.c   263                                    case 3:
-      DataTest.c   264                                            if (alpha) {
-    00000496 2668                   TST         R6,R6
-    00000498 8901                   BT          L589
-      DataTest.c   265                                                    return 'Y';
-    0000049A 000B                   RTS
-    0000049C E059                   MOV         #89,R0
-    0000049E              L589:                             
-      DataTest.c   266                                            } else {
-      DataTest.c   267                                                    return '-';
-    0000049E 000B                   RTS
-    000004A0 E02D                   MOV         #45,R0
-    000004A2              L517:                            ; case label 
-      DataTest.c   268                                            }
-      DataTest.c   269                                            break;
-      DataTest.c   270                                    case 4:
-      DataTest.c   271                                            if (alpha) {
-    000004A2 2668                   TST         R6,R6
-    000004A4 8901                   BT          L591
-      DataTest.c   272                                                    return 'X';
-    000004A6 000B                   RTS
-    000004A8 E058                   MOV         #88,R0
-    000004AA              L591:                             
-      DataTest.c   273                                            } else {
-      DataTest.c   274                                                    return '+';
+    0000049A 8B01                   BF          L604
+    0000049C 2EE8                   TST         R14,R14
+    0000049E 8BEC                   BF          L602
+    000004A0              L604:                             
+      DataTest.c   264            }
+      DataTest.c   265    }
+    000004A0 4F26                   LDS.L       @R15+,PR
+    000004A2 6AF6                   MOV.L       @R15+,R10
+    000004A4 6BF6                   MOV.L       @R15+,R11
+    000004A6 6CF6                   MOV.L       @R15+,R12
+    000004A8 6DF6                   MOV.L       @R15+,R13
     000004AA 000B                   RTS
-    000004AC E02B                   MOV         #43,R0
-    000004AE              L518:                            ; case label 
-      DataTest.c   275                                            }
-      DataTest.c   276                                            break;
-      DataTest.c   277                                    case 5:
-      DataTest.c   278                                            if (alpha) {
-    000004AE 2668                   TST         R6,R6
-    000004B0 8901                   BT          L593
-      DataTest.c   279                                                    return 'W';
-    000004B2 000B                   RTS
-    000004B4 E057                   MOV         #87,R0
-    000004B6              L593:                             
-      DataTest.c   280                                            } else {
-      DataTest.c   281                                                    return '3';
-    000004B6 000B                   RTS
-    000004B8 E033                   MOV         #51,R0
-    000004BA              L519:                            ; case label 
-      DataTest.c   282                                            }
-      DataTest.c   283                                            break;
-      DataTest.c   284                                    case 6:
-      DataTest.c   285                                            if (alpha) {
-    000004BA 2668                   TST         R6,R6
-    000004BC 8901                   BT          L595
-      DataTest.c   286                                                    return 'V';
-    000004BE 000B                   RTS
+    000004AC 6EF6                   MOV.L       @R15+,R14
+      DataTest.c   266    
+      DataTest.c   267    char getCharFromInput(int column, int row, bool alpha) {
+    000004AE              _getCharFromInput:               ; function: getCharFromInput
+                                                           ; frame size=0
+      DataTest.c   268            switch (row) {
+    000004AE 6053                   MOV         R5,R0
+    000004B0 8802                   CMP/EQ      #2,R0
+    000004B2 892D                   BT          L526
+    000004B4 8803                   CMP/EQ      #3,R0
+    000004B6 894A                   BT          L531
+    000004B8 8804                   CMP/EQ      #4,R0
+    000004BA 8B01                   BF          L660
+    000004BC A072                   BRA         L537
+    000004BE 0009                   NOP
+    000004C0              L660:                             
+    000004C0 8805                   CMP/EQ      #5,R0
+    000004C2 8B01                   BF          L661
+    000004C4 A099                   BRA         L543
+    000004C6 0009                   NOP
+    000004C8              L661:                             
+    000004C8 8806                   CMP/EQ      #6,R0
+    000004CA 8B01                   BF          L662
+    000004CC A0B0                   BRA         L547
+    000004CE 0009                   NOP
+    000004D0              L662:                             
+    000004D0 8807                   CMP/EQ      #7,R0
+    000004D2 8B01                   BF          L663
+    000004D4 A0D3                   BRA         L554
+    000004D6 0009                   NOP
+    000004D8              L663:                             
+    000004D8 A0EC                   BRA         L605
+    000004DA 0009                   NOP
+    000004DC              L659:                             
+    000004DC 07D0                   .DATA.W     H'07D0
+    000004DE 0000                   .DATA.W     0
+    000004E0 <00000000>             .DATA.L     _sprintf
+    000004E4 <00000000>             .DATA.L     _GetKey
+    000004E8 <00000000>             .DATA.L     L404
+    000004EC <00000000>             .DATA.L     _connect
+    000004F0 <00000000>             .DATA.L     _Bdisp_AllClr_VRAM
+    000004F4 <00000000>             .DATA.L     L449
+    000004F8 <00000000>             .DATA.L     _Bdisp_PutDisp_DD
+    000004FC <00000000>             .DATA.L     _Sleep
+    00000500 <00000000>             .DATA.L     L451
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   17
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    000004C0 E056                   MOV         #86,R0
-    000004C2              L595:                             
-      DataTest.c   287                                            } else {
-      DataTest.c   288                                                    return '2';
-    000004C2 000B                   RTS
-    000004C4 E032                   MOV         #50,R0
-    000004C6              L520:                            ; case label 
-      DataTest.c   289                                            }
-      DataTest.c   290                                            break;
-      DataTest.c   291                                    case 7:
-      DataTest.c   292                                            if (alpha) {
-    000004C6 2668                   TST         R6,R6
-    000004C8 8901                   BT          L597
-      DataTest.c   293                                                    return 'U';
-    000004CA 000B                   RTS
-    000004CC E055                   MOV         #85,R0
-    000004CE              L597:                             
-      DataTest.c   294                                            } else {
-      DataTest.c   295                                                    return '1';
-    000004CE 000B                   RTS
-    000004D0 E031                   MOV         #49,R0
-    000004D2              L521:                            ; case label 
-      DataTest.c   296                                            }
-      DataTest.c   297                                            break;
-      DataTest.c   298                            }
-      DataTest.c   299                            break;
-      DataTest.c   300                    case 4:
-      DataTest.c   301                            switch (column) {
-    000004D2 6043                   MOV         R4,R0
-    000004D4 8803                   CMP/EQ      #3,R0
-    000004D6 8909                   BT          L522
-    000004D8 8804                   CMP/EQ      #4,R0
-    000004DA 890D                   BT          L523
-    000004DC 8805                   CMP/EQ      #5,R0
-    000004DE 8911                   BT          L524
-    000004E0 8806                   CMP/EQ      #6,R0
-    000004E2 8915                   BT          L525
-    000004E4 8807                   CMP/EQ      #7,R0
-    000004E6 8919                   BT          L526
-    000004E8 A07B                   BRA         L579
-    000004EA 0009                   NOP
-    000004EC              L522:                            ; case label 
-      DataTest.c   302                                    case 3:
-      DataTest.c   303                                            if (alpha) {
-    000004EC 2668                   TST         R6,R6
-    000004EE 8901                   BT          L600
-      DataTest.c   304                                                    return 'T';
-    000004F0 000B                   RTS
-    000004F2 E054                   MOV         #84,R0
-    000004F4              L600:                             
-      DataTest.c   305                                            } else {
-      DataTest.c   306                                                    return 0xB9;
-    000004F4 000B                   RTS
-    000004F6 E0B9                   MOV         #-71,R0
-    000004F8              L523:                            ; case label 
-      DataTest.c   307                                            }
-      DataTest.c   308                                            break;
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   18
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   17
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-      DataTest.c   309                                    case 4:
-      DataTest.c   310                                            if (alpha) {
-    000004F8 2668                   TST         R6,R6
-    000004FA 8901                   BT          L602
-      DataTest.c   311                                                    return 'S';
-    000004FC 000B                   RTS
-    000004FE E053                   MOV         #83,R0
-    00000500              L602:                             
-      DataTest.c   312                                            } else {
-      DataTest.c   313                                                    return 0xA9;
-    00000500 000B                   RTS
-    00000502 E0A9                   MOV         #-87,R0
-    00000504              L524:                            ; case label 
-      DataTest.c   314                                            }
-      DataTest.c   315                                            break;
-      DataTest.c   316                                    case 5:
-      DataTest.c   317                                            if (alpha) {
-    00000504 2668                   TST         R6,R6
-    00000506 8901                   BT          L604
-      DataTest.c   318                                                    return 'R';
-    00000508 000B                   RTS
-    0000050A E052                   MOV         #82,R0
-    0000050C              L604:                             
-      DataTest.c   319                                            } else {
-      DataTest.c   320                                                    return '6';
-    0000050C 000B                   RTS
-    0000050E E036                   MOV         #54,R0
-    00000510              L525:                            ; case label 
-      DataTest.c   321                                            }
-      DataTest.c   322                                            break;
-      DataTest.c   323                                    case 6:
-      DataTest.c   324                                            if (alpha) {
-    00000510 2668                   TST         R6,R6
-    00000512 8901                   BT          L606
-      DataTest.c   325                                                    return 'Q';
-    00000514 000B                   RTS
-    00000516 E051                   MOV         #81,R0
-    00000518              L606:                             
-      DataTest.c   326                                            } else {
-      DataTest.c   327                                                    return '5';
-    00000518 000B                   RTS
-    0000051A E035                   MOV         #53,R0
-    0000051C              L526:                            ; case label 
-      DataTest.c   328                                            }
-      DataTest.c   329                                            break;
-      DataTest.c   330                                    case 7:
-      DataTest.c   331                                            if (alpha) {
-    0000051C 2668                   TST         R6,R6
-    0000051E 8901                   BT          L608
-      DataTest.c   332                                                    return 'P';
-    00000520 000B                   RTS
-    00000522 E050                   MOV         #80,R0
-    00000524              L608:                             
-      DataTest.c   333                                            } else {
-      DataTest.c   334                                                    return '4';
-    00000524 000B                   RTS
-    00000526 E034                   MOV         #52,R0
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   19
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    00000528              L527:                            ; case label 
-      DataTest.c   335                                            }
-      DataTest.c   336                                            break;
-      DataTest.c   337                            }
-      DataTest.c   338                            break;
-      DataTest.c   339                    case 5:
-      DataTest.c   340                            switch (column) {
-    00000528 6043                   MOV         R4,R0
-    0000052A 8805                   CMP/EQ      #5,R0
-    0000052C 8905                   BT          L528
-    0000052E 8806                   CMP/EQ      #6,R0
-    00000530 8909                   BT          L529
-    00000532 8807                   CMP/EQ      #7,R0
-    00000534 890D                   BT          L530
-    00000536 A054                   BRA         L579
-    00000538 0009                   NOP
-    0000053A              L528:                            ; case label 
-      DataTest.c   341                                    case 5:
-      DataTest.c   342                                            if (alpha) {
-    0000053A 2668                   TST         R6,R6
-    0000053C 8901                   BT          L611
-      DataTest.c   343                                                    return 'O';
+    00000504 <00000000>             .DATA.L     _Bdisp_AllClr_DDVRAM
+    00000508 <00000000>             .DATA.L     _freeNetList
+    0000050C <00000000>             .DATA.L     _PrintMini
+    00000510              L526:                            ; case label 
+      DataTest.c   269                    case 2:
+      DataTest.c   270                            switch (column) {
+    00000510 6043                   MOV         R4,R0
+    00000512 8804                   CMP/EQ      #4,R0
+    00000514 8907                   BT          L527
+    00000516 8805                   CMP/EQ      #5,R0
+    00000518 8907                   BT          L528
+    0000051A 8806                   CMP/EQ      #6,R0
+    0000051C 890B                   BT          L529
+    0000051E 8807                   CMP/EQ      #7,R0
+    00000520 890F                   BT          L530
+    00000522 A0C7                   BRA         L605
+    00000524 0009                   NOP
+    00000526              L527:                            ; case label 
+      DataTest.c   271                                    case 4:
+      DataTest.c   272                                            return 0x87;
+    00000526 000B                   RTS
+    00000528 E087                   MOV         #-121,R0
+    0000052A              L528:                            ; case label 
+      DataTest.c   273                                            break;
+      DataTest.c   274                                    case 5:
+      DataTest.c   275                                            if (alpha) {
+    0000052A 2668                   TST         R6,R6
+    0000052C 8901                   BT          L608
+      DataTest.c   276                                                    return 0x22;
+    0000052E 000B                   RTS
+    00000530 E022                   MOV         #34,R0
+    00000532              L608:                             
+      DataTest.c   277                                            } else {
+      DataTest.c   278                                                    return 0x0F;
+    00000532 000B                   RTS
+    00000534 E00F                   MOV         #15,R0
+    00000536              L529:                            ; case label 
+      DataTest.c   279                                            }
+      DataTest.c   280                                            break;
+      DataTest.c   281                                    case 6:
+      DataTest.c   282                                            if (alpha) {
+    00000536 2668                   TST         R6,R6
+    00000538 8901                   BT          L610
+      DataTest.c   283                                                    return ' ';
+    0000053A 000B                   RTS
+    0000053C E020                   MOV         #32,R0
+    0000053E              L610:                             
+      DataTest.c   284                                            } else {
+      DataTest.c   285                                                    return 0x2E;
     0000053E 000B                   RTS
-    00000540 E04F                   MOV         #79,R0
-    00000542              L611:                             
-      DataTest.c   344                                            } else {
-      DataTest.c   345                                                    return '9';
-    00000542 000B                   RTS
-    00000544 E039                   MOV         #57,R0
-    00000546              L529:                            ; case label 
-      DataTest.c   346                                            }
-      DataTest.c   347                                            break;
-      DataTest.c   348                                    case 6:
-      DataTest.c   349                                            if (alpha) {
-    00000546 2668                   TST         R6,R6
-    00000548 8901                   BT          L613
-      DataTest.c   350                                                    return 'N';
+    00000540 E02E                   MOV         #46,R0
+    00000542              L530:                            ; case label 
+      DataTest.c   286                                            }
+      DataTest.c   287                                            break;
+      DataTest.c   288                                    case 7:
+      DataTest.c   289                                            if (alpha) {
+    00000542 2668                   TST         R6,R6
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   18
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000544 8901                   BT          L612
+      DataTest.c   290                                                    return 'Z';
+    00000546 000B                   RTS
+    00000548 E05A                   MOV         #90,R0
+    0000054A              L612:                             
+      DataTest.c   291                                            } else {
+      DataTest.c   292                                                    return '0';
     0000054A 000B                   RTS
-    0000054C E04E                   MOV         #78,R0
-    0000054E              L613:                             
-      DataTest.c   351                                            } else {
-      DataTest.c   352                                                    return '8';
-    0000054E 000B                   RTS
-    00000550 E038                   MOV         #56,R0
-    00000552              L530:                            ; case label 
-      DataTest.c   353                                            }
-      DataTest.c   354                                            break;
-      DataTest.c   355                                    case 7:
-      DataTest.c   356                                            if (alpha) {
-    00000552 2668                   TST         R6,R6
-    00000554 8901                   BT          L615
-      DataTest.c   357                                                    return 'M';
-    00000556 000B                   RTS
-    00000558 E04D                   MOV         #77,R0
-    0000055A              L615:                             
-      DataTest.c   358                                            } else {
-      DataTest.c   359                                                    return '7';
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   20
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    0000055A 000B                   RTS
-    0000055C E037                   MOV         #55,R0
-    0000055E              L531:                            ; case label 
-      DataTest.c   360                                            }
-      DataTest.c   361                                            break;
-      DataTest.c   362                            }
-      DataTest.c   363                            break;
-      DataTest.c   364                    case 6:
-      DataTest.c   365                            switch (column) {
-    0000055E 6043                   MOV         R4,R0
-    00000560 8802                   CMP/EQ      #2,R0
-    00000562 890B                   BT          L532
-    00000564 8803                   CMP/EQ      #3,R0
-    00000566 890B                   BT          L533
-    00000568 8804                   CMP/EQ      #4,R0
-    0000056A 890F                   BT          L534
-    0000056C 8805                   CMP/EQ      #5,R0
-    0000056E 8913                   BT          L535
-    00000570 8806                   CMP/EQ      #6,R0
-    00000572 8917                   BT          L536
-    00000574 8807                   CMP/EQ      #7,R0
-    00000576 8917                   BT          L537
-    00000578 A033                   BRA         L579
-    0000057A 0009                   NOP
-    0000057C              L532:                            ; case label 
-      DataTest.c   366                                    case 2:
-      DataTest.c   367                                            return 'L';
+    0000054C E030                   MOV         #48,R0
+    0000054E              L531:                            ; case label 
+      DataTest.c   293                                            }
+      DataTest.c   294                                            break;
+      DataTest.c   295                            }
+      DataTest.c   296                            break;
+      DataTest.c   297                    case 3:
+      DataTest.c   298                            switch (column) {
+    0000054E 6043                   MOV         R4,R0
+    00000550 8803                   CMP/EQ      #3,R0
+    00000552 8909                   BT          L532
+    00000554 8804                   CMP/EQ      #4,R0
+    00000556 890D                   BT          L533
+    00000558 8805                   CMP/EQ      #5,R0
+    0000055A 8911                   BT          L534
+    0000055C 8806                   CMP/EQ      #6,R0
+    0000055E 8915                   BT          L535
+    00000560 8807                   CMP/EQ      #7,R0
+    00000562 8919                   BT          L536
+    00000564 A0A6                   BRA         L605
+    00000566 0009                   NOP
+    00000568              L532:                            ; case label 
+      DataTest.c   299                                    case 3:
+      DataTest.c   300                                            if (alpha) {
+    00000568 2668                   TST         R6,R6
+    0000056A 8901                   BT          L615
+      DataTest.c   301                                                    return 'Y';
+    0000056C 000B                   RTS
+    0000056E E059                   MOV         #89,R0
+    00000570              L615:                             
+      DataTest.c   302                                            } else {
+      DataTest.c   303                                                    return '-';
+    00000570 000B                   RTS
+    00000572 E02D                   MOV         #45,R0
+    00000574              L533:                            ; case label 
+      DataTest.c   304                                            }
+      DataTest.c   305                                            break;
+      DataTest.c   306                                    case 4:
+      DataTest.c   307                                            if (alpha) {
+    00000574 2668                   TST         R6,R6
+    00000576 8901                   BT          L617
+      DataTest.c   308                                                    return 'X';
+    00000578 000B                   RTS
+    0000057A E058                   MOV         #88,R0
+    0000057C              L617:                             
+      DataTest.c   309                                            } else {
+      DataTest.c   310                                                    return '+';
     0000057C 000B                   RTS
-    0000057E E04C                   MOV         #76,R0
-    00000580              L533:                            ; case label 
-      DataTest.c   368                                            break;
-      DataTest.c   369                                    case 3:
-      DataTest.c   370                                            if (alpha) {
+    0000057E E02B                   MOV         #43,R0
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   19
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000580              L534:                            ; case label 
+      DataTest.c   311                                            }
+      DataTest.c   312                                            break;
+      DataTest.c   313                                    case 5:
+      DataTest.c   314                                            if (alpha) {
     00000580 2668                   TST         R6,R6
-    00000582 8901                   BT          L618
-      DataTest.c   371                                                    return 'K';
+    00000582 8901                   BT          L619
+      DataTest.c   315                                                    return 'W';
     00000584 000B                   RTS
-    00000586 E04B                   MOV         #75,R0
-    00000588              L618:                             
-      DataTest.c   372                                            } else {
-      DataTest.c   373                                                    return ',';
+    00000586 E057                   MOV         #87,R0
+    00000588              L619:                             
+      DataTest.c   316                                            } else {
+      DataTest.c   317                                                    return '3';
     00000588 000B                   RTS
-    0000058A E02C                   MOV         #44,R0
-    0000058C              L534:                            ; case label 
-      DataTest.c   374                                            }
-      DataTest.c   375                                            break;
-      DataTest.c   376                                    case 4:
-      DataTest.c   377                                            if (alpha) {
+    0000058A E033                   MOV         #51,R0
+    0000058C              L535:                            ; case label 
+      DataTest.c   318                                            }
+      DataTest.c   319                                            break;
+      DataTest.c   320                                    case 6:
+      DataTest.c   321                                            if (alpha) {
     0000058C 2668                   TST         R6,R6
-    0000058E 8901                   BT          L620
-      DataTest.c   378                                                    return 'J';
+    0000058E 8901                   BT          L621
+      DataTest.c   322                                                    return 'V';
     00000590 000B                   RTS
-    00000592 E04A                   MOV         #74,R0
-    00000594              L620:                             
-      DataTest.c   379                                            } else {
-      DataTest.c   380                                                    return ')';
+    00000592 E056                   MOV         #86,R0
+    00000594              L621:                             
+      DataTest.c   323                                            } else {
+      DataTest.c   324                                                    return '2';
     00000594 000B                   RTS
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   21
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-    00000596 E029                   MOV         #41,R0
-    00000598              L535:                            ; case label 
-      DataTest.c   381                                            }
-      DataTest.c   382                                            break;
-      DataTest.c   383                                    case 5:
-      DataTest.c   384                                            if (alpha) {
+    00000596 E032                   MOV         #50,R0
+    00000598              L536:                            ; case label 
+      DataTest.c   325                                            }
+      DataTest.c   326                                            break;
+      DataTest.c   327                                    case 7:
+      DataTest.c   328                                            if (alpha) {
     00000598 2668                   TST         R6,R6
-    0000059A 8901                   BT          L622
-      DataTest.c   385                                                    return 'I';
+    0000059A 8901                   BT          L623
+      DataTest.c   329                                                    return 'U';
     0000059C 000B                   RTS
-    0000059E E049                   MOV         #73,R0
-    000005A0              L622:                             
-      DataTest.c   386                                            } else {
-      DataTest.c   387                                                    return '(';
+    0000059E E055                   MOV         #85,R0
+    000005A0              L623:                             
+      DataTest.c   330                                            } else {
+      DataTest.c   331                                                    return '1';
     000005A0 000B                   RTS
-    000005A2 E028                   MOV         #40,R0
-    000005A4              L536:                            ; case label 
-      DataTest.c   388                                            }
-      DataTest.c   389                                            break;
-      DataTest.c   390                                    case 6:
-      DataTest.c   391                                            return 'H';
-    000005A4 000B                   RTS
-    000005A6 E048                   MOV         #72,R0
-    000005A8              L537:                            ; case label 
-      DataTest.c   392                                            break;
-      DataTest.c   393                                    case 7:
-      DataTest.c   394                                            return 'G';
-    000005A8 000B                   RTS
-    000005AA E047                   MOV         #71,R0
-    000005AC              L538:                            ; case label 
-      DataTest.c   395                                            break;
-      DataTest.c   396                            }
-      DataTest.c   397                            break;
-      DataTest.c   398                    case 7:
-      DataTest.c   399                            switch (column) {
-    000005AC 6043                   MOV         R4,R0
-    000005AE 8802                   CMP/EQ      #2,R0
-    000005B0 890B                   BT          L539
-    000005B2 8803                   CMP/EQ      #3,R0
-    000005B4 890B                   BT          L540
-    000005B6 8804                   CMP/EQ      #4,R0
-    000005B8 890B                   BT          L541
-    000005BA 8805                   CMP/EQ      #5,R0
-    000005BC 890B                   BT          L542
-    000005BE 8806                   CMP/EQ      #6,R0
-    000005C0 890B                   BT          L543
-    000005C2 8807                   CMP/EQ      #7,R0
-    000005C4 890B                   BT          L544
-    000005C6 A00C                   BRA         L579
-    000005C8 0009                   NOP
+    000005A2 E031                   MOV         #49,R0
+    000005A4              L537:                            ; case label 
+      DataTest.c   332                                            }
+      DataTest.c   333                                            break;
+      DataTest.c   334                            }
+      DataTest.c   335                            break;
+      DataTest.c   336                    case 4:
+      DataTest.c   337                            switch (column) {
+    000005A4 6043                   MOV         R4,R0
+    000005A6 8803                   CMP/EQ      #3,R0
+    000005A8 8909                   BT          L538
+    000005AA 8804                   CMP/EQ      #4,R0
+    000005AC 890D                   BT          L539
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   20
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000005AE 8805                   CMP/EQ      #5,R0
+    000005B0 8911                   BT          L540
+    000005B2 8806                   CMP/EQ      #6,R0
+    000005B4 8915                   BT          L541
+    000005B6 8807                   CMP/EQ      #7,R0
+    000005B8 8919                   BT          L542
+    000005BA A07B                   BRA         L605
+    000005BC 0009                   NOP
+    000005BE              L538:                            ; case label 
+      DataTest.c   338                                    case 3:
+      DataTest.c   339                                            if (alpha) {
+    000005BE 2668                   TST         R6,R6
+    000005C0 8901                   BT          L626
+      DataTest.c   340                                                    return 'T';
+    000005C2 000B                   RTS
+    000005C4 E054                   MOV         #84,R0
+    000005C6              L626:                             
+      DataTest.c   341                                            } else {
+      DataTest.c   342                                                    return 0xB9;
+    000005C6 000B                   RTS
+    000005C8 E0B9                   MOV         #-71,R0
     000005CA              L539:                            ; case label 
-      DataTest.c   400                                    case 2:
-      DataTest.c   401                                            return 'F';
-    000005CA 000B                   RTS
-    000005CC E046                   MOV         #70,R0
-    000005CE              L540:                            ; case label 
-      DataTest.c   402                                            break;
-
-
-
-
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   22
-
-
-SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
-
-      DataTest.c   403                                    case 3:
-      DataTest.c   404                                            return 'E';
+      DataTest.c   343                                            }
+      DataTest.c   344                                            break;
+      DataTest.c   345                                    case 4:
+      DataTest.c   346                                            if (alpha) {
+    000005CA 2668                   TST         R6,R6
+    000005CC 8901                   BT          L628
+      DataTest.c   347                                                    return 'S';
     000005CE 000B                   RTS
-    000005D0 E045                   MOV         #69,R0
-    000005D2              L541:                            ; case label 
-      DataTest.c   405                                            break;
-      DataTest.c   406                                    case 4:
-      DataTest.c   407                                            return 'D';
+    000005D0 E053                   MOV         #83,R0
+    000005D2              L628:                             
+      DataTest.c   348                                            } else {
+      DataTest.c   349                                                    return 0xA9;
     000005D2 000B                   RTS
-    000005D4 E044                   MOV         #68,R0
-    000005D6              L542:                            ; case label 
-      DataTest.c   408                                            break;
-      DataTest.c   409                                    case 5:
-      DataTest.c   410                                            return 'C';
-    000005D6 000B                   RTS
-    000005D8 E043                   MOV         #67,R0
-    000005DA              L543:                            ; case label 
-      DataTest.c   411                                            break;
-      DataTest.c   412                                    case 6:
-      DataTest.c   413                                            return 'B';
+    000005D4 E0A9                   MOV         #-87,R0
+    000005D6              L540:                            ; case label 
+      DataTest.c   350                                            }
+      DataTest.c   351                                            break;
+      DataTest.c   352                                    case 5:
+      DataTest.c   353                                            if (alpha) {
+    000005D6 2668                   TST         R6,R6
+    000005D8 8901                   BT          L630
+      DataTest.c   354                                                    return 'R';
     000005DA 000B                   RTS
-    000005DC E042                   MOV         #66,R0
-    000005DE              L544:                            ; case label 
-      DataTest.c   414                                            break;
-      DataTest.c   415                                    case 7:
-      DataTest.c   416                                            return 'A';
+    000005DC E052                   MOV         #82,R0
+    000005DE              L630:                             
+      DataTest.c   355                                            } else {
+      DataTest.c   356                                                    return '6';
     000005DE 000B                   RTS
-    000005E0 E041                   MOV         #65,R0
-    000005E2              L579:                             
-      DataTest.c   417                                            break;
-      DataTest.c   418                            }
-      DataTest.c   419                            break;
-      DataTest.c   420            }
-      DataTest.c   421            
-      DataTest.c   422            return 0;
-    000005E2 E000                   MOV         #0,R0
-      DataTest.c   423    }
-    000005E4              L581:                             
-    000005E4 000B                   RTS
-    000005E6 0009                   NOP
-      DataTest.c   424    
-      DataTest.c   425    
-      DataTest.c   426    
-      DataTest.c   427    
-      DataTest.c   428    //****************************************************************************
-      DataTest.c   429    //**************                                              ****************
-      DataTest.c   430    //**************                 Notice!                      ****************
-      DataTest.c   431    //**************                                              ****************
-      DataTest.c   432    //**************  Please do not change the following source.  ****************
-      DataTest.c   433    //**************                                              ****************
-      DataTest.c   434    //****************************************************************************
-      DataTest.c   435    
-      DataTest.c   436    
-      DataTest.c   437    #pragma section _BR_Size
-      DataTest.c   438    unsigned long BR_Size;
-      DataTest.c   439    #pragma section
-      DataTest.c   440    
+    000005E0 E036                   MOV         #54,R0
+    000005E2              L541:                            ; case label 
+      DataTest.c   357                                            }
+      DataTest.c   358                                            break;
+      DataTest.c   359                                    case 6:
+      DataTest.c   360                                            if (alpha) {
+    000005E2 2668                   TST         R6,R6
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   23
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   21
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-      DataTest.c   441    
-      DataTest.c   442    #pragma section _TOP
-      DataTest.c   443    
-      DataTest.c   444    //****************************************************************************
-      DataTest.c   445    //  InitializeSystem
-      DataTest.c   446    //
-      DataTest.c   447    //  param   :   isAppli   : 1 = Application / 0 = eActivity
-      DataTest.c   448    //              OptionNum : Option Number (only eActivity)
-      DataTest.c   449    //
-      DataTest.c   450    //  retval  :   1 = No error / 0 = Error
-      DataTest.c   451    //
-      DataTest.c   452    //****************************************************************************
-      DataTest.c   453    int InitializeSystem(int isAppli, unsigned short OptionNum)
+    000005E4 8901                   BT          L632
+      DataTest.c   361                                                    return 'Q';
+    000005E6 000B                   RTS
+    000005E8 E051                   MOV         #81,R0
+    000005EA              L632:                             
+      DataTest.c   362                                            } else {
+      DataTest.c   363                                                    return '5';
+    000005EA 000B                   RTS
+    000005EC E035                   MOV         #53,R0
+    000005EE              L542:                            ; case label 
+      DataTest.c   364                                            }
+      DataTest.c   365                                            break;
+      DataTest.c   366                                    case 7:
+      DataTest.c   367                                            if (alpha) {
+    000005EE 2668                   TST         R6,R6
+    000005F0 8901                   BT          L634
+      DataTest.c   368                                                    return 'P';
+    000005F2 000B                   RTS
+    000005F4 E050                   MOV         #80,R0
+    000005F6              L634:                             
+      DataTest.c   369                                            } else {
+      DataTest.c   370                                                    return '4';
+    000005F6 000B                   RTS
+    000005F8 E034                   MOV         #52,R0
+    000005FA              L543:                            ; case label 
+      DataTest.c   371                                            }
+      DataTest.c   372                                            break;
+      DataTest.c   373                            }
+      DataTest.c   374                            break;
+      DataTest.c   375                    case 5:
+      DataTest.c   376                            switch (column) {
+    000005FA 6043                   MOV         R4,R0
+    000005FC 8805                   CMP/EQ      #5,R0
+    000005FE 8905                   BT          L544
+    00000600 8806                   CMP/EQ      #6,R0
+    00000602 8909                   BT          L545
+    00000604 8807                   CMP/EQ      #7,R0
+    00000606 890D                   BT          L546
+    00000608 A054                   BRA         L605
+    0000060A 0009                   NOP
+    0000060C              L544:                            ; case label 
+      DataTest.c   377                                    case 5:
+      DataTest.c   378                                            if (alpha) {
+    0000060C 2668                   TST         R6,R6
+    0000060E 8901                   BT          L637
+      DataTest.c   379                                                    return 'O';
+    00000610 000B                   RTS
+    00000612 E04F                   MOV         #79,R0
+    00000614              L637:                             
+      DataTest.c   380                                            } else {
+      DataTest.c   381                                                    return '9';
+    00000614 000B                   RTS
+    00000616 E039                   MOV         #57,R0
+    00000618              L545:                            ; case label 
+      DataTest.c   382                                            }
+      DataTest.c   383                                            break;
+      DataTest.c   384                                    case 6:
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   22
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      DataTest.c   385                                            if (alpha) {
+    00000618 2668                   TST         R6,R6
+    0000061A 8901                   BT          L639
+      DataTest.c   386                                                    return 'N';
+    0000061C 000B                   RTS
+    0000061E E04E                   MOV         #78,R0
+    00000620              L639:                             
+      DataTest.c   387                                            } else {
+      DataTest.c   388                                                    return '8';
+    00000620 000B                   RTS
+    00000622 E038                   MOV         #56,R0
+    00000624              L546:                            ; case label 
+      DataTest.c   389                                            }
+      DataTest.c   390                                            break;
+      DataTest.c   391                                    case 7:
+      DataTest.c   392                                            if (alpha) {
+    00000624 2668                   TST         R6,R6
+    00000626 8901                   BT          L641
+      DataTest.c   393                                                    return 'M';
+    00000628 000B                   RTS
+    0000062A E04D                   MOV         #77,R0
+    0000062C              L641:                             
+      DataTest.c   394                                            } else {
+      DataTest.c   395                                                    return '7';
+    0000062C 000B                   RTS
+    0000062E E037                   MOV         #55,R0
+    00000630              L547:                            ; case label 
+      DataTest.c   396                                            }
+      DataTest.c   397                                            break;
+      DataTest.c   398                            }
+      DataTest.c   399                            break;
+      DataTest.c   400                    case 6:
+      DataTest.c   401                            switch (column) {
+    00000630 6043                   MOV         R4,R0
+    00000632 8802                   CMP/EQ      #2,R0
+    00000634 890B                   BT          L548
+    00000636 8803                   CMP/EQ      #3,R0
+    00000638 890B                   BT          L549
+    0000063A 8804                   CMP/EQ      #4,R0
+    0000063C 890F                   BT          L550
+    0000063E 8805                   CMP/EQ      #5,R0
+    00000640 8913                   BT          L551
+    00000642 8806                   CMP/EQ      #6,R0
+    00000644 8917                   BT          L552
+    00000646 8807                   CMP/EQ      #7,R0
+    00000648 8917                   BT          L553
+    0000064A A033                   BRA         L605
+    0000064C 0009                   NOP
+    0000064E              L548:                            ; case label 
+      DataTest.c   402                                    case 2:
+      DataTest.c   403                                            return 'L';
+    0000064E 000B                   RTS
+    00000650 E04C                   MOV         #76,R0
+    00000652              L549:                            ; case label 
+      DataTest.c   404                                            break;
+      DataTest.c   405                                    case 3:
+      DataTest.c   406                                            if (alpha) {
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   23
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000652 2668                   TST         R6,R6
+    00000654 8901                   BT          L644
+      DataTest.c   407                                                    return 'K';
+    00000656 000B                   RTS
+    00000658 E04B                   MOV         #75,R0
+    0000065A              L644:                             
+      DataTest.c   408                                            } else {
+      DataTest.c   409                                                    return ',';
+    0000065A 000B                   RTS
+    0000065C E02C                   MOV         #44,R0
+    0000065E              L550:                            ; case label 
+      DataTest.c   410                                            }
+      DataTest.c   411                                            break;
+      DataTest.c   412                                    case 4:
+      DataTest.c   413                                            if (alpha) {
+    0000065E 2668                   TST         R6,R6
+    00000660 8901                   BT          L646
+      DataTest.c   414                                                    return 'J';
+    00000662 000B                   RTS
+    00000664 E04A                   MOV         #74,R0
+    00000666              L646:                             
+      DataTest.c   415                                            } else {
+      DataTest.c   416                                                    return ')';
+    00000666 000B                   RTS
+    00000668 E029                   MOV         #41,R0
+    0000066A              L551:                            ; case label 
+      DataTest.c   417                                            }
+      DataTest.c   418                                            break;
+      DataTest.c   419                                    case 5:
+      DataTest.c   420                                            if (alpha) {
+    0000066A 2668                   TST         R6,R6
+    0000066C 8901                   BT          L648
+      DataTest.c   421                                                    return 'I';
+    0000066E 000B                   RTS
+    00000670 E049                   MOV         #73,R0
+    00000672              L648:                             
+      DataTest.c   422                                            } else {
+      DataTest.c   423                                                    return '(';
+    00000672 000B                   RTS
+    00000674 E028                   MOV         #40,R0
+    00000676              L552:                            ; case label 
+      DataTest.c   424                                            }
+      DataTest.c   425                                            break;
+      DataTest.c   426                                    case 6:
+      DataTest.c   427                                            return 'H';
+    00000676 000B                   RTS
+    00000678 E048                   MOV         #72,R0
+    0000067A              L553:                            ; case label 
+      DataTest.c   428                                            break;
+      DataTest.c   429                                    case 7:
+      DataTest.c   430                                            return 'G';
+    0000067A 000B                   RTS
+    0000067C E047                   MOV         #71,R0
+    0000067E              L554:                            ; case label 
+      DataTest.c   431                                            break;
+      DataTest.c   432                            }
+      DataTest.c   433                            break;
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   24
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      DataTest.c   434                    case 7:
+      DataTest.c   435                            switch (column) {
+    0000067E 6043                   MOV         R4,R0
+    00000680 8802                   CMP/EQ      #2,R0
+    00000682 890B                   BT          L555
+    00000684 8803                   CMP/EQ      #3,R0
+    00000686 890B                   BT          L556
+    00000688 8804                   CMP/EQ      #4,R0
+    0000068A 890B                   BT          L557
+    0000068C 8805                   CMP/EQ      #5,R0
+    0000068E 890B                   BT          L558
+    00000690 8806                   CMP/EQ      #6,R0
+    00000692 890B                   BT          L559
+    00000694 8807                   CMP/EQ      #7,R0
+    00000696 890B                   BT          L560
+    00000698 A00C                   BRA         L605
+    0000069A 0009                   NOP
+    0000069C              L555:                            ; case label 
+      DataTest.c   436                                    case 2:
+      DataTest.c   437                                            return 'F';
+    0000069C 000B                   RTS
+    0000069E E046                   MOV         #70,R0
+    000006A0              L556:                            ; case label 
+      DataTest.c   438                                            break;
+      DataTest.c   439                                    case 3:
+      DataTest.c   440                                            return 'E';
+    000006A0 000B                   RTS
+    000006A2 E045                   MOV         #69,R0
+    000006A4              L557:                            ; case label 
+      DataTest.c   441                                            break;
+      DataTest.c   442                                    case 4:
+      DataTest.c   443                                            return 'D';
+    000006A4 000B                   RTS
+    000006A6 E044                   MOV         #68,R0
+    000006A8              L558:                            ; case label 
+      DataTest.c   444                                            break;
+      DataTest.c   445                                    case 5:
+      DataTest.c   446                                            return 'C';
+    000006A8 000B                   RTS
+    000006AA E043                   MOV         #67,R0
+    000006AC              L559:                            ; case label 
+      DataTest.c   447                                            break;
+      DataTest.c   448                                    case 6:
+      DataTest.c   449                                            return 'B';
+    000006AC 000B                   RTS
+    000006AE E042                   MOV         #66,R0
+    000006B0              L560:                            ; case label 
+      DataTest.c   450                                            break;
+      DataTest.c   451                                    case 7:
+      DataTest.c   452                                            return 'A';
+    000006B0 000B                   RTS
+    000006B2 E041                   MOV         #65,R0
+    000006B4              L605:                             
+      DataTest.c   453                                            break;
+      DataTest.c   454                            }
+      DataTest.c   455                            break;
+      DataTest.c   456            }
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   25
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      DataTest.c   457            
+      DataTest.c   458            return 0;
+    000006B4 E000                   MOV         #0,R0
+      DataTest.c   459    }
+    000006B6              L607:                             
+    000006B6 000B                   RTS
+    000006B8 0009                   NOP
+      DataTest.c   460    
+      DataTest.c   461    
+      DataTest.c   462    
+      DataTest.c   463    
+      DataTest.c   464    //****************************************************************************
+      DataTest.c   465    //**************                                              ****************
+      DataTest.c   466    //**************                 Notice!                      ****************
+      DataTest.c   467    //**************                                              ****************
+      DataTest.c   468    //**************  Please do not change the following source.  ****************
+      DataTest.c   469    //**************                                              ****************
+      DataTest.c   470    //****************************************************************************
+      DataTest.c   471    
+      DataTest.c   472    
+      DataTest.c   473    #pragma section _BR_Size
+      DataTest.c   474    unsigned long BR_Size;
+      DataTest.c   475    #pragma section
+      DataTest.c   476    
+      DataTest.c   477    
+      DataTest.c   478    #pragma section _TOP
+      DataTest.c   479    
+      DataTest.c   480    //****************************************************************************
+      DataTest.c   481    //  InitializeSystem
+      DataTest.c   482    //
+      DataTest.c   483    //  param   :   isAppli   : 1 = Application / 0 = eActivity
+      DataTest.c   484    //              OptionNum : Option Number (only eActivity)
+      DataTest.c   485    //
+      DataTest.c   486    //  retval  :   1 = No error / 0 = Error
+      DataTest.c   487    //
+      DataTest.c   488    //****************************************************************************
+      DataTest.c   489    int InitializeSystem(int isAppli, unsigned short OptionNum)
 P_T 00000000              _InitializeSystem:               ; function: InitializeSystem
                                                            ; frame size=0
-      DataTest.c   454    {
-      DataTest.c   455            return INIT_ADDIN_APPLICATION(isAppli, OptionNum);
-    00000000 D301                   MOV.L       L635+2,R3  ; _INIT_ADDIN_APPLICATION
+      DataTest.c   490    {
+      DataTest.c   491            return INIT_ADDIN_APPLICATION(isAppli, OptionNum);
+    00000000 D301                   MOV.L       L664+2,R3  ; _INIT_ADDIN_APPLICATION
     00000002 432B                   JMP         @R3
     00000004 0009                   NOP
-    00000006              L635:                             
+    00000006              L664:                             
     00000006 0000                   .DATA.W     0
     00000008 <00000000>             .DATA.L     _INIT_ADDIN_APPLICATION
-      DataTest.c   456    }
-      DataTest.c   457    
-      DataTest.c   458    #pragma section
-      DataTest.c   459    
-C   00000000              L416:
-    00000000 5245434549             .SDATA      "RECEIVED"
-             564544       
-    00000008 00                     .DATA.B     H'00
-    00000009 00000001               .RES.B      1
-    0000000A 00000002               .RES.W      1
-    0000000C              L419:
-    0000000C 2573202564             .SDATA      "%s %d %d"
-             202564       
+      DataTest.c   492    }
+      DataTest.c   493    
+      DataTest.c   494    #pragma section
+      DataTest.c   495    
+C   00000000              L400:
+    00000000 4631202D20             .SDATA      "F1 - Create Chatroom"
+             4372656174   
+             6520436861   
+             74726F6F6D   
     00000014 00                     .DATA.B     H'00
-    00000015 00000001               .RES.B      1
-    00000016 00000002               .RES.W      1
-    00000018              L420:
-    00000018 3132333435             .SDATA      "123456789"
-             36373839     
-    00000021 00                     .DATA.B     H'00
-    00000022 00000002               .RES.W      1
-    00000024              L421:
-    00000024 487572656E             .SDATA      "Hurensohn"
-             736F686E     
-    0000002D 00                     .DATA.B     H'00
-    0000002E 00000002               .RES.W      1
-    00000030              L422:
-    00000030 2564                   .SDATA      "%d"
-    00000032 00                     .DATA.B     H'00
-    00000033 00000001               .RES.B      1
-    00000034              L425:
-    00000034 4E6F204461             .SDATA      "No Data"
-             7461         
-    0000003B 00                     .DATA.B     H'00
 
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE   24
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   26
 
 
 SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
 
-    0000003C              L427:
-    0000003C 4552524F52             .SDATA      "ERROR"
+    00000015 00000001               .RES.B      1
+    00000016 00000002               .RES.W      1
+    00000018              L401:
+    00000018 4632202D20             .SDATA      "F2 - Join Chatroom"
+             4A6F696E20   
+             4368617472   
+             6F6F6D       
+    0000002A 00                     .DATA.B     H'00
+    0000002B 00000001               .RES.B      1
+    0000002C              L403:
+    0000002C 4553502043             .SDATA      "ESP Chat"
+             686174       
+    00000034 00                     .DATA.B     H'00
+    00000035 00000001               .RES.B      1
+    00000036 00000002               .RES.W      1
+    00000038              L404:
+    00000038 3132333435             .SDATA      "123456789"
+             36373839     
     00000041 00                     .DATA.B     H'00
     00000042 00000002               .RES.W      1
-    00000044              L437:
-    00000044 436F6E6E65             .SDATA      "Connecting..."
+    00000044              L429:
+    00000044 5245434549             .SDATA      "RECEIVED"
+             564544       
+    0000004C 00                     .DATA.B     H'00
+    0000004D 00000001               .RES.B      1
+    0000004E 00000002               .RES.W      1
+    00000050              L432:
+    00000050 2573202564             .SDATA      "%s %d %d"
+             202564       
+    00000058 00                     .DATA.B     H'00
+    00000059 00000001               .RES.B      1
+    0000005A 00000002               .RES.W      1
+    0000005C              L433:
+    0000005C 487572656E             .SDATA      "Hurensohn"
+             736F686E     
+    00000065 00                     .DATA.B     H'00
+    00000066 00000002               .RES.W      1
+    00000068              L434:
+    00000068 2564                   .SDATA      "%d"
+    0000006A 00                     .DATA.B     H'00
+    0000006B 00000001               .RES.B      1
+    0000006C              L437:
+    0000006C 4E6F204461             .SDATA      "No Data"
+             7461         
+    00000073 00                     .DATA.B     H'00
+    00000074              L439:
+    00000074 4552524F52             .SDATA      "ERROR"
+    00000079 00                     .DATA.B     H'00
+    0000007A 00000002               .RES.W      1
+    0000007C              L449:
+    0000007C 436F6E6E65             .SDATA      "Connecting..."
              6374696E67   
              2E2E2E       
-    00000051 00                     .DATA.B     H'00
-    00000052 00000002               .RES.W      1
-    00000054              L439:
-    00000054 4E6F204E65             .SDATA      "No Networks"
+    00000089 00                     .DATA.B     H'00
+    0000008A 00000002               .RES.W      1
+    0000008C              L451:
+    0000008C 4E6F204E65             .SDATA      "No Networks"
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE   27
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
              74776F726B   
              73           
-    0000005F 00                     .DATA.B     H'00
+    00000097 00                     .DATA.B     H'00
 B_B 00000000              _BR_Size:                        ; static: BR_Size
     00000000 00000004               .RES.L      1
 
@@ -1582,7 +1768,19 @@ B_B 00000000              _BR_Size:                        ; static: BR_Size
 
 
 
-SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 22-Aug-2018 22:55:42  PAGE    1
+
+
+
+
+
+
+
+
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 17-Dec-2018 22:08:39  PAGE    1
 
 
 ******** STATISTICS INFORMATION ********
@@ -1591,23 +1789,23 @@ SH SERIES C/C++ Compiler (Ver. 6.0C)                                            
 ********** ERROR INFORMATION ***********
 
 NUMBER OF ERRORS:           0
-NUMBER OF WARNINGS:         4
+NUMBER OF WARNINGS:         6
 
 
 
 
 ******* SOURCE LINE INFORMATION ********
 
-COMPILED SOURCE LINE:      459
+COMPILED SOURCE LINE:      495
 
 
 
 ******* SECTION SIZE INFORMATION *******
 
-PROGRAM  SECTION (P):                               000005E8 Byte(s)
+PROGRAM  SECTION (P):                               000006BA Byte(s)
 PROGRAM  SECTION (P_BR_Size):                       00000000 Byte(s)
 PROGRAM  SECTION (P_TOP):                           0000000C Byte(s)
-CONSTANT SECTION (C):                               00000060 Byte(s)
+CONSTANT SECTION (C):                               00000098 Byte(s)
 CONSTANT SECTION (C_BR_Size):                       00000000 Byte(s)
 CONSTANT SECTION (C_TOP):                           00000000 Byte(s)
 DATA     SECTION (D):                               00000000 Byte(s)
@@ -1617,15 +1815,15 @@ BSS      SECTION (B):                               00000000 Byte(s)
 BSS      SECTION (B_BR_Size):                       00000004 Byte(s)
 BSS      SECTION (B_TOP):                           00000000 Byte(s)
 
- TOTAL PROGRAM SIZE: 00000658 Byte(s)
+ TOTAL PROGRAM SIZE: 00000762 Byte(s)
 
 
 
 ********** LABEL INFORMATION ***********
 
-NUMBER OF EXTERNAL REFERENCE SYMBOLS:           27
+NUMBER OF EXTERNAL REFERENCE SYMBOLS:           28
 NUMBER OF EXTERNAL DEFINITION SYMBOLS:           6
-NUMBER OF INTERNAL/EXTERNAL SYMBOLS:           129
+NUMBER OF INTERNAL/EXTERNAL SYMBOLS:           142
 
 
 
@@ -1651,5 +1849,5 @@ NUMBER OF INTERNAL/EXTERNAL SYMBOLS:           129
 *** COMMAND PARAMETER ***
 
 
-  -subcommand=C:\Users\Niko\AppData\Local\Temp\hmkC24E.tmp 
+  -subcommand=C:\Users\Niko\AppData\Local\Temp\hmkD318.tmp 
 

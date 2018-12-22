@@ -1,10 +1,12 @@
 #include "net.h"
+#include "stddef.h"
 #include "stdio.h"
+#include "stdlib.h"
 
 void openSerial() {
     unsigned char mode[6];
     mode[0] = 0;
-    mode[1] = 5;
+    mode[1] = 9; // 115200 baud
     mode[2] = 0;
     mode[3] = 0;
     mode[4] = 0;
@@ -112,15 +114,16 @@ Data* receiveDataTimeout(int timeout, int retryCount) {
 		if (Serial_ReadOneByte(&c) == 0 && c == 221) {
 			receiveStringTimeout(buf, 11, timeout);
 			if (strcmp(buf, "DATA", 4) == 0) {
-				int counter = 0;
+				unsigned int counter = 0;
 				short received;
 				data = (Data*) malloc(sizeof(Data));
+				data->buf = NULL;
 				
 				if (!receiveStringTimeout(buf, 11, timeout)) {
 					retry = 1;
 					break;
 				}
-				data->length = atoi(buf);
+				data->length = (unsigned int) atol(buf);
 				
 				if (!receiveStringTimeout(buf, 11, timeout)) {
 					retry = 1;
@@ -215,12 +218,13 @@ NetData* receiveNetDataTimeout(int timeout) {
 				int counter = 0;
 				short received;
 				data = (NetData*) malloc(sizeof(NetData));
+				data->buf = NULL;
 				
 				if (!receiveStringTimeout(buf, 11, 1000)) {
 					retry = 1;
 					break;
 				}
-				data->length = atoi(buf);
+				data->length = (unsigned int) atol(buf);
 				
 				if (!receiveStringTimeout(buf, 11, 1000)) {
 					retry = 1;
@@ -293,9 +297,13 @@ void freeNetData(NetData* data) {
 void freeNetList(NetworkList* netList) {
 	if (netList != NULL) {
 		freeNetList(netList->next);
+		netList->next = NULL;
+		
 		if (netList->network.ssid != NULL) {
 			free(netList->network.ssid);
+			netList->network.ssid = NULL;
 		}
+		
 		free(netList);
 	}
 }
@@ -328,6 +336,9 @@ NetworkList* getAvailableNetworks() {
 		}
 		
 		netElement = (NetworkList*) malloc(sizeof(NetworkList));
+		netElement->network.ssid = NULL;
+		netElement->next = NULL;
+		
 		ssidLength = strlen(&data->buf[counter]);
 		
 		netElement->network.ssid = (unsigned char*) malloc(ssidLength + 1);
@@ -335,8 +346,8 @@ NetworkList* getAvailableNetworks() {
 		counter += ssidLength + 1;
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
-			free(netElement->network.ssid);
-			free(netElement);
+			freeNetList(netElement);
+			netElement = NULL;
 			break;
 		}
 		
@@ -344,8 +355,8 @@ NetworkList* getAvailableNetworks() {
 		counter += strlen(&data->buf[counter]) + 1;
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
-			free(netElement->network.ssid);
-			free(netElement);
+			freeNetList(netElement);
+			netElement = NULL;
 			break;
 		}
 		
@@ -362,6 +373,7 @@ NetworkList* getAvailableNetworks() {
 	}
 	
 	freeData(data);
+	data = NULL;
 	
 	return head;
 }
@@ -423,6 +435,8 @@ Network getNetworkInfo() {
 		int ssidLength;
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
+			freeData(data);
+			data = NULL;
 			return net;
 		}
 		
@@ -434,6 +448,9 @@ Network getNetworkInfo() {
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
 			free(net.ssid);
+			net.ssid = NULL;
+			freeData(data);
+			data = NULL;
 			return net;
 		}
 		
@@ -441,6 +458,35 @@ Network getNetworkInfo() {
 	}
 	
 	freeData(data);
+	data = NULL;
 	
 	return net;
+}
+
+int startAP(unsigned char* ssid, unsigned char* password) {
+	int status;
+	
+	sendCommand((unsigned char*) "STARTAP");
+	Serial_BufferedTransmitNBytes(ssid, strlen(ssid) + 1);
+	Serial_BufferedTransmitNBytes(password, strlen(password) + 1);
+	status = receiveStatus();
+	
+	if (status == STATUS_OK) {
+		return 1;
+	}
+	
+	return 0;
+}
+
+int stopAP() {
+	int status;
+	
+	sendCommand((unsigned char*) "STOPAP");
+	status = receiveStatus();
+	
+	if (status == STATUS_OK) {
+		return 1;
+	}
+	
+	return 0;
 }

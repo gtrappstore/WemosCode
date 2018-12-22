@@ -1,5 +1,7 @@
 package de.niko.gtrwifi;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,8 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -61,8 +66,37 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("main", "Checksum: " + calculateChecksum("Hallo".getBytes()));
 
-        this.serverThread = new Thread(new ServerThread());
-        this.serverThread.start();
+        if (isAPenabled()) {
+            this.serverThread = new Thread(new ServerThread());
+            this.serverThread.start();
+        } else {
+            new Thread(new ClientThread()).start();
+        }
+    }
+
+    private boolean isAPenabled() {
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        Method method = null;
+        try {
+            method = wifiManager.getClass().getDeclaredMethod("isWifiApEnabled");
+            method.setAccessible(true);
+            return (Boolean) method.invoke(wifiManager);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public String intToIp(int addr) {
+        return  ((addr & 0xFF) + "." +
+                ((addr >>>= 8) & 0xFF) + "." +
+                ((addr >>>= 8) & 0xFF) + "." +
+                ((addr >>>= 8) & 0xFF));
     }
 
     @Override
@@ -101,6 +135,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    class ClientThread implements Runnable {
+
+        @Override
+        public void run() {
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            try {
+                Log.d("main", "IP: " + intToIp(wifiManager.getDhcpInfo().gateway));
+                Socket socket = new Socket(intToIp(wifiManager.getDhcpInfo().gateway), 8266);
+                CommunicationThread commThread = new CommunicationThread(socket);
+                new Thread(commThread).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     class CommunicationThread implements Runnable {
         private Socket clientSocket;
         private InputStream input;
@@ -108,6 +158,12 @@ public class MainActivity extends AppCompatActivity {
 
         public CommunicationThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
+
+            try {
+                this.clientSocket.setTcpNoDelay(true);
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
 
             try {
                 this.input = this.clientSocket.getInputStream();
@@ -146,17 +202,15 @@ public class MainActivity extends AppCompatActivity {
 
                         Log.d("main", "RECEIVED: " + command + " " + length + " " + checksum + " " + appName + " " + data);
                     }
-
-                    String msg;
-                    Log.d("main", "Queue Size: " + msgQueue.size());
-                    if ((msg = msgQueue.poll()) != null) {
-                        Log.d("main", "Proccessing message: " + msg);
-                        sendNetData(output, msg.getBytes());
-                    }
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+
+                String msg;
+                Log.d("main", "Queue Size: " + msgQueue.size());
+                if ((msg = msgQueue.poll()) != null) {
+                    Log.d("main", "Proccessing message: " + msg);
+                    sendNetData(output, msg.getBytes());
                 }
             }
         }
@@ -196,6 +250,8 @@ public class MainActivity extends AppCompatActivity {
             output.write(0);
 
             output.write(data);
+
+            output.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

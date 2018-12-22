@@ -45,10 +45,17 @@ Flags=00001012
 File=D:\Documents\GTR\Wifi\DataTest\DataTest.c
 Line=84
 Flags=00001012
+Sublevel=1
 
 [Breakpoint]
 File=D:\Documents\GTR\Wifi\DataTest\DataTest.c
 Line=189
+Flags=00001012
+Sublevel=2
+
+[Breakpoint]
+File=D:\Documents\GTR\Wifi\DataTest\DataTest.c
+Line=84
 Flags=00001012
 Sublevel=2
 
