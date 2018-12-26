@@ -120,8 +120,9 @@ void loop() {
           softSer.println("GETAPPINFO");
           sendCommandAck();
 //          getAppInfo();
-        } else if (String("GETBYID").equals(command)) {
-          
+        } else if (String("WEBCONTENT").equals(command)) {
+          sendCommandAck();
+          getWebContent();
         } else {
           sendCommandAck("UC");
         }
@@ -410,8 +411,8 @@ void getWebContent() {
     if (wfClient.available()) {
       int len = wfClient.read(buf, sizeof buf);
 
-    if (sendData(buf, len)) {
-      return;
+    if (!sendData(buf, len)) {
+      sendAck("TO");
     }
       
     counter += len;
@@ -456,7 +457,7 @@ boolean sendData(unsigned char* data, int len) {
     yield();
   } while(!String("OK").equals(ack));
 
-  return false;
+  return true;
 }
 
 String receiveAck() {

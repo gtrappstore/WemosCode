@@ -26,6 +26,12 @@ void sendStatus(unsigned char* status) {
 	Serial_BufferedTransmitNBytes(status, strlen(status) + 1);
 }
 
+void sendStringSerial(unsigned char* buffer) {
+	unsigned int counter = 0;
+
+	Serial_BufferedTransmitNBytes(buffer, strlen(buffer) + 1);
+}
+
 int receiveString(unsigned char* buf, int maxLen) {
 	return receiveStringTimeout(buf, 500);
 }
@@ -223,4 +229,12 @@ NetworkList* getAvailableNetworks() {
 	freeData(data);
 	
 	return head;
+}
+
+void getWebContent(int mode, unsigned char* host, unsigned char* url, int port) {
+	sendCommand("WEBCONTENT");
+	sendStringSerial(mode);
+	sendStringSerial(host);
+	sendStringSerial(url);
+	sendStringSerial(port);
 }
