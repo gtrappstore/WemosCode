@@ -17,6 +17,9 @@ typedef struct {
 // functions
 
 NetworkSelectionUI initNetworkSelectionUI(int x, int y, int width, int height, NetworkList* nl);
-int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int selection);
+int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction);
+void drawLock(int x, int y, int closed);
+void drawStrengthIndicator(int x, int y, int strength);
+void drawBallIndicator(int x, int y, int filled);
 
 #endif

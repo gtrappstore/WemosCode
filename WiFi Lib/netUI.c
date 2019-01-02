@@ -1,14 +1,15 @@
 #include "netUI.h"
 #include "stddef.h"
+#include "dispbios.h"
 
-NetworkSelectionUI initNetworkSelectionUI(int x, int y, int w, int h, NetworkList* nl) {
+NetworkSelectionUI initNetworkSelectionUI(int x, int y, int width, int height, NetworkList* nl) {
 	NetworkList* tmp = nl;
 	NetworkSelectionUI nsui;
 	
 	nsui.x = x;
 	nsui.y = y;
-	nsui.xidth = w;
-	nsui.height = h;
+	nsui.width = width;
+	nsui.height = height;
 	nsui.selection = 0;
 	nsui.scroll = 0;
 	nsui.networkList = nl;
@@ -26,6 +27,10 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 	NetworkList* tmp = nsui->networkList;
 	int scrollCounter = 0;
 	int lineCounter = 0;
+	unsigned char arrow[3] = {0xE6, 0x9B, 0x00};
+	unsigned char line[22];
+	int ssidLength;
+	DISPBOX box;
 	
 	nsui->selection += direction;
 	
@@ -41,8 +46,8 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 		nsui->scroll = nsui->selection;
 	}
 	
-	if (nsui->scroll >= nsui->networkCount - nsui->height) {
-		nsui->scroll = nsui->networkCount - nsui->height - 1;
+	if (nsui->scroll > nsui->networkCount - nsui->height) {
+		nsui->scroll = nsui->networkCount - nsui->height;
 	}
 	
 	if (nsui->scroll < 0) {
@@ -50,17 +55,95 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 	}
 	
 	// iterate over networks to skip scrolled items
-	for (scrollCounter = 0; scrollCounter < scroll; scrollCounter += 1) {
+	for (scrollCounter = 0; scrollCounter < nsui->scroll; scrollCounter += 1) {
 		tmp = tmp->next;
 	}
 	
 	// print (at most) [height] lines with network ssid's
 	for (lineCounter = 0; lineCounter < nsui->height; lineCounter += 1) {
 		if (tmp != NULL) {
-			locate(nsui->x, nsui->y + lineCounter);
-			Print(tmp->network.ssid);
+			ssidLength = strlen(tmp->network.ssid);
+			if (ssidLength > nsui->width - 1) {
+				ssidLength = nsui->width - 1;
+			}
+			
+			memcpy(line, tmp->network.ssid, ssidLength);
+			line[ssidLength] = 0;
+			
+			locate(nsui->x + 1, nsui->y + lineCounter);
+			Print(line);
+			
+			box.left = (nsui->x + nsui->width) * 6 - 20;
+			box.top = (nsui->y + lineCounter) * 8 - 8;
+			box.right = box.left + 20;
+			box.bottom = box.top + 6;
+				
+			Bdisp_AreaClr_VRAM(&box);
+			
+			drawStrengthIndicator((nsui->x + nsui->width) * 6 - 19, (nsui->y + lineCounter) * 8 - 6, (int) ((tmp->network.rssi + 100.0f) / 10.0f));
+			if (tmp->network.encType == 1) {
+				box.left = (nsui->x + nsui->width) * 6 - 26;
+				box.right = box.left + 6;
+				
+				Bdisp_AreaClr_VRAM(&box);
+				
+				drawLock((nsui->x + nsui->width) * 6 - 25, (nsui->y + lineCounter) * 8 - 7, 1);
+			}
 			
 			tmp = tmp->next;
 		}
 	}
+
+	locate(1, nsui->selection - nsui->scroll + 1);
+	Print(arrow);
+	
+	return nsui->selection;
+}
+
+void drawLock(int x, int y, int closed) {
+	if (closed != 0) {
+		Bdisp_DrawLineVRAM(x + 1, y, x + 3, y);
+		Bdisp_SetPoint_VRAM(x + 3, y + 1, 1);
+	} else {
+		Bdisp_DrawLineVRAM(x + 1, y, x + 2, y);
+	}
+	
+	Bdisp_SetPoint_VRAM(x + 1, y + 1, 1);
+	
+	{
+		DISPBOX box;
+		box.left = x;
+		box.top = y + 2;
+		box.right = x + 4;
+		box.bottom = y + 5;
+		
+		Bdisp_AreaClr_VRAM(&box);
+		
+		Bdisp_SetPoint_VRAM(x + 2, y + 4, 1);
+		
+		Bdisp_AreaReverseVRAM(x, y + 2, x + 4, y + 5);
+	}
+}
+
+void drawStrengthIndicator(int x, int y, int strength) {
+	int counter;
+	
+	for (counter = 0; counter < 4; counter += 1) {
+		int xPos = x + counter * 5;
+		drawBallIndicator(xPos, y, counter < strength);
+	}
+}
+
+void drawBallIndicator(int x, int y, int filled) {
+	Bdisp_DrawLineVRAM(x + 1, y, x + 2, y);
+	
+	if (filled != 0) {
+		Bdisp_DrawLineVRAM(x, y + 1, x + 3, y + 1);
+		Bdisp_DrawLineVRAM(x, y + 2, x + 3, y + 2);
+	} else {
+		Bdisp_DrawLineVRAM(x, y + 1, x, y + 2);
+		Bdisp_DrawLineVRAM(x + 3, y + 1, x + 3, y + 2);
+	}
+	
+	Bdisp_DrawLineVRAM(x + 1, y + 3, x + 2, y + 3);
 }
