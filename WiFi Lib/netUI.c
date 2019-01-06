@@ -28,6 +28,8 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 	int scrollCounter = 0;
 	int lineCounter = 0;
 	unsigned char arrow[3] = {0xE6, 0x9B, 0x00};
+	unsigned char arrowUp[3] = {0xE6, 0x92, 0x00};
+	unsigned char arrowDown[3] = {0xE6, 0x93, 0x00};
 	unsigned char line[22];
 	int ssidLength;
 	DISPBOX box;
@@ -73,29 +75,39 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 			locate(nsui->x + 1, nsui->y + lineCounter);
 			Print(line);
 			
-			box.left = (nsui->x + nsui->width) * 6 - 20;
+			box.left = (nsui->x + nsui->width - 1) * 6 - 20;
 			box.top = (nsui->y + lineCounter) * 8 - 8;
 			box.right = box.left + 20;
 			box.bottom = box.top + 6;
 				
 			Bdisp_AreaClr_VRAM(&box);
 			
-			drawStrengthIndicator((nsui->x + nsui->width) * 6 - 19, (nsui->y + lineCounter) * 8 - 6, (int) ((tmp->network.rssi + 100.0f) / 10.0f));
+			drawStrengthIndicator((nsui->x + nsui->width - 1) * 6 - 19, (nsui->y + lineCounter) * 8 - 6, (int) ((tmp->network.rssi + 100.0f) / 10.0f));
 			if (tmp->network.encType == 1) {
-				box.left = (nsui->x + nsui->width) * 6 - 26;
+				box.left = (nsui->x + nsui->width - 1) * 6 - 26;
 				box.right = box.left + 6;
 				
 				Bdisp_AreaClr_VRAM(&box);
 				
-				drawLock((nsui->x + nsui->width) * 6 - 25, (nsui->y + lineCounter) * 8 - 7, 1);
+				drawLock((nsui->x + nsui->width - 1) * 6 - 25, (nsui->y + lineCounter) * 8 - 7, 1);
 			}
 			
 			tmp = tmp->next;
 		}
 	}
 
-	locate(1, nsui->selection - nsui->scroll + 1);
+	locate(nsui->x, nsui->y + nsui->selection - nsui->scroll);
 	Print(arrow);
+	
+	if (nsui->scroll >= 1) {
+		locate(nsui->x + nsui->width - 1, nsui->y);
+		Print(arrowUp);
+	}
+	
+	if (nsui->scroll + nsui->height < nsui->networkCount) {
+		locate(nsui->x + nsui->width - 1, nsui->y + nsui->height - 1);
+		Print(arrowDown);
+	}
 	
 	return nsui->selection;
 }
