@@ -517,3 +517,13 @@ int stopAP() {
 	
 	return 0;
 }
+
+Data* getWebContent(int mode, unsigned char* host, unsigned char* url, int port) {
+	sendCommand("WEBCONTENT");
+	sendStringSerial(mode);
+	sendStringSerial(host);
+	sendStringSerial(url);
+	sendStringSerial(port);
+
+	return receiveData(10);
+}

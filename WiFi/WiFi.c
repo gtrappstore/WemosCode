@@ -9,6 +9,9 @@
 /*****************************************************************/
 #include "fxlib.h"
 #include "stdio.h"
+#include "..\WIFI_Lib\net.h"
+#include "..\WIFI_Lib\status.h"
+#include "..\WIFI_Lib\netUI.h"
 
 // custom types
 
@@ -23,18 +26,13 @@ struct Network {
 } network = {false, NULL, 0};
 // prototypes
 
-int openSerial();
 void drawInfoBar();
 void drawBubble(int x, int y, int filled);
-void getNetworkInfo();
 void connectToNetwork();
-void disconnect();
 void browseFiles();
 void downloadFile();
 void getAppByID();
 void sendCommand(unsigned char*);
-void receiveStatus();
-void receiveStatusTimeout(int timeout);
 void readString(int x, int y, bool search);
 void serialSendString(unsigned char* buffer);
 void serialReadString(unsigned char* buffer);
@@ -48,13 +46,10 @@ void itoa(int integer,int len,unsigned char* data);
 void drawBrowseResults(unsigned char* results);
 int showAppInfo();
 void sendAcknowledgement(unsigned char* state);
-unsigned char* receiveData(int timeout,unsigned short* transmitted);
 void drawImage();
 
 // syscalls
 
-int Serial_Open(unsigned char *mode);
-int Serial_Close(int mode);
 int Serial_ReadOneByte(unsigned char *result);
 int Serial_ReadNBytes(unsigned char *result, int max_size, short *actually_transferred);
 int Serial_GetReceivedBytesAvailable();
@@ -210,12 +205,11 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
             } else if (col == 3 && row == 2) {
                 switch (selection) {
                     case 0:
-                        sendCommand("CONNECT");
-                        receiveStatus();
-						
-                        if (memcmp(status,"OK",2)==0){
-                            connectToNetwork();
-                        }
+						Bdisp_AllClr_DDVRAM();
+						locate(1, 1);
+						Print((unsigned char*) "Scanning...");
+						Bdisp_PutDisp_DD();
+						connectToNetwork();         
                         break;
                     case 1:
                         sendCommand("DISCONNECT");
@@ -223,6 +217,7 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
 						
                         if (memcmp(status,"OK",2)==0){
                             disconnect();
+							shouldRequestNetInfo = false;
                         }
                         break;
                     case 2:
@@ -246,21 +241,9 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
         Keyboard_ClrBuffer(); // clear the buffer to prevent strange behaviour when hitting the menu key
     }
 
-    Serial_Close(1);
+	closeSerial();
 
     return 1;
-}
-
-int openSerial() {
-    unsigned char mode[6];
-    mode[0] = 0;
-    mode[1] = 5; // 5
-    mode[2] = 0;
-    mode[3] = 0;
-    mode[4] = 0;
-    mode[5] = 0;
-
-    return Serial_Open(&mode);
 }
 
 void drawInfoBar() { //überarbeitet
@@ -330,168 +313,91 @@ void drawBubble(int x, int y, int filled) {
     }
 }
 
-void getNetworkInfo() { //überarbeitet
-    unsigned int key;
-    int numChars;
-    int lastTabIndex;
-
-	unsigned char netInfo[50];
-	
-    sendCommand("GETNETINFO");
-               
-    receiveStatus();
-						
-    if (memcmp(status,"OK",2)==0){
-             
-        serialReadString(netInfo);
-
-        if (netInfo[0] == 0) {
-            network.isConnected = false;
-            
-             locate(21,7);
-             Print((unsigned char*) "9");
-             Bdisp_PutDisp_DD(); 
-
-            if(network.ssid!=0){
-                free(network.ssid);
-                network.ssid=0;            
-            }
-            
-             locate(21,7);
-             Print((unsigned char*) "7");
-             Bdisp_PutDisp_DD();
-
-            network.rssi = 0;
-
-             locate(21,7);
-             Print((unsigned char*) "8");
-             Bdisp_PutDisp_DD(); 
-
-            return;
-        }
-           
-        for (numChars = 0, lastTabIndex = 0; netInfo[numChars] != 0; numChars = numChars + 1) {
-            if (netInfo[numChars] == '\t') {
-                network.ssid = (unsigned char*) malloc(numChars + 1);
-                memset(network.ssid, 0, numChars + 1);
-                memcpy(network.ssid, netInfo, numChars);
-
-                lastTabIndex = numChars;
-            }
-        }   
-
-        if (lastTabIndex < numChars - 1) {
-            network.rssi = atoi(&netInfo[lastTabIndex + 1]);
-        }
-    
-        network.isConnected = true;
-		
-    }   
-}
-
 void connectToNetwork() {    
 
     unsigned int key;
     int counter = 0, lines = 0, lineBegin = 0, selection = 0, scroll = 0, lastTicks, a = 0, numChars = 0;
     unsigned char text[22];
+	NetworkList* nets;
+	NetworkSelectionUI nsui;
+	int direction = 0;
+	unsigned char passwordBuf[65]; // WiFi passwords are at most 64 chars
 
     Serial_ClearReceiveBuffer();
 
     
     lastTicks = RTC_GetTicks();
     counter = 0;
-
-    while(1) {
-        if (RTC_Elapsed_ms(lastTicks, 250) || counter == 0) {
-            counter = counter + 1;
-            counter = (counter - 1) % 5 + 1;
-            lastTicks = RTC_GetTicks();
-
-            Bdisp_AllClr_DDVRAM();
-            locate(1, 1);
-            Print((unsigned char*) "Scanning");
-            for (a = 0; a < counter; a = a + 1) {
-                locate(a + 1, 2);
-                Print((unsigned char*) ".");
-            }
-            Bdisp_PutDisp_DD();
-        }
-
-        if (Serial_GetReceivedBytesAvailable() > 0) {
-            unsigned char c;
-            Serial_ReadOneByte(&c);
-
-            if (c == 0) {
-                break;
-            } else {
-                buf[numChars] = c;
-                numChars = numChars + 1;
-            }
-        }
-    }
-
-    do {
-		
-		Bdisp_AllClr_DDVRAM();
-
-        for (counter = 0, lines = 0, lineBegin = 0; buf[counter] != 0; counter = counter + 1) {
-            if (buf[counter] == '\n') {
-                lines = lines + 1;
-
-                if (lines > scroll && lines <= scroll + 8) {
-                    memset(text, 0, sizeof text);
-                    memcpy(text, &buf[lineBegin], counter - lineBegin);
-
-                    locate(1, lines - scroll);
-                    Print(text);
-                }
-
-                lineBegin = counter + 1;
-            }
-        }
-
-        Bdisp_AreaReverseVRAM(0, 8 * (selection - scroll), 127, 8 * (selection - scroll) + 7);
-
-        GetKey(&key);
-
-        if (key == 30018) {
-            selection = selection - 1;
-        } else if (key == 30023) {
-            selection = selection + 1;
-        }
-
-        if (selection < 0) {
-            selection = 0;
-        } else if (selection >= lines) {
-            selection = lines - 1;
-        } else {
-            if (selection < scroll) {
-                scroll = scroll - 1;
-            } else if (selection >= 8 + scroll) {
-                scroll = scroll + 1;
-            }
-        }
-    } while(key != 30004);
 	
+	nets = getAvailableNetworks();
+
+	Bdisp_AllClr_DDVRAM();
+   
+	nsui = initNetworkSelectionUI(1, 2, 21, 7, nets);
+
+	while (1) {
+		Bdisp_AllClr_VRAM();
+		locate(1, 1);
+		Print("Select Network:");
+		drawNetworkSelectionUI(&nsui, direction);
+		GetKey(&key);
+
+		if (key == KEY_CTRL_UP) {
+			direction = -1;
+		}
+		else if (key == KEY_CTRL_DOWN) {
+			direction = 1;
+		}
+		else if (key == KEY_CTRL_EXIT) {
+			freeNetList(nets);
+			nets = NULL;
+			//return 0; DEBUG- wieder auskommentieren -> als Abbruch werten
+		}
+		else if (key == KEY_CTRL_EXE) {
+			break;
+		}
+	}
+
+	freeNetList(nets);
+	nets = NULL;
+
 	Bdisp_AllClr_DDVRAM();
 
-	memset(buf, 0, sizeof buf);
-    sprintf(buf, "%d", selection);	
-    serialSendString(buf);
+	memset(passwordBuf, 0, 65);
+	Cursor_SetFlashOn(0);
 
-    Bdisp_AllClr_DDVRAM();
+	while (1) {
+		int x = 0;
 
-    locate(1, 1);
-    Print((unsigned char*) "Password:");
+		if (strlen(passwordBuf) > 20) {
+			x = strlen(passwordBuf) - 20;
+		}
 
-    readString(1, 3,false);
-    serialSendString(buf);
+		Bdisp_AllClr_VRAM();
+		locate(1, 1);
+		Print("Password:");
+		locate(1, 3);
+		Print(&passwordBuf[x]);
+		locate(strlen(passwordBuf) + 1, 3);
 
-    shouldRequestNetInfo=false;
-}
+		GetKey(&key);
 
-void disconnect() {
-    Serial_BufferedTransmitOneByte((unsigned char) 114);
+		if (key == KEY_CTRL_DEL && strlen(passwordBuf) >= 1) {
+			passwordBuf[strlen(passwordBuf) - 1] = 0;
+		}
+		else if (key == KEY_CTRL_EXIT) {
+			//return 0; DEBUG- wieder auskommentieren -> als Abbruch werten
+		}
+		else if (key == KEY_CTRL_EXE) {
+			break;
+		}
+		else if (key < 128 && strlen(passwordBuf) < 64) {
+			passwordBuf[strlen(passwordBuf)] = (unsigned char)key;
+		}
+	}
+
+	connect(nsui.selection, passwordBuf);
+
     shouldRequestNetInfo=false;
 }
 
@@ -663,7 +569,7 @@ int showAppInfo(){
 	
 	Bdisp_AllClr_DDVRAM();
 	
-	picture=receiveData(5000,&transmitted);
+	//picture=receiveData(5000,&transmitted); DEBUG- wieder auskommentieren
 	serialReadString(infoText);
 	
 	drawImage(picture);
@@ -727,7 +633,7 @@ void downloadFile() {
 		
 		unsigned int key=0;
 		
-        d=receiveData(5000,&received);
+        //d=receiveData(5000,&received); DEBUG- wieder auskommentieren
 		if(d==0){
 			Bfile_CloseFile(fileHandle);
 			//File löschen
@@ -782,27 +688,6 @@ void sendCommand(unsigned char* command) {  //überarbeitet
 void sendAcknowledgement(unsigned char* state){	
 	Serial_BufferedTransmitOneByte((unsigned char)220);
 	serialSendString(state);
-}
-
-void receiveStatus(){
-    receiveStatusTimeout(500);
-}
-
-void receiveStatusTimeout(int timeout){
-    int startTicks=RTC_GetTicks();  
-    unsigned char c;
-	
-    memset(status, 0, sizeof status);
-	
-    while(!RTC_Elapsed_ms(startTicks,timeout)){
-        if(Serial_GetReceivedBytesAvailable()>0){
-            Serial_ReadOneByte(&c);
-            if(c==220){ 
-                serialReadString(&status);
-                return;
-            }
-        }
-    }
 }
 
 void readString(int x, int y, bool search) {
@@ -1093,88 +978,6 @@ void itoa(int integer,int len,unsigned char* data){
 		data[len-1-i]=z+48;
 		integer=integer-(z*pow(10,i));
 	}
-}
-
-unsigned char* receiveData(int timeout,unsigned short* received) {
-	unsigned char c;
-	short actuallyTransferred;
-	int counter=0;
-	int startTicks = RTC_GetTicks();
-	//int timeout = 2000;
-	unsigned char command[4];
-	unsigned char length[10];
-	unsigned char checksumRec[4];
-	unsigned char checksumCalc[4];
-	unsigned char* data;
-	unsigned short try=0;
-	int len=0;
-	
-	
-
-	do{
-		startTicks=RTC_GetTicks();
-		if (Serial_GetReceivedBytesAvailable()>0) {
-			Serial_ReadOneByte(&c);
-			if (c == 219) {
-				
-				startTicks=RTC_GetTicks();
-				while(Serial_GetReceivedBytesAvailable()<5)
-				{
-					if(RTC_Elapsed_ms(startTicks,2000));
-				}
-				Serial_ReadNBytes(command,5,&actuallyTransferred);
-				
-				startTicks=RTC_GetTicks();
-				while(Serial_GetReceivedBytesAvailable()<10)
-				{
-					if(RTC_Elapsed_ms(startTicks,2000));
-				}
-				Serial_ReadNBytes(length,10,&actuallyTransferred);
-				
-				startTicks=RTC_GetTicks();
-				while(Serial_GetReceivedBytesAvailable()<4)
-				{
-					if(RTC_Elapsed_ms(startTicks,2000));
-				}
-				Serial_ReadNBytes(checksumRec,4,&actuallyTransferred);
-				
-				len=atoi(&length);
-				
-				data=(unsigned char*)malloc(len);
-				
-				do{
-					Serial_ReadNBytes(&data[counter],len-counter,&actuallyTransferred);
-					counter+=actuallyTransferred;
-				}while(counter<len);
-				
-				checksum(data,len,&checksumCalc);
-				
-				
-				
-				if(memcmp(checksumCalc,checksumRec,4)==0){
-					sendAcknowledgement("OK");
-					*received=len;
-					return data;
-				}else{
-					if(try<5){
-						sendAcknowledgement("ER");
-						free(data);
-						startTicks=RTC_GetTicks();
-						try+=1;
-					}else{
-						sendAcknowledgement("CA");
-						*received=0;
-						return 0;
-					}
-				}
-			}
-		}
-		
-		
-	}while(!RTC_Elapsed_ms(startTicks,timeout));
-	
-	
-	return 0;
 }
 
 void drawImage(unsigned char* d){

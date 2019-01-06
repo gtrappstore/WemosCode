@@ -354,7 +354,7 @@ void getWebContent() {
   1=only content
   2=only headers
   */
-  
+  String host=Serial.readStringUntil(0);
   String url = Serial.readStringUntil(0);
   String portString= Serial.readStringUntil(0);
   int port=portString.toInt();
@@ -369,7 +369,7 @@ void getWebContent() {
 //  return;
 //  }
 
-  wfClient.print(url);
+  wfClient.print(String("GET ") + host+url);
 
 //  softSer.println("request sent");
 

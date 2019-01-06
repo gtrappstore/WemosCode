@@ -2,14 +2,14 @@
 
 [_1]
 Type=5
-Order=3
+Order=4
 Top=120
 Left=16905
 Height=6630
 Width=5565
-State=0
+State=1
 Flags=00000020
-Setting=1194:1:WiFi.c
+Setting=1067:1:WiFi.c
 OptionA=0
 
 [_2]
@@ -19,19 +19,19 @@ Top=330
 Left=22695
 Height=4740
 Width=5535
-State=0
+State=1
 Flags=00000000
 OptionA=15
 OptionB=15
 
 [_3]
 Type=6
-Order=1
+Order=3
 Top=5235
 Left=22710
 Height=6630
 Width=5535
-State=0
+State=1
 Flags=00000000
 OptionA=0
 
@@ -81,7 +81,7 @@ OptionA=0
 
 [_8]
 Type=17
-Order=4
+Order=5
 Top=135
 Left=135
 Height=11115
@@ -92,11 +92,11 @@ OptionA=0
 
 [_9]
 Type=15
-Order=5
-Top=7005
-Left=16890
-Height=6090
-Width=5685
+Order=0
+Top=135
+Left=17025
+Height=13065
+Width=11295
 State=0
 Flags=00000000
 OptionA=0
@@ -114,14 +114,14 @@ OptionA=0
 
 [_32]
 Type=16
-Order=0
+Order=1
 Top=60
 Left=2265
 Height=13230
-Width=14520
+Width=11820
 State=0
 Flags=00000028
-Setting=22:14:WiFi.c
+Setting=33:20:WiFi.c
 OptionA=4
 
 [_33]
