@@ -9,9 +9,9 @@
 /*****************************************************************/
 #include "fxlib.h"
 #include "stdio.h"
-#include "..\WIFI_Lib\net.h"
-#include "..\WIFI_Lib\status.h"
-#include "..\WIFI_Lib\netUI.h"
+#include "..\WiFi_Lib\net.h"
+#include "..\WiFi_Lib\status.h"
+#include "..\WiFi_Lib\netUI.h"
 
 // custom types
 

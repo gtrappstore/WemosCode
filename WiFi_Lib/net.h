@@ -65,7 +65,7 @@ NetData* receiveNetData();
 NetData* receiveNetDataTimeout(int timeout);
 
 NetworkList* getAvailableNetworks();
-int connect(int index, unsigned char* pass);
+int connect(unsigned char* ssid, unsigned char* pass);
 int disconnect();
 Network getNetworkInfo();
 int startAP(unsigned char* ssid, unsigned char* password);

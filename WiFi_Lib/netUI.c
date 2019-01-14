@@ -1,6 +1,7 @@
 #include "netUI.h"
 #include "stddef.h"
 #include "dispbios.h"
+#include "stdio.h"
 
 NetworkSelectionUI initNetworkSelectionUI(int x, int y, int width, int height, NetworkList* nl) {
 	NetworkList* tmp = nl;
@@ -14,6 +15,7 @@ NetworkSelectionUI initNetworkSelectionUI(int x, int y, int width, int height, N
 	nsui.scroll = 0;
 	nsui.networkList = nl;
 	nsui.networkCount = 0;
+	nsui.appOnly = 0;
 	
 	while(tmp != NULL) {
 		nsui.networkCount += 1;
@@ -33,8 +35,49 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 	unsigned char line[22];
 	int ssidLength;
 	DISPBOX box;
+	unsigned char appName[9];
 	
-	nsui->selection += direction;
+	GetAppName(appName);
+	
+	if (nsui->appOnly) {
+		int appOnlySelection = 0;
+		int counter = 0;
+		int appOnlyNetworkCount = 0;
+		NetworkList* a;
+		
+		for (a = nsui->networkList; a != NULL; a = a->next) {
+			if (strncmp(appName, a->network.ssid, strlen(appName)) == 0) {
+				appOnlyNetworkCount += 1;
+			}
+		}
+		
+		for (counter = 0, a = nsui->networkList; counter < nsui->selection && a != NULL; counter += 1, a = a->next) {
+			if (strncmp(appName, a->network.ssid, strlen(appName)) == 0) {
+				appOnlySelection += 1;
+			}
+		}
+		
+		appOnlySelection += direction;
+		
+		if (appOnlySelection < 0) {
+			appOnlySelection = 0;
+		} else if (appOnlySelection >= appOnlyNetworkCount) {
+			appOnlySelection = appOnlyNetworkCount - 1;
+		}
+		
+		for (counter = 0, a = nsui->networkList; a != NULL; counter += 1, a = a->next) {
+			if (strncmp(appName, a->network.ssid, strlen(appName)) == 0) {
+				if (appOnlySelection <= 0) {
+					nsui->selection = counter;
+					break;
+				}
+				
+				appOnlySelection -= 1;
+			}
+		}
+	} else {
+		nsui->selection += direction;
+	}
 	
 	if (nsui->selection < 0) {
 		nsui->selection = 0;
@@ -42,10 +85,10 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 		nsui->selection = nsui->networkCount - 1;
 	}
 	
-	if (nsui->selection >= nsui->scroll + nsui->height) {
-		nsui->scroll = nsui->selection - nsui->height + 1;
-	} else if (nsui->selection < nsui->scroll) {
-		nsui->scroll = nsui->selection;
+	if (numNetworksBetween(nsui->scroll, nsui->selection, nsui) >= nsui->height) {
+		for (nsui->scroll = 0; numNetworksBetween(nsui->scroll, nsui->selection, nsui) >= nsui->height; nsui->scroll += 1);
+	} else if (numNetworksBetween(nsui->scroll, nsui->selection, nsui) < 0) {
+		for (nsui->scroll = nsui->selection; numNetworksBetween(nsui->scroll, nsui->selection, nsui) < 0; nsui->scroll -= 1);
 	}
 	
 	if (nsui->scroll > nsui->networkCount - nsui->height) {
@@ -61,15 +104,23 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 		tmp = tmp->next;
 	}
 	
+	tmp = getNextNetwork(tmp, nsui);
+	
 	// print (at most) [height] lines with network ssid's
 	for (lineCounter = 0; lineCounter < nsui->height; lineCounter += 1) {
 		if (tmp != NULL) {
-			ssidLength = strlen(tmp->network.ssid);
+			int prefixCount = 0;
+			
+			if (nsui->appOnly) {
+				prefixCount += strlen(appName) + 1;
+			}
+			
+			ssidLength = strlen(&tmp->network.ssid[prefixCount]);
 			if (ssidLength > nsui->width - 1) {
 				ssidLength = nsui->width - 1;
 			}
 			
-			memcpy(line, tmp->network.ssid, ssidLength);
+			memcpy(line, &tmp->network.ssid[prefixCount], ssidLength);
 			line[ssidLength] = 0;
 			
 			locate(nsui->x + 1, nsui->y + lineCounter);
@@ -83,7 +134,7 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 			Bdisp_AreaClr_VRAM(&box);
 			
 			drawStrengthIndicator((nsui->x + nsui->width - 1) * 6 - 19, (nsui->y + lineCounter) * 8 - 6, (int) ((tmp->network.rssi + 100.0f) / 10.0f));
-			if (tmp->network.encType == 1) {
+			if (tmp->network.encType != 7) {
 				box.left = (nsui->x + nsui->width - 1) * 6 - 26;
 				box.right = box.left + 6;
 				
@@ -92,24 +143,78 @@ int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction) {
 				drawLock((nsui->x + nsui->width - 1) * 6 - 25, (nsui->y + lineCounter) * 8 - 7, 1);
 			}
 			
-			tmp = tmp->next;
+//			tmp = tmp->next;
+			tmp = getNextNetwork(tmp->next, nsui);
 		}
 	}
-
-	locate(nsui->x, nsui->y + nsui->selection - nsui->scroll);
-	Print(arrow);
 	
-	if (nsui->scroll >= 1) {
+	{
+		int y = nsui->y + numNetworksBetween(nsui->scroll, nsui->selection, nsui);
+		locate(nsui->x, y);
+		Print(arrow);
+	}
+	
+	if (numNetworksBetween(0, nsui->scroll, nsui) >= 1) {
 		locate(nsui->x + nsui->width - 1, nsui->y);
 		Print(arrowUp);
 	}
 	
-	if (nsui->scroll + nsui->height < nsui->networkCount) {
+	if (numNetworksBetween(nsui->scroll, nsui->networkCount, nsui) > nsui->height) {
 		locate(nsui->x + nsui->width - 1, nsui->y + nsui->height - 1);
 		Print(arrowDown);
 	}
 	
 	return nsui->selection;
+}
+
+unsigned char* getSelectedSSID(NetworkSelectionUI* nsui) {
+	NetworkList* nl = nsui->networkList;
+	int counter;
+	
+	for (counter = 0; counter < nsui->selection && nl != NULL; counter += 1, nl = nl->next);
+	
+	if (nl != NULL) {
+		return nl->network.ssid;
+	}
+	
+	return NULL;
+}
+
+NetworkList* getNextNetwork(NetworkList* current, NetworkSelectionUI* nsui) {
+	NetworkList* next = current;
+	unsigned char appName[9];
+	GetAppName(appName);
+	
+	if (nsui->appOnly) {
+		while(next != NULL && strncmp(appName, next->network.ssid, strlen(appName)) != 0) {
+			next = next->next;
+		}
+	}
+	
+	return next;
+}
+
+int numNetworksBetween(int index1, int index2, NetworkSelectionUI* nsui) {
+	int num = 0;
+	unsigned char appName[9];
+	GetAppName(appName);
+	
+	if (nsui->appOnly && index2 > index1) {
+		int counter = 0;
+		NetworkList* a;
+		
+		for (counter = 0, a = nsui->networkList; counter < index1; counter += 1, a = a->next);
+		
+		for (counter = 0; index1 + counter < index2; counter += 1, a = a->next) {
+			if (strncmp(appName, a->network.ssid, strlen(appName)) == 0) {
+				num += 1;
+			}
+		}
+	} else {
+		num += index2 - index1;
+	}
+	
+	return num;
 }
 
 void drawLock(int x, int y, int closed) {

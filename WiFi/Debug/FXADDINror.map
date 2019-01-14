@@ -1,25 +1,25 @@
-Hitachi Optimizing Linkage Editor (Ver. 7.1.03.000)06-Jan-2019 21:00:31
+Hitachi Optimizing Linkage Editor (Ver. 7.1.03.000)06-Jan-2019 21:51:53
 
 *** Options ***
 
--subcommand=C:\Users\Max\AppData\Local\Temp\hmkE597.tmp
+-subcommand=C:\Users\Niko\AppData\Local\Temp\hmkC273.tmp
 noprelink
 sdebug
 rom D=R
 nomessage
-list "A:\_Austuasch\TheRealSlimWifi\WiFi\Debug\FXADDINror.map"
+list "D:\Documents\GTR\Wifi\WiFi\Debug\FXADDINror.map"
 show symbol
 nooptimize
 start P_TOP,P,C,D,C$VTBL,C$INIT/0300200,B_BR_Size,B,R/08100000
 fsymbol P
 nologo
-input "A:\_Austuasch\TheRealSlimWifi\WiFi\Debug\WiFi.obj" "A:\_Austuasch\TheRealSlimWifi\WiFi\Debug\SYSCALLS.obj"
-input "A:\CASIO_SDK\OS\FX\lib\setup.obj"
-library "A:\CASIO_SDK\OS\FX\lib\fx9860G_library.lib"
-output "A:\_Austuasch\TheRealSlimWifi\WiFi\Debug\FXADDINror.abs"
+input "D:\Documents\GTR\Wifi\WiFi\Debug\WiFi.obj" "D:\Documents\GTR\Wifi\WiFi\Debug\SYSCALLS.obj"
+input "D:\Program Files\CASIO\fx-9860G SDK\OS\FX\lib\setup.obj"
+library "D:\Program Files\CASIO\fx-9860G SDK\OS\FX\lib\fx9860G_library.lib"
+output "D:\Documents\GTR\Wifi\WiFi\Debug\FXADDINror.abs"
 -nomessage=1100
 end
 
 *** Error information ***
 
-** L2310 (E) Undefined external symbol "_getAvailableNetworks" referenced in "A:\_Austuasch\TheRealSlimWifi\WiFi\Debug\WiFi.obj"
+** L2310 (E) Undefined external symbol "_getAvailableNetworks" referenced in "D:\Documents\GTR\Wifi\WiFi\Debug\WiFi.obj"

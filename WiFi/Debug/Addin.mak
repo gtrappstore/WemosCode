@@ -3,10 +3,10 @@
 #
 ############################
 # Directory defines
-TCDIR = A:\CASIO_SDK\OS\SH
-OSDIR = A:\CASIO_SDK\OS
-APPDIR = A:\_Austuasch\TheRealSlimWifi\WiFi
-OUTDIR = A:\_Austuasch\TheRealSlimWifi\WiFi\Debug
+TCDIR = D:\Program Files\CASIO\fx-9860G SDK\OS\SH
+OSDIR = D:\Program Files\CASIO\fx-9860G SDK\OS
+APPDIR = D:\Documents\GTR\Wifi\WiFi
+OUTDIR = D:\Documents\GTR\Wifi\WiFi\Debug
 
 ################
 # Main Defines

@@ -2,6 +2,7 @@
 #include "stddef.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 
 void openSerial() {
     unsigned char mode[6];
@@ -339,7 +340,7 @@ NetworkList* getAvailableNetworks() {
 	int status;
 	Data* data = NULL;
 	int counter;
-	NetworkList *head = NULL, *tail = NULL;
+	NetworkList *head = NULL;
 	
 	sendCommand((unsigned char*) "GETNETS");
 	status = receiveStatus();
@@ -357,6 +358,7 @@ NetworkList* getAvailableNetworks() {
 	while (counter < data->length) {
 		NetworkList* netElement;
 		int ssidLength;
+		int skip = 0;
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
 			break;
@@ -369,7 +371,8 @@ NetworkList* getAvailableNetworks() {
 		ssidLength = strlen(&data->buf[counter]);
 		
 		netElement->network.ssid = (unsigned char*) malloc(ssidLength + 1);
-		strncpy(netElement->network.ssid, &data->buf[counter], ssidLength);
+		memcpy(netElement->network.ssid, &data->buf[counter], ssidLength);
+		netElement->network.ssid[ssidLength] = 0;
 		counter += ssidLength + 1;
 		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
@@ -392,10 +395,21 @@ NetworkList* getAvailableNetworks() {
 		
 		if (head == NULL) {
 			head = netElement;
-			tail = netElement;
 		} else {
-			tail->next = netElement;
-			tail = netElement;
+			// sort by signal strength
+			if (head->network.rssi < netElement->network.rssi) {
+				netElement->next = head;
+				head = netElement;
+			} else {
+				NetworkList* tmp = head;
+				
+				while(tmp->next != NULL && tmp->next->network.rssi > netElement->network.rssi) {
+					tmp = tmp->next;
+				}
+				
+				netElement->next = tmp->next;
+				tmp->next = netElement;
+			}
 		}
 	}
 	
@@ -405,13 +419,11 @@ NetworkList* getAvailableNetworks() {
 	return head;
 }
 
-int connect(int index, unsigned char* pass) {
-	unsigned char* buf[11];
+int connect(unsigned char* ssid, unsigned char* pass) {
 	int status;
 	
 	sendCommand((unsigned char*) "CONNECT");
-	sprintf(buf, "%d", index);
-	Serial_BufferedTransmitNBytes(buf, strlen(buf) + 1);
+	Serial_BufferedTransmitNBytes(ssid, strlen(ssid) + 1);
 	Serial_BufferedTransmitNBytes(pass, strlen(pass) + 1);
 	
 	status = receiveStatus();
@@ -518,6 +530,7 @@ int stopAP() {
 	return 0;
 }
 
+/*
 Data* getWebContent(int mode, unsigned char* host, unsigned char* url, int port) {
 	sendCommand("WEBCONTENT");
 	sendStringSerial(mode);
@@ -527,3 +540,4 @@ Data* getWebContent(int mode, unsigned char* host, unsigned char* url, int port)
 
 	return receiveData(10);
 }
+*/
