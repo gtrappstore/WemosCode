@@ -9,9 +9,13 @@
 /*****************************************************************/
 #include "fxlib.h"
 #include "stdio.h"
-#include "..\WIFI_Lib\net.h"
-#include "..\WIFI_Lib\status.h"
-#include "..\WIFI_Lib\netUI.h"
+#include "..\WiFi_Lib\net.h"
+#include "..\WiFi_Lib\net.c"
+#include "..\WiFi_Lib\status.h"
+#include "..\WiFi_Lib\status.c"
+#include "..\WiFi_Lib\netUI.h"
+#include "..\WiFi_Lib\netUI.c"
+#include "syscalls.h"
 
 // custom types
 
@@ -116,15 +120,15 @@ int AddIn_main(int isAppli, unsigned short OptionNum)
     Bdisp_AllClr_DDVRAM();
 
 
-    while(true) {
+    //while(true) {
         //GetKey(&key);
         //sprintf(buf, "Key: %d", key);
         //locate(2, 2);
         //Bdisp_AllClr_DDVRAM();
         //Print(buf);
-		drawImage();
-		GetKey(&key);
-    }
+		//drawImage();
+		//GetKey(&key);
+   // }
 
 
     openSerial();
@@ -364,7 +368,7 @@ void connectToNetwork() {
 	Bdisp_AllClr_DDVRAM();
 
 	memset(passwordBuf, 0, 65);
-	Cursor_SetFlashOn(0);
+	//Cursor_SetFlashOn(0);
 
 	while (1) {
 		int x = 0;
@@ -678,11 +682,6 @@ void downloadFile() {
 
 void getAppByID(){
 
-}
-
-void sendCommand(unsigned char* command) {  //überarbeitet
-    Serial_BufferedTransmitOneByte((unsigned char) 219);
-    Serial_BufferedTransmitNBytes(command, strlen(command)+1);
 }
 
 void sendAcknowledgement(unsigned char* state){	

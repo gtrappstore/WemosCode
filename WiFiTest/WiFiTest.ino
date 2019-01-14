@@ -1,3 +1,16 @@
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiAP.h>
+#include <ESP8266WiFiGeneric.h>
+#include <ESP8266WiFiMulti.h>
+#include <ESP8266WiFiScan.h>
+#include <ESP8266WiFiSTA.h>
+#include <ESP8266WiFiType.h>
+#include <WiFiClient.h>
+#include <WiFiClientSecure.h>
+#include <WiFiServer.h>
+#include <WiFiServerSecure.h>
+#include <WiFiUdp.h>
+
 #include <SoftwareSerial.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -412,7 +425,7 @@ void getWebContent() {
       int len = wfClient.read(buf, sizeof buf);
 
     if (!sendData(buf, len)) {
-      sendAck("TO");
+      sendCommandAck("TO");
     }
       
     counter += len;

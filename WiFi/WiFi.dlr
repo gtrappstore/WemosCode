@@ -236,6 +236,7 @@ Sublevel=4
 File=A:\_Austuasch\TheRealSlimWifi\WiFi\WiFi.c
 Line=628
 Flags=00001012
+Sublevel=1
 
 [Breakpoint]
 File=A:\_Austuasch\TheRealSlimWifi\WiFi\WiFi.c
@@ -247,6 +248,7 @@ Sublevel=1
 File=A:\_Austuasch\TheRealSlimWifi\WiFi\WiFi.c
 Line=632
 Flags=00001012
+Sublevel=1
 
 [Breakpoint]
 File=A:\_Austuasch\TheRealSlimWifi\WiFi\WiFi.c
@@ -476,5 +478,17 @@ Sublevel=2
 [Breakpoint]
 File=A:\_Austuasch\TheRealSlimWifi\WiFi\WiFi.c
 Line=1057
+Flags=00001012
+Sublevel=2
+
+[Breakpoint]
+File=A:\_Austuasch\TheRealSlimWifi\WiFi\WiFi.c
+Line=628
+Flags=00001012
+Sublevel=2
+
+[Breakpoint]
+File=A:\_Austuasch\TheRealSlimWifi\WiFi\WiFi.c
+Line=632
 Flags=00001012
 Sublevel=2

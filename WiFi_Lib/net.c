@@ -2,6 +2,7 @@
 #include "stddef.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 
 void openSerial() {
     unsigned char mode[6];
@@ -517,13 +518,14 @@ int stopAP() {
 	
 	return 0;
 }
-
+/**
 Data* getWebContent(int mode, unsigned char* host, unsigned char* url, int port) {
 	sendCommand("WEBCONTENT");
-	sendStringSerial(mode);
-	sendStringSerial(host);
-	sendStringSerial(url);
-	sendStringSerial(port);
+	
+	Serial_BufferedTransmitNBytes(mode, strlen(mode) + 1);
+	Serial_BufferedTransmitNBytes(host, strlen(host) + 1);
+	Serial_BufferedTransmitNBytes(url, strlen(url) + 1);
+	Serial_BufferedTransmitNBytes(port, strlen(port) + 1);
 
 	return receiveData(10);
-}
+}**/
