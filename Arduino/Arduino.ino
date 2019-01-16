@@ -83,10 +83,6 @@ void loop() {
         }
       }
     }
-
-    unsigned char number_client;
-    number_client= wifi_softap_get_station_num();
-    LOG("Connected Devices: " + String(number_client));
   }
 
   // handle Serial commands
