@@ -17,6 +17,8 @@ typedef struct {
 
 // functions
 
+int createNetworkScreen(unsigned char* title);
+int connectScreen(int appOnlyNetworks, unsigned char* title);
 NetworkSelectionUI initNetworkSelectionUI(int x, int y, int width, int height, NetworkList* nl);
 int drawNetworkSelectionUI(NetworkSelectionUI* nsui, int direction);
 unsigned char* getSelectedSSID(NetworkSelectionUI* nsui);

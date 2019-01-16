@@ -83,6 +83,10 @@ void loop() {
         }
       }
     }
+
+    unsigned char number_client;
+    number_client= wifi_softap_get_station_num();
+    LOG("Connected Devices: " + String(number_client));
   }
 
   // handle Serial commands
@@ -391,9 +395,9 @@ void getNetInfo() {
 
 void startAP() {
   String ssid = Serial.readStringUntil(0);
-  LOG("Hotspot: " + ssid);
-
   String password = Serial.readStringUntil(0);
+
+  LOG("Hotspot: " + ssid + " " + password);
 
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid.c_str(), password.c_str());

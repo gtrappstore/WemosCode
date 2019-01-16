@@ -1,7 +1,161 @@
 #include "netUI.h"
 #include "stddef.h"
 #include "dispbios.h"
+#include "keybios.h"
 #include "stdio.h"
+
+int createNetworkScreen(unsigned char* title) {
+	unsigned int key;
+	unsigned char ssidBuf[33]; // WiFi ssids are at most 32 chars
+	unsigned char passwordBuf[65]; // WiFi passwords are at most 64 chars
+	
+	memset(ssidBuf, 0, 33);
+	Cursor_SetFlashOn(0);
+	
+	while (1){
+		int x = 0;
+		
+		if (strlen(ssidBuf) > 20) {
+			x = strlen(ssidBuf) - 20;
+		}
+		
+		Bdisp_AllClr_VRAM();
+		locate(1, 1);
+		if (title == NULL) {
+			Print("Network name:");
+		} else {
+			Print(title);
+		}
+		locate(1, 3);
+		Print(&ssidBuf[x]);
+		locate(strlen(ssidBuf) + 1, 3);
+		
+		GetKey(&key);
+		
+		if (key == KEY_CTRL_DEL && strlen(ssidBuf) >= 1) {
+			ssidBuf[strlen(ssidBuf) - 1] = 0;
+		} else if (key == KEY_CTRL_EXIT) {
+			return 0;
+		} else if (key == KEY_CTRL_EXE) {
+			break;
+		} else if (key < 128 && strlen(ssidBuf) < 32) {
+			ssidBuf[strlen(ssidBuf)] = (unsigned char) key;
+		}
+	}
+	
+	memset(passwordBuf, 0, 65);
+	Cursor_SetFlashOn(0);
+	
+	while (1){
+		int x = 0;
+		
+		if (strlen(passwordBuf) > 20) {
+			x = strlen(passwordBuf) - 20;
+		}
+		
+		Bdisp_AllClr_VRAM();
+		locate(1, 1);
+		Print("Password:");
+		locate(1, 3);
+		Print(&passwordBuf[x]);
+		locate(strlen(passwordBuf) + 1, 3);
+		
+		GetKey(&key);
+		
+		if (key == KEY_CTRL_DEL && strlen(passwordBuf) >= 1) {
+			passwordBuf[strlen(passwordBuf) - 1] = 0;
+		} else if (key == KEY_CTRL_EXIT) {
+			return 0;
+		} else if (key == KEY_CTRL_EXE) {
+			break;
+		} else if (key < 128 && strlen(passwordBuf) < 64) {
+			passwordBuf[strlen(passwordBuf)] = (unsigned char) key;
+		}
+	}
+	
+	startAP(ssidBuf, passwordBuf);
+	return 1;
+}
+
+int connectScreen(int appOnlyNetworks, unsigned char* title) {
+	NetworkList* nets;
+	NetworkSelectionUI nsui;
+	int direction = 0;
+	unsigned int key;
+	unsigned char ssidBuf[33]; // WiFi ssids are at most 32 chars
+	unsigned char passwordBuf[65]; // WiFi passwords are at most 64 chars
+	
+	// TODO: add output to user bc getNets() will block
+	nets = getAvailableNetworks(1);
+	
+	// TODO: handle no networks
+	
+	nsui = initNetworkSelectionUI(1, 3, 21, 6, nets);
+	nsui.appOnly = appOnlyNetworks;
+
+	while(1){
+		Bdisp_AllClr_VRAM();
+		locate(1, 1);
+		if (title == NULL) {
+			Print("Choose a network:");
+		} else {
+			Print(title);
+		}
+		drawNetworkSelectionUI(&nsui, direction);
+		GetKey(&key);
+
+		if(key == KEY_CTRL_UP) {
+			direction = -1;
+		} else if (key == KEY_CTRL_DOWN) {
+			direction = 1;
+		} else if (key == KEY_CTRL_EXIT) {
+			freeNetList(nets);
+			nets = NULL;
+			return 0;
+		} else if (key == KEY_CTRL_EXE) {
+			break;
+		}
+	}
+	
+	// copy the ssid before networklist gets deleted
+	memcpy(ssidBuf, getSelectedSSID(&nsui), strlen(getSelectedSSID(&nsui)) + 1);
+	
+	freeNetList(nets);
+	nets = NULL;
+	
+	memset(passwordBuf, 0, 65);
+	Cursor_SetFlashOn(0);
+	
+	while (1){
+		int x = 0;
+		
+		if (strlen(passwordBuf) > 20) {
+			x = strlen(passwordBuf) - 20;
+		}
+		
+		Bdisp_AllClr_VRAM();
+		locate(1, 1);
+		Print("Password:");
+		locate(1, 3);
+		Print(&passwordBuf[x]);
+		locate(strlen(passwordBuf) + 1, 3);
+		
+		GetKey(&key);
+		
+		if (key == KEY_CTRL_DEL && strlen(passwordBuf) >= 1) {
+			passwordBuf[strlen(passwordBuf) - 1] = 0;
+		} else if (key == KEY_CTRL_EXIT) {
+			return 0;
+		} else if (key == KEY_CTRL_EXE) {
+			break;
+		} else if (key < 128 && strlen(passwordBuf) < 64) {
+			passwordBuf[strlen(passwordBuf)] = (unsigned char) key;
+		}
+	}
+	
+	connect(ssidBuf, passwordBuf);
+	return 1;
+}
 
 NetworkSelectionUI initNetworkSelectionUI(int x, int y, int width, int height, NetworkList* nl) {
 	NetworkList* tmp = nl;
