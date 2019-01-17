@@ -84,36 +84,61 @@ int connectScreen(int appOnlyNetworks, unsigned char* title) {
 	unsigned int key;
 	unsigned char ssidBuf[33]; // WiFi ssids are at most 32 chars
 	unsigned char passwordBuf[65]; // WiFi passwords are at most 64 chars
+	int reload = 1;
 	
-	// TODO: add output to user bc getNets() will block
-	nets = getAvailableNetworks();
-	
-	// TODO: handle no networks
-	
-	nsui = initNetworkSelectionUI(1, 3, 21, 6, nets);
-	nsui.appOnly = appOnlyNetworks;
-
-	while(1){
+	while(reload) {
 		Bdisp_AllClr_VRAM();
 		locate(1, 1);
-		if (title == NULL) {
-			Print("Choose a network:");
+		Print("Searching...");
+		Bdisp_PutDisp_DD();
+		
+		nets = getAvailableNetworks();
+		
+		if (nets == NULL) { // list is NULL -> no networks found / error
+			while (1) {
+				Bdisp_AllClr_VRAM();
+				locate(1, 1);
+				Print("No networks found");
+				
+				GetKey(&key);
+				if (key == KEY_CTRL_F5) { // reload
+					reload = 1;
+					break;
+				} else if (key == KEY_CTRL_EXIT) {
+					return 0;
+				}
+			}
 		} else {
-			Print(title);
-		}
-		drawNetworkSelectionUI(&nsui, direction);
-		GetKey(&key);
+			nsui = initNetworkSelectionUI(1, 3, 21, 6, nets);
+			nsui.appOnly = appOnlyNetworks;
 
-		if(key == KEY_CTRL_UP) {
-			direction = -1;
-		} else if (key == KEY_CTRL_DOWN) {
-			direction = 1;
-		} else if (key == KEY_CTRL_EXIT) {
-			freeNetList(nets);
-			nets = NULL;
-			return 0;
-		} else if (key == KEY_CTRL_EXE) {
-			break;
+			while(1){
+				Bdisp_AllClr_VRAM();
+				locate(1, 1);
+				if (title == NULL) {
+					Print("Choose a network:");
+				} else {
+					Print(title);
+				}
+				drawNetworkSelectionUI(&nsui, direction);
+				GetKey(&key);
+
+				if(key == KEY_CTRL_UP) {
+					direction = -1;
+				} else if (key == KEY_CTRL_DOWN) {
+					direction = 1;
+				} else if (key == KEY_CTRL_F5) {
+					reload = 1;
+					break;
+				} else if (key == KEY_CTRL_EXIT) {
+					freeNetList(nets);
+					nets = NULL;
+					return 0;
+				} else if (key == KEY_CTRL_EXE) {
+					reload = 0;
+					break;
+				}
+			}
 		}
 	}
 	
