@@ -64,7 +64,7 @@ void sendNetDataProt(unsigned char* buf, unsigned int length, int protocol);
 NetData* receiveNetData();
 NetData* receiveNetDataTimeout(int timeout);
 
-NetworkList* getAvailableNetworks(int appOnly);
+NetworkList* getAvailableNetworks();
 int connect(unsigned char* ssid, unsigned char* pass);
 int disconnect();
 Network getNetworkInfo();

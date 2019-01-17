@@ -336,14 +336,11 @@ void freeNetList(NetworkList* netList) {
 	}
 }
 
-NetworkList* getAvailableNetworks(int appOnly) {
+NetworkList* getAvailableNetworks() {
 	int status;
 	Data* data = NULL;
 	int counter;
 	NetworkList *head = NULL;
-	unsigned char appName[9];
-	
-	GetAppName(appName);
 	
 	sendCommand((unsigned char*) "GETNETS");
 	status = receiveStatus();
@@ -378,10 +375,6 @@ NetworkList* getAvailableNetworks(int appOnly) {
 		netElement->network.ssid[ssidLength] = 0;
 		counter += ssidLength + 1;
 		
-		if (appOnly && strncmp(netElement->network.ssid, appName, strlen(appName)) != 0) {
-			skip = 1;
-		}
-		
 		if (memchr(&data->buf[counter], 0, data->length - counter) == NULL) {
 			freeNetList(netElement);
 			netElement = NULL;
@@ -399,13 +392,6 @@ NetworkList* getAvailableNetworks(int appOnly) {
 		
 		netElement->network.encType = atoi(&data->buf[counter]);
 		counter += strlen(&data->buf[counter]) + 1;
-		
-		// don`t add this network to the list
-		if (skip) {
-			freeNetList(netElement);
-			netElement = NULL;
-			continue;
-		}
 		
 		if (head == NULL) {
 			head = netElement;

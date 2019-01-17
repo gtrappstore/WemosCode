@@ -86,7 +86,7 @@ int connectScreen(int appOnlyNetworks, unsigned char* title) {
 	unsigned char passwordBuf[65]; // WiFi passwords are at most 64 chars
 	
 	// TODO: add output to user bc getNets() will block
-	nets = getAvailableNetworks(1);
+	nets = getAvailableNetworks();
 	
 	// TODO: handle no networks
 	
